@@ -8,11 +8,7 @@ import {
 import { SynapseClient } from '../../utils'
 import { SMALL_USER_CARD } from '../../utils/SynapseConstants'
 import { useSynapseContext } from '../../utils/SynapseContext'
-import {
-  Subscription,
-  SubscriptionObjectType,
-  Topic,
-} from '../../utils/synapseTypes/Subscription'
+import { SubscriptionObjectType } from '../../utils/synapseTypes/Subscription'
 import Typography from '../../utils/typography/Typography'
 import { getMessage } from '../DiscussionSearchResult'
 import UserCard from '../UserCard'
@@ -23,11 +19,7 @@ import IconSvg from '../IconSvg'
 import Tooltip from '../../utils/tooltip/Tooltip'
 import MarkdownSynapse from '../markdown/MarkdownSynapse'
 import { ObjectType } from '../../utils/synapseTypes'
-import { getSubscription } from '../../utils/functions/getSubscription'
-import {
-  useDeleteSubscription,
-  usePostSubscription,
-} from '../../utils/hooks/SynapseAPI/subscription/useSubscription'
+import { useSubscription } from '../../utils/hooks/SynapseAPI/subscription/useSubscription'
 
 export type DiscussionThreadProps = {
   threadId: string
@@ -43,35 +35,18 @@ export function DiscussionThread(props: DiscussionThreadProps) {
   const { accessToken } = useSynapseContext()
   const [orderByDatePosted, setOrderByDatePosted] = useState(true)
   const [message, setMessage] = useState<string>()
-  const [subscribed, setSubscribed] = useState<Subscription>()
-  const [isLoading, setIsLoading] = useState(false)
 
   const { data: threadData } = useGetThread(threadId)
-  const { mutate: updateSubscription } = usePostSubscription()
-  const { mutate: deleteSubscription } = useDeleteSubscription()
-
-  useEffect(() => {
-    getSubscription(accessToken, threadId, SubscriptionObjectType.THREAD).then(
-      result => setSubscribed(result),
-    )
-  }, [accessToken, threadId, handleFollowBtn])
+  const { subscription, toggleSubscribed, isLoading } = useSubscription(
+    threadId,
+    SubscriptionObjectType.THREAD,
+  )
 
   function handleFollowBtn() {
     try {
-      setIsLoading(true)
-      if (subscribed) {
-        deleteSubscription(subscribed.subscriptionId)
-      } else {
-        const topic: Topic = {
-          objectId: threadId,
-          objectType: SubscriptionObjectType.THREAD,
-        }
-        updateSubscription(topic)
-      }
+      toggleSubscribed()
     } catch (err: any) {
       displayToast(err.reason as string, 'danger')
-    } finally {
-      setIsLoading(false)
     }
   }
 
@@ -137,14 +112,14 @@ export function DiscussionThread(props: DiscussionThreadProps) {
       ) : (
         <></>
       )}
-      <Tooltip title={subscribed ? FOLLOWING_TEXT : UNFOLLOWING_TEXT}>
+      <Tooltip title={subscription ? FOLLOWING_TEXT : UNFOLLOWING_TEXT}>
         <button
           className="follow-button"
-          aria-label={subscribed ? 'follow-button' : 'unfollow-button'}
+          aria-label={subscription ? 'follow-button' : 'unfollow-button'}
           disabled={isLoading}
           onClick={() => handleFollowBtn()}
         >
-          {subscribed ? (
+          {subscription ? (
             <IconSvg options={{ icon: 'visibility' }} />
           ) : (
             <IconSvg options={{ icon: 'visibilityOff' }} />

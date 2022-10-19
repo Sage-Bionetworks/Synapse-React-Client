@@ -16,6 +16,7 @@ import { SynapseClientError } from '../../../SynapseClientError'
 import { useSynapseContext } from '../../../SynapseContext'
 import { Direction } from '../../../synapseTypes'
 import { SynapseClient } from '../../..'
+import { useCallback } from 'react'
 
 export function useGetSubscription(
   objectId: string,
@@ -37,7 +38,7 @@ export function useGetSubscription(
     return subscriptionList.results[0]
   }
   return useQuery<Subscription, SynapseClientError>(
-    ['subscription', objectId, objectType],
+    [accessToken, 'subscription', objectId, objectType],
     queryFn,
     options,
   )
@@ -54,11 +55,7 @@ export function usePostSubscription(
     {
       ...options,
       onSuccess: async (updatedSubscription, variables, ctx) => {
-        await queryClient.invalidateQueries([
-          'subscription',
-          variables.objectId,
-          variables.objectType,
-        ])
+        await queryClient.invalidateQueries([accessToken, 'subscription'])
         if (options?.onSuccess) {
           await options.onSuccess(updatedSubscription, variables, ctx)
         }
@@ -79,11 +76,36 @@ export function useDeleteSubscription(
     {
       ...options,
       onSuccess: async (updatedSubscription, variables, ctx) => {
-        await queryClient.invalidateQueries(['subscription', variables])
+        await queryClient.invalidateQueries([accessToken, 'subscription'])
         if (options?.onSuccess) {
           await options.onSuccess(updatedSubscription, variables, ctx)
         }
       },
     },
   )
+}
+
+export const useSubscription = (
+  objectId: string,
+  objectType: SubscriptionObjectType,
+) => {
+  const { data: subscription, isLoading: isLoadingGet } = useGetSubscription(
+    objectId,
+    objectType,
+  )
+  const { mutate: postSubscription, isLoading: isLoadingPost } =
+    usePostSubscription()
+  const { mutate: deleteSubscription, isLoading: isLoadingDelete } =
+    useDeleteSubscription()
+
+  const isLoading = isLoadingGet || isLoadingPost || isLoadingDelete
+  const toggleSubscribed = useCallback(() => {
+    if (subscription) {
+      deleteSubscription(subscription.subscriptionId)
+    } else {
+      postSubscription({ objectId, objectType })
+    }
+  }, [deleteSubscription, objectId, objectType, postSubscription, subscription])
+
+  return { isLoading, subscription, toggleSubscribed }
 }

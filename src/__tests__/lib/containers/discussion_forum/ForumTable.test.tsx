@@ -125,22 +125,23 @@ describe('Forum Table test', () => {
     const followButton = await screen.findByRole('button', { name: 'Follow' })
     await userEvent.click(followButton)
 
-    expect(SynapseClient.postSubscription).toBeCalledWith(
-      MOCK_ACCESS_TOKEN,
-      followRequest,
-    )
-
+    waitFor(() => {
+      expect(SynapseClient.postSubscription).toBeCalledWith(
+        MOCK_ACCESS_TOKEN,
+        followRequest,
+      )
+    })
     // When following the follow button should show Unfollow
     const unFollowButton = await screen.findByRole('button', {
       name: 'Unfollow',
     })
     await userEvent.click(unFollowButton)
-
-    expect(SynapseClient.deleteSubscription).toBeCalledWith(
-      MOCK_ACCESS_TOKEN,
-      MOCK_SUBSCRIPTION_ID,
-    )
-    await screen.findByRole('button', { name: 'Follow' })
+    await waitFor(() => {
+      expect(SynapseClient.deleteSubscription).toBeCalledWith(
+        MOCK_ACCESS_TOKEN,
+        MOCK_SUBSCRIPTION_ID,
+      )
+    })
   })
 
   it('Loads more when there is more data', async () => {

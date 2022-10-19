@@ -1,26 +1,17 @@
 import moment from 'moment'
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { Button, Table } from 'react-bootstrap'
 import SortIcon from '../../assets/icons/Sort'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
-import { getSubscription } from '../../utils/functions/getSubscription'
 import { useGetForumInfinite } from '../../utils/hooks/SynapseAPI/forum/useForum'
-import {
-  useDeleteSubscription,
-  usePostSubscription,
-} from '../../utils/hooks/SynapseAPI/subscription/useSubscription'
+import { useSubscription } from '../../utils/hooks/SynapseAPI/subscription/useSubscription'
 import { AVATAR, SMALL_USER_CARD } from '../../utils/SynapseConstants'
-import { useSynapseContext } from '../../utils/SynapseContext'
 import { Direction } from '../../utils/synapseTypes'
 import {
   DiscussionFilter,
   DiscussionThreadOrder,
 } from '../../utils/synapseTypes/DiscussionBundle'
-import {
-  Subscription,
-  SubscriptionObjectType,
-  Topic,
-} from '../../utils/synapseTypes/Subscription'
+import { SubscriptionObjectType } from '../../utils/synapseTypes/Subscription'
 import IconSvg from '../IconSvg'
 import { displayToast } from '../ToastMessage'
 import UserCard from '../UserCard'
@@ -38,38 +29,21 @@ export const ForumTable: React.FC<ForumTableProps> = ({
   filter,
   onClickLink,
 }) => {
-  const { accessToken } = useSynapseContext()
   const [sort, setSort] = useState<DiscussionThreadOrder>(
     DiscussionThreadOrder.PINNED_AND_LAST_ACTIVITY,
   )
   const [isAscending, setIsAscending] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
-  const [subscribed, setSubscribed] = useState<Subscription>()
-  const { mutate: deleteSubscription } = useDeleteSubscription()
-  const { mutate: updateSubscription } = usePostSubscription()
 
-  useEffect(() => {
-    getSubscription(accessToken, forumId, SubscriptionObjectType.FORUM).then(
-      result => setSubscribed(result),
-    )
-  }, [accessToken, forumId, handleFollowBtn])
+  const { subscription, isLoading, toggleSubscribed } = useSubscription(
+    forumId,
+    SubscriptionObjectType.FORUM,
+  )
 
   function handleFollowBtn() {
     try {
-      setIsLoading(true)
-      if (subscribed) {
-        deleteSubscription(subscribed.subscriptionId)
-      } else {
-        const topic: Topic = {
-          objectId: forumId,
-          objectType: SubscriptionObjectType.FORUM,
-        }
-        updateSubscription(topic)
-      }
+      toggleSubscribed()
     } catch (err: any) {
       displayToast(err.reason as string, 'danger')
-    } finally {
-      setIsLoading(false)
     }
   }
 
@@ -101,11 +75,11 @@ export const ForumTable: React.FC<ForumTableProps> = ({
     <div className="ForumTable bootstrap-4-backport">
       <div className="ForumTable__top-level-control">
         <Button
-          variant={subscribed ? 'outline-primary' : 'primary'}
+          variant={subscription ? 'outline-primary' : 'primary'}
           onClick={() => handleFollowBtn()}
           disabled={isLoading}
         >
-          {subscribed ? 'Unfollow' : 'Follow'}
+          {subscription ? 'Unfollow' : 'Follow'}
         </Button>
       </div>
       <Table>
