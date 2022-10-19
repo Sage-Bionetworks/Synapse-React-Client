@@ -14,7 +14,6 @@ import { WarningModal } from '../synapse_form_wrapper/WarningModal'
 import { HelpOutlineTwoTone } from '@material-ui/icons'
 import Tooltip from '../../utils/tooltip/Tooltip'
 import { SynapseClientError } from '../../utils/SynapseClientError'
-import { SynapseSpinner } from '../LoadingScreen'
 
 export type CreateOAuthModalProps = {
   isShowingModal: boolean
@@ -62,7 +61,7 @@ export const CreateOAuthModal: React.FunctionComponent<
     setClientUri(client?.client_uri ?? '')
     setSectorUri(client?.sector_identifier_uri ?? undefined)
     setTosUri(client?.tos_uri ?? '')
-  }, [isShowingModal])
+  }, [isShowingModal, client])
 
   useEffect(() => {
     const stateArr = redirectUris?.map(str => str.uri)
@@ -74,7 +73,7 @@ export const CreateOAuthModal: React.FunctionComponent<
       sectorUri != client?.sector_identifier_uri)
       ? setWarnTrigger(true)
       : setWarnTrigger(false)
-  }, [redirectUris, sectorUri])
+  }, [redirectUris, sectorUri, client])
 
   const hide = () => {
     setClientName('')
@@ -95,16 +94,18 @@ export const CreateOAuthModal: React.FunctionComponent<
     onSuccess: () => {
       displayToast('Successfully created', 'success')
       setError(undefined)
+      hide()
     },
     onError: err => {
       setError(err)
     },
   })
 
-  const { mutate: updateClient, isLoading } = useUpdateOAuthClient({
+  const { mutate: updateClient } = useUpdateOAuthClient({
     onSuccess: () => {
       displayToast('Successfully saved', 'success')
       setError(undefined)
+      hide()
     },
     onError: err => {
       setError(err)
@@ -115,7 +116,7 @@ export const CreateOAuthModal: React.FunctionComponent<
   const { mutate: deleteClient } = useDeleteOAuthClient({
     onSuccess: () => {
       displayToast('Successfully deleted', 'success')
-      onClose()
+      hide()
     },
     onError: error => {
       displayToast(error.reason as string, 'danger')
@@ -146,7 +147,6 @@ export const CreateOAuthModal: React.FunctionComponent<
           }
         }
       }
-      hide()
     } catch (err) {
       displayToast(err.reason as string, 'danger')
     }
@@ -375,7 +375,6 @@ export const CreateOAuthModal: React.FunctionComponent<
                 onClick={() => {
                   setIsDelete(true)
                   setIsShowingConfirmModal(true)
-                  hide()
                 }}
               >
                 <IconSvg options={{ icon: 'delete', color: '#f44336' }} />
@@ -414,11 +413,6 @@ export const CreateOAuthModal: React.FunctionComponent<
         confirmButtonVariant="danger"
         confirmButtonText="Yes, Continue"
       />
-      {isLoading && (
-        <div className="Loader">
-          <SynapseSpinner size={50} />
-        </div>
-      )}
     </div>
   )
 }
