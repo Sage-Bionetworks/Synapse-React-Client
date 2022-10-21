@@ -1,24 +1,17 @@
 import moment from 'moment'
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { Button, Table } from 'react-bootstrap'
 import SortIcon from '../../assets/icons/Sort'
-import { SynapseClient } from '../../utils'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
 import { useGetForumInfinite } from '../../utils/hooks/SynapseAPI/forum/useForum'
+import { useSubscription } from '../../utils/hooks/SynapseAPI/subscription/useSubscription'
 import { AVATAR, SMALL_USER_CARD } from '../../utils/SynapseConstants'
-import { useSynapseContext } from '../../utils/SynapseContext'
 import { Direction } from '../../utils/synapseTypes'
 import {
   DiscussionFilter,
   DiscussionThreadOrder,
 } from '../../utils/synapseTypes/DiscussionBundle'
-import {
-  SortByType,
-  Subscription,
-  SubscriptionObjectType,
-  SubscriptionRequest,
-  Topic,
-} from '../../utils/synapseTypes/Subscription'
+import { SubscriptionObjectType } from '../../utils/synapseTypes/Subscription'
 import IconSvg from '../IconSvg'
 import { displayToast } from '../ToastMessage'
 import UserCard from '../UserCard'
@@ -26,42 +19,33 @@ import UserCard from '../UserCard'
 export type ForumTableProps = {
   forumId: string
   limit: number
+  onClickLink: () => void
   filter?: DiscussionFilter
-}
-
-async function getSubscribe(accessToken: string | undefined, objectId: string) {
-  const subscriptionRequest: SubscriptionRequest = {
-    objectType: SubscriptionObjectType.FORUM,
-    idList: [objectId],
-    sortByType: SortByType.OBJECT_ID,
-    sortDirection: Direction.ASC,
-  }
-  const subscriptionList = await SynapseClient.postSubscriptionList(
-    accessToken,
-    subscriptionRequest,
-  )
-  if (subscriptionList.totalNumberOfResults > 0) {
-    return subscriptionList.results[0]
-  }
-  return
 }
 
 export const ForumTable: React.FC<ForumTableProps> = ({
   forumId,
   limit,
   filter,
+  onClickLink,
 }) => {
-  const { accessToken } = useSynapseContext()
   const [sort, setSort] = useState<DiscussionThreadOrder>(
     DiscussionThreadOrder.PINNED_AND_LAST_ACTIVITY,
   )
-  const [subscribed, setSubscribed] = useState<Subscription>()
   const [isAscending, setIsAscending] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
 
-  useEffect(() => {
-    getSubscribe(accessToken, forumId).then(result => setSubscribed(result))
-  }, [accessToken, forumId])
+  const { subscription, isLoading, toggleSubscribed } = useSubscription(
+    forumId,
+    SubscriptionObjectType.FORUM,
+  )
+
+  function handleFollowBtn() {
+    try {
+      toggleSubscribed()
+    } catch (err: any) {
+      displayToast(err.reason as string, 'danger')
+    }
+  }
 
   const { data, hasNextPage, fetchNextPage } = useGetForumInfinite(
     forumId,
@@ -75,30 +59,6 @@ export const ForumTable: React.FC<ForumTableProps> = ({
 
   const getUrl = (threadId: string, projectId: string) => {
     return `${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!Synapse:${projectId}/discussion/threadId=${threadId}`
-  }
-
-  const handleFollowBtn = async () => {
-    try {
-      setIsLoading(true)
-      if (subscribed) {
-        await SynapseClient.deleteSubscription(
-          accessToken,
-          subscribed.subscriptionId,
-        )
-        setSubscribed(undefined)
-      } else {
-        const topic: Topic = {
-          objectId: forumId,
-          objectType: SubscriptionObjectType.FORUM,
-        }
-        const follow = await SynapseClient.postSubscription(accessToken, topic)
-        setSubscribed(follow)
-      }
-    } catch (err: any) {
-      displayToast(err.reason as string, 'danger')
-    } finally {
-      setIsLoading(false)
-    }
   }
 
   const onSort = (field: DiscussionThreadOrder) => {
@@ -115,11 +75,11 @@ export const ForumTable: React.FC<ForumTableProps> = ({
     <div className="ForumTable bootstrap-4-backport">
       <div className="ForumTable__top-level-control">
         <Button
-          variant={subscribed ? 'outline-primary' : 'primary'}
+          variant={subscription ? 'outline-primary' : 'primary'}
           onClick={() => handleFollowBtn()}
           disabled={isLoading}
         >
-          {subscribed ? 'Unfollow' : 'Follow'}
+          {subscription ? 'Unfollow' : 'Follow'}
         </Button>
       </div>
       <Table>
@@ -212,7 +172,7 @@ export const ForumTable: React.FC<ForumTableProps> = ({
             return (
               <tr key={item.id}>
                 <td>
-                  <a href={getUrl(item.id, item.projectId)}>
+                  <a onClick={() => onClickLink()}>
                     {item.isPinned ? (
                       <IconSvg options={{ icon: 'pushpin' }} />
                     ) : (

@@ -59,6 +59,8 @@ import {
   SyncTwoTone,
   TableChartTwoTone,
   ViewAgendaTwoTone,
+  VisibilityTwoTone,
+  VisibilityOffTwoTone,
   VpnKeyTwoTone,
   WarningTwoTone,
   WatchLater,
@@ -69,7 +71,6 @@ import {
   FormatItalic,
   FormatBold,
   Title,
-  StrikethroughS,
 } from '@material-ui/icons'
 import React, { useEffect } from 'react'
 import AccessManagement from '../assets/mui_components/AccessManagement'
@@ -194,7 +195,8 @@ export const IconStrings = [
   'italic',
   'bold',
   'title',
-  'strikethrough',
+  'visibility',
+  'visibilityOff',
 ] as const
 
 export type Icon = typeof IconStrings[number]
@@ -449,6 +451,10 @@ const getIcon = (options: IconSvgOptions) => {
       return <FormatBold style={muiSvgStyle} />
     case 'title':
       return <Title style={muiSvgStyle} />
+    case 'visibility':
+      return <VisibilityTwoTone style={muiSvgStyle} />
+    case 'visibilityOff':
+      return <VisibilityOffTwoTone style={muiSvgStyle} />
     default:
       return <></>
   }

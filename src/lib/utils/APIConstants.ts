@@ -135,3 +135,7 @@ export const TEAM_MEMBERS = (teamId: string | number) =>
 
 export const FORUM = `${REPO}/forum`
 export const FORUM_THREAD = (id: string) => `${FORUM}/${id}/threads`
+
+export const THREAD = `${REPO}/thread`
+export const THREAD_ID = (id: string) => `${THREAD}/${id}`
+export const THREAD_REPLIES = (id: string) => `${THREAD_ID(id)}/replies`

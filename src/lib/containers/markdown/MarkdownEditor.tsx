@@ -15,7 +15,7 @@ export const MarkdownEditor: React.FunctionComponent<MarkdownEditorProps> = ({
   placeholder,
 }) => {
   const [currentTab, setCurrentTab] = useState<MarkdownEditorTabs>(
-    MarkdownEditorTabs.EDIT,
+    MarkdownEditorTabs.WRITE,
   )
   const [text, setText] = useState<string>()
 
