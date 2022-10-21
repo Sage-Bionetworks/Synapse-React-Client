@@ -39,6 +39,10 @@ export enum DiscussionThreadOrder {
   THREAD_TITLE = 'THREAD_TITLE',
 }
 
+export enum DiscussionReplyOrder {
+  CREATED_ON = 'CREATED_ON',
+}
+
 export enum DiscussionFilter {
   NO_FILTER = 'NO_FILTER',
   DELETED_ONLY = 'DELETED_ONLY',
