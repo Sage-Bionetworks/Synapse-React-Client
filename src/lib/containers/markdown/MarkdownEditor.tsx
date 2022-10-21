@@ -40,20 +40,22 @@ export const MarkdownEditor: React.FunctionComponent<MarkdownEditorProps> = ({
             )
           })}
         </div>
-        <div className="ControllerContainer">
-          <button>
-            <IconSvg options={{ icon: 'title' }} />
-          </button>
-          <button>
-            <IconSvg options={{ icon: 'bold' }} />
-          </button>
-          <button>
-            <IconSvg options={{ icon: 'italic' }} />
-          </button>
-          <button>
-            <IconSvg options={{ icon: 'code' }} />
-          </button>
-        </div>
+        {currentTab === MarkdownEditorTabs.WRITE && (
+          <div className="ControllerContainer">
+            <button>
+              <IconSvg options={{ icon: 'title' }} />
+            </button>
+            <button>
+              <IconSvg options={{ icon: 'bold' }} />
+            </button>
+            <button>
+              <IconSvg options={{ icon: 'italic' }} />
+            </button>
+            <button>
+              <IconSvg options={{ icon: 'code' }} />
+            </button>
+          </div>
+        )}
       </div>
       <div>
         {currentTab === MarkdownEditorTabs.WRITE ? (
@@ -64,8 +66,10 @@ export const MarkdownEditor: React.FunctionComponent<MarkdownEditorProps> = ({
             value={text}
             placeholder={placeholder}
           />
-        ) : (
+        ) : text ? (
           <MarkdownSynapse markdown={text} />
+        ) : (
+          'Nothing to preview'
         )}
       </div>
     </div>
