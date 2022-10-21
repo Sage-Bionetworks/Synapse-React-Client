@@ -66,6 +66,10 @@ import {
   InsertDriveFileOutlined,
   AddBoxOutlined,
   IndeterminateCheckBoxOutlined,
+  FormatItalic,
+  FormatBold,
+  Title,
+  StrikethroughS,
 } from '@material-ui/icons'
 import React, { useEffect } from 'react'
 import AccessManagement from '../assets/mui_components/AccessManagement'
@@ -187,6 +191,10 @@ export const IconStrings = [
   'pushpin',
   'addBoxOutline',
   'minusBoxOutline',
+  'italic',
+  'bold',
+  'title',
+  'strikethrough',
 ] as const
 
 export type Icon = typeof IconStrings[number]
@@ -435,6 +443,12 @@ const getIcon = (options: IconSvgOptions) => {
       return <AddBoxOutlined style={muiSvgStyle} />
     case 'minusBoxOutline':
       return <IndeterminateCheckBoxOutlined style={muiSvgStyle} />
+    case 'italic':
+      return <FormatItalic style={muiSvgStyle} />
+    case 'bold':
+      return <FormatBold style={muiSvgStyle} />
+    case 'title':
+      return <Title style={muiSvgStyle} />
     default:
       return <></>
   }
