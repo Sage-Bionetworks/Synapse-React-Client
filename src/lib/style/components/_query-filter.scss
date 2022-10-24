@@ -1,7 +1,7 @@
 @use '../abstracts/variables' as SRC;
 @use 'sass:map';
 
-.QueryFilter {
+.FacetFilterControls {
   &__title {
     font-weight: bold;
   }

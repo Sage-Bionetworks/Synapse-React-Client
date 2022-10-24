@@ -223,7 +223,7 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = (
                         {isFaceted && (
                           <>
                             <FacetFilterControls
-                              facetFiltersToShow={facetsToFilter}
+                              facetsToFilter={facetsToFilter}
                             />
                           </>
                         )}

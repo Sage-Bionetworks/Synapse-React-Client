@@ -151,7 +151,7 @@ describe('FacetFilterControls tests', () => {
 
   it('should respect facetsToFilter', async () => {
     // set facetsToFilter to make the component only show a filter for Year (a range type facet) and not Make (a values/enum type)
-    init({ facetFiltersToShow: ['Year'] })
+    init({ facetsToFilter: ['Year'] })
     expect(screen.queryByTestId('EnumFacetFilter')).not.toBeInTheDocument()
     expect(screen.queryByTestId('RangeFacetFilter')).toBeInTheDocument()
     // expects the facet chips to only show facets within facetToFilter

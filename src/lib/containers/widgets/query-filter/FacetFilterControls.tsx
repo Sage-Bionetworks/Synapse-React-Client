@@ -23,7 +23,7 @@ import { FacetChip } from './FacetChip'
 import { RangeFacetFilter } from './RangeFacetFilter'
 
 export type FacetFilterControlsProps = {
-  facetFiltersToShow?: string[]
+  facetsToFilter?: string[]
 }
 
 const convertFacetToFacetColumnValuesRequest = (
@@ -138,7 +138,7 @@ export const applyChangesToRangeColumn = (
 }
 
 export function FacetFilterControls(props: FacetFilterControlsProps) {
-  const { facetFiltersToShow } = props
+  const { facetsToFilter: facetFiltersToShow } = props
   const { data, isLoadingNewBundle, getLastQueryRequest, executeQueryRequest } =
     useQueryContext()
 
@@ -191,7 +191,7 @@ export function FacetFilterControls(props: FacetFilterControlsProps) {
 
   return (
     <div
-      className={`QueryFilter ${
+      className={`FacetFilterControls ${
         showFacetFilter
           ? QUERY_FILTERS_EXPANDED_CSS
           : QUERY_FILTERS_COLLAPSED_CSS
@@ -206,7 +206,10 @@ export function FacetFilterControls(props: FacetFilterControlsProps) {
               model => model.name === facet.columnName,
             )
             return (
-              <div className="QueryFilter__facet" key={facet.columnName}>
+              <div
+                className="FacetFilterControls__facet"
+                key={facet.columnName}
+              >
                 {facet.facetType === 'enumeration' && columnModel && (
                   <EnumFacetFilter
                     containerAs="Collapsible"
