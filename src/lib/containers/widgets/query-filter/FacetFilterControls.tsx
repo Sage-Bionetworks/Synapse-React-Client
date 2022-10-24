@@ -156,7 +156,7 @@ export function FacetFilterControls(props: FacetFilterControlsProps) {
     shownChips = facetFiltersToShow
   }
   const [facetFiltersShown, setFacetFiltersShown] = React.useState<string[]>([])
-  const { facetAliases, topLevelControlsState } = useQueryVisualizationContext()
+  const { topLevelControlsState } = useQueryVisualizationContext()
   const { showFacetFilter } = topLevelControlsState
 
   /**
@@ -216,7 +216,6 @@ export function FacetFilterControls(props: FacetFilterControlsProps) {
                     collapsed={false}
                     facetValues={facet.facetValues}
                     columnModel={columnModel}
-                    facetAliases={facetAliases}
                     onChange={(facetNamesMap: Record<string, string>) =>
                       applyMultipleChangesToValuesColumn(
                         lastRequest,
@@ -238,7 +237,6 @@ export function FacetFilterControls(props: FacetFilterControlsProps) {
                   <RangeFacetFilter
                     facetResult={facet}
                     columnModel={columnModel}
-                    facetAliases={facetAliases}
                     collapsed={false}
                     onChange={(values: string[]) =>
                       applyChangesToRangeColumn(

@@ -50,6 +50,7 @@ const defaultQueryVisualizationContext: Partial<QueryVisualizationContextType> =
       showDownloadConfirmation: false,
       showColumnSelectDropdown: false,
     },
+    getColumnDisplayName: jest.fn(col => col),
   }
 
 function getButtonOnFacet(

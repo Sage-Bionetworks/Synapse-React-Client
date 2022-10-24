@@ -16,8 +16,12 @@ import ModalDownload from '../ModalDownload'
 import {
   QueryVisualizationContextConsumer,
   QueryVisualizationWrapper,
+  QueryVisualizationWrapperProps,
 } from '../QueryVisualizationWrapper'
-import { QueryWrapper as PaginatedQueryWrapper } from '../QueryWrapper'
+import {
+  QueryWrapper as PaginatedQueryWrapper,
+  QueryWrapperProps,
+} from '../QueryWrapper'
 import { InfiniteQueryWrapper } from '../InfiniteQueryWrapper'
 import { QueryContextConsumer } from '../QueryContext'
 import { QueryWrapperErrorBanner } from '../QueryWrapperErrorBanner'
@@ -53,19 +57,23 @@ type OwnProps = {
     SearchV2Props,
     'queryContext' | 'queryVisualizationContext'
   >
-  rgbIndex?: number
   facetsToPlot?: string[]
   facetsToFilter?: string[]
-  visibleColumnCount?: number
-  facetAliases?: Record<string, string>
   hideDownload?: boolean
   hideQueryCount?: boolean
   hideSqlEditorControl?: boolean
   defaultColumn?: string
-  defaultShowFacetVisualization?: boolean
   defaultShowSearchBox?: boolean
-  showLastUpdatedOn?: boolean
-} & Omit<TopLevelControlsProps, 'entityId'>
+  lockedColumn: QueryWrapperProps['lockedColumn']
+} & Omit<TopLevelControlsProps, 'entityId'> &
+  Pick<
+    QueryVisualizationWrapperProps,
+    | 'defaultShowFacetVisualization'
+    | 'visibleColumnCount'
+    | 'columnAliases'
+    | 'rgbIndex'
+    | 'showLastUpdatedOn'
+  >
 
 type SearchParams = {
   searchParams?: {
@@ -144,7 +152,7 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = (
         <QueryVisualizationWrapper
           unitDescription={'results'}
           rgbIndex={props.rgbIndex}
-          facetAliases={props.facetAliases}
+          columnAliases={props.columnAliases}
           visibleColumnCount={props.visibleColumnCount}
           defaultShowFacetVisualization={props.defaultShowFacetVisualization}
           defaultShowSearchBar={

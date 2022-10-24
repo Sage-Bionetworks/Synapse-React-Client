@@ -8,11 +8,12 @@ import {
   MEDIUM_USER_CARD,
   OBSERVATION_CARD,
 } from '../utils/SynapseConstants'
-import { EntityHeader, Row, ColumnType } from '../utils/synapseTypes/'
+import { ColumnType, EntityHeader, Row } from '../utils/synapseTypes/'
 import { CardConfiguration } from './CardContainerLogic'
 import GenericCard from './GenericCard'
 import loadingScreen from './LoadingScreen'
 import { useInfiniteQueryContext } from './QueryContext'
+import { useQueryVisualizationContext } from './QueryVisualizationWrapper'
 import { Dataset, Funder } from './row_renderers'
 import {
   LoadingObservationCard,
@@ -27,7 +28,6 @@ export type CardContainerProps = {
   isHeader?: boolean
   isAlignToLeftNav?: boolean
   title?: string
-  facetAliases?: Record<string, string>
   isLoading?: boolean
   unitDescription?: string
 } & CardConfiguration
@@ -47,6 +47,9 @@ export const CardContainer = (props: CardContainerProps) => {
     infiniteQueryContext
 
   const queryRequest = getLastQueryRequest()
+
+  const queryVisualizationContext = useQueryVisualizationContext()
+
   const renderCard = (props: any, type: string) => {
     switch (type) {
       case DATASET:
@@ -54,7 +57,13 @@ export const CardContainer = (props: CardContainerProps) => {
       case FUNDER:
         return <Funder {...props} />
       case GENERIC_CARD:
-        return <GenericCard {...props} queryContext={infiniteQueryContext} />
+        return (
+          <GenericCard
+            {...props}
+            queryContext={infiniteQueryContext}
+            queryVisualizationContext={queryVisualizationContext}
+          />
+        )
       case OBSERVATION_CARD:
         return <ObservationCard {...props} />
       default:

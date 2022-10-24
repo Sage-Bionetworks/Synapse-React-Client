@@ -2,8 +2,8 @@ import React, { useState } from 'react'
 import { Dropdown } from 'react-bootstrap'
 import { ElementWithTooltip } from '../../widgets/ElementWithTooltip'
 import { SelectColumn } from '../../../utils/synapseTypes/'
-import { unCamelCase } from '../../../utils/functions/unCamelCase'
 import IconSvg from '../../IconSvg'
+import { useQueryVisualizationContext } from '../../QueryVisualizationWrapper'
 
 type ColumnSelectionProps = {
   headers?: SelectColumn[]
@@ -16,7 +16,6 @@ type ColumnSelectionProps = {
   onChange?: () => void
   toggleColumnSelection: (name: string) => void
   darkTheme?: boolean
-  facetAliases?: Record<string, string>
 }
 
 type MetadataEvent = {
@@ -28,14 +27,9 @@ const tooltipColumnSelectionId = 'addAndRemoveColumns'
 export const ColumnSelection: React.FunctionComponent<ColumnSelectionProps> = (
   props: ColumnSelectionProps,
 ) => {
-  const {
-    headers,
-    isColumnSelected,
-    toggleColumnSelection,
-    darkTheme,
-    facetAliases,
-  } = props
+  const { headers, isColumnSelected, toggleColumnSelection, darkTheme } = props
 
+  const { getColumnDisplayName } = useQueryVisualizationContext()
   const [show, setShow] = useState(false)
   const onDropdownClick = (
     _show: boolean,
@@ -93,7 +87,7 @@ export const ColumnSelection: React.FunctionComponent<ColumnSelectionProps> = (
               <span className={maybeShowPrimaryColor} style={iconStyle}>
                 <IconSvg options={{ icon: 'check', size: '14px' }} />
               </span>
-              {unCamelCase(name, facetAliases)}
+              {getColumnDisplayName(name)}
             </Dropdown.Item>
           )
         })}

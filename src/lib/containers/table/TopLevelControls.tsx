@@ -97,7 +97,6 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
     setTopLevelControlsState,
     columnsToShowInTable,
     selectedRowIndices,
-    facetAliases,
     setColumnsToShowInTable,
   } = useQueryVisualizationContext()
 
@@ -237,7 +236,6 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
               isColumnSelected={columnsToShowInTable}
               toggleColumnSelection={toggleColumnSelection}
               darkTheme={true}
-              facetAliases={facetAliases}
             />
           )}
         </div>

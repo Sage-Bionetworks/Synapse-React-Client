@@ -20,7 +20,6 @@ export type EnumFacetFilterProps = {
   columnModel: SelectColumn
   onChange: (facetNamesMap: Record<string, string>) => void
   onClear: () => void
-  facetAliases?: Record<string, string>
   containerAs?: 'Collapsible' | 'Dropdown'
   dropdownType?: 'Icon' | 'SelectBox'
   collapsed?: boolean
@@ -79,7 +78,6 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
   columnModel,
   onClear,
   onChange,
-  facetAliases,
   containerAs = 'Collapsible',
   dropdownType = 'Icon',
   collapsed = false,
@@ -329,7 +327,6 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
     return (
       <>
         <FacetFilterHeader
-          facetAliases={facetAliases}
           isCollapsed={isCollapsed}
           label={columnModel.name}
           onClick={(isCollapsed: boolean) => setIsCollapsed(isCollapsed)}

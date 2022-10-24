@@ -7,7 +7,6 @@ import {
   DOI_REGEX,
   SYNAPSE_ENTITY_ID_REGEX,
 } from '../utils/functions/RegularExpressions'
-import { unCamelCase } from '../utils/functions/unCamelCase'
 import { SMALL_USER_CARD } from '../utils/SynapseConstants'
 import { SynapseContext } from '../utils/SynapseContext'
 import {
@@ -37,6 +36,7 @@ import { CardFooter, Icon } from './row_renderers/utils'
 import UserCard from './UserCard'
 import { FileHandleLink } from './widgets/FileHandleLink'
 import { ImageFileHandle } from './widgets/ImageFileHandle'
+import { QueryVisualizationContextType } from './QueryVisualizationWrapper'
 
 export type KeyToAlias = {
   key: string
@@ -56,7 +56,7 @@ export type GenericCardSchema = {
   icon?: string
   imageFileHandleColumnName?: string
   thumbnailRequiresPadding?: boolean
-  secondaryLabels?: any[]
+  secondaryLabels?: string[]
   link?: string
   dataTypeIconNames?: string
 }
@@ -68,7 +68,6 @@ export type IconOptions = {
 export type GenericCardProps = {
   selectColumns?: SelectColumn[]
   columnModels?: ColumnModel[]
-  facetAliases?: Record<string, string>
   iconOptions?: IconOptions
   useTypeColumnForIcon?: boolean
   isHeader?: boolean
@@ -81,6 +80,7 @@ export type GenericCardProps = {
   tableId: string | undefined
   columnIconOptions?: {}
   queryContext: QueryContextType
+  queryVisualizationContext: QueryVisualizationContextType
 } & CommonCardProps
 
 export type GenericCardState = {
@@ -638,11 +638,11 @@ export default class GenericCard extends React.Component<
       titleLinkConfig,
       ctaLinkConfig,
       labelLinkConfig,
-      facetAliases = {},
       descriptionConfig,
       rgbIndex,
       columnIconOptions,
       queryContext: { entity: table },
+      queryVisualizationContext: { getColumnDisplayName },
     } = this.props
     // GenericCard inherits properties from CommonCardProps so that the properties have the same name
     // and type, but theres one nuance which is that we can't override if one specific property will be
@@ -710,7 +710,7 @@ export default class GenericCard extends React.Component<
               rowData={data}
             />
           )
-          columnDisplayName = unCamelCase(columnName, facetAliases)
+          columnDisplayName = getColumnDisplayName(columnName)
         }
         const keyValue = [columnDisplayName, value, columnName]
         values.push(keyValue)
@@ -786,17 +786,14 @@ export default class GenericCard extends React.Component<
       )
     }
 
-    const titleSearchHandle = unCamelCase(
+    const titleSearchHandle = getColumnDisplayName(
       genericCardSchemaDefined.title,
-      facetAliases,
     )
-    const stubTitleSearchHandle = unCamelCase(
+    const stubTitleSearchHandle = getColumnDisplayName(
       genericCardSchemaDefined.subTitle,
-      facetAliases,
     )
-    const descriptionSubTitle = unCamelCase(
+    const descriptionSubTitle = getColumnDisplayName(
       genericCardSchemaDefined.description,
-      facetAliases,
     )
 
     let ctaHref: string | undefined = undefined,

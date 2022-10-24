@@ -1,5 +1,4 @@
 import React from 'react'
-import { unCamelCase } from '../../../utils/functions/unCamelCase'
 import { FacetColumnResult } from '../../../utils/synapseTypes'
 import IconSvg from '../../IconSvg'
 import { useQueryVisualizationContext } from '../../QueryVisualizationWrapper'
@@ -15,10 +14,10 @@ export const FacetChip: React.FC<FacetChipProps> = ({
   isChecked,
   onClick,
 }) => {
-  const { facetAliases } = useQueryVisualizationContext()
+  const { getColumnDisplayName } = useQueryVisualizationContext()
   return (
     <button className={`Chip ${isChecked ? 'Checked' : ''}`} onClick={onClick}>
-      {unCamelCase(facet.columnName, facetAliases)}
+      {getColumnDisplayName(facet.columnName)}
       <IconSvg
         options={{
           icon: isChecked ? 'check' : 'add',

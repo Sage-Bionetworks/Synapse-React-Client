@@ -44,7 +44,7 @@ describe('it performs basic functionality', () => {
     unitDescription: 'files',
     type: SynapseConstants.STUDY,
     rgbIndex: 2,
-    facetAliases: { facetName: 'alias' },
+    columnAliases: { facetName: 'alias' },
   }
 
   it('renders without crashing', async () => {
@@ -89,7 +89,7 @@ describe('it performs basic functionality', () => {
         expect.objectContaining({
           rgbIndex: props.rgbIndex,
           unitDescription: props.unitDescription,
-          facetAliases: props.facetAliases,
+          columnAliases: props.columnAliases,
         }),
         expect.anything(),
       ),

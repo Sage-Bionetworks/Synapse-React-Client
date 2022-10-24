@@ -116,6 +116,7 @@ describe('TotalQueryResults test', () => {
 
   const queryVisualizationContext: Partial<QueryVisualizationContextType> = {
     unitDescription,
+    getColumnDisplayName: jest.fn(col => col),
   }
 
   it('Shows the display text, query count, and unit description', async () => {

@@ -1,8 +1,7 @@
-import * as React from 'react'
+import React from 'react'
 import { SynapseConstants } from '../utils'
 import {
   insertConditionsFromSearchParams,
-  KeyValue,
   parseEntityIdFromSqlStatement,
   SQLOperator,
 } from '../utils/functions/sqlFunctions'
@@ -11,7 +10,10 @@ import CardContainer from './CardContainer'
 import { ErrorBanner } from './ErrorBanner'
 import { GenericCardSchema, IconOptions } from './GenericCard'
 import { IconSvgOptions } from './IconSvg'
-import { QueryVisualizationWrapper } from './QueryVisualizationWrapper'
+import {
+  QueryVisualizationWrapper,
+  QueryVisualizationWrapperProps,
+} from './QueryVisualizationWrapper'
 import { QueryContextConsumer } from './QueryContext'
 import { InfiniteQueryWrapper } from './InfiniteQueryWrapper'
 import QuerySortSelector from './QuerySortSelector'
@@ -117,16 +119,17 @@ export type CardConfiguration = {
 export type CardContainerLogicProps = {
   limit?: number
   title?: string
-  unitDescription?: string
   sqlOperator?: SQLOperator
-  searchParams?: KeyValue
-  facetAliases?: Record<string, string>
-  rgbIndex?: number
+  searchParams?: Record<string, string>
   isHeader?: boolean
   isAlignToLeftNav?: boolean
   sql: string
   sortConfig?: SortConfiguration
-} & CardConfiguration
+} & CardConfiguration &
+  Pick<
+    QueryVisualizationWrapperProps,
+    'rgbIndex' | 'unitDescription' | 'columnAliases'
+  >
 
 /**
  * Class wraps around CardContainer and serves as a standalone logic container for rendering cards.
@@ -137,7 +140,7 @@ export const CardContainerLogic = (props: CardContainerLogicProps) => {
     props.searchParams,
     props.sqlOperator,
   )
-  const { sortConfig, facetAliases } = props
+  const { sortConfig, columnAliases } = props
   const defaultSortItems = sortConfig
     ? [
         {
@@ -150,7 +153,7 @@ export const CardContainerLogic = (props: CardContainerLogicProps) => {
     concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
     entityId: parseEntityIdFromSqlStatement(sql),
     query: {
-      sql: sql,
+      sql: props.sql,
       limit: props.limit,
       sort: defaultSortItems,
     },
@@ -170,14 +173,9 @@ export const CardContainerLogic = (props: CardContainerLogicProps) => {
       <QueryVisualizationWrapper
         rgbIndex={props.rgbIndex}
         unitDescription={props.unitDescription}
-        facetAliases={props.facetAliases}
+        columnAliases={columnAliases}
       >
-        {sortConfig && (
-          <QuerySortSelector
-            sortConfig={sortConfig}
-            facetAliases={facetAliases}
-          />
-        )}
+        {sortConfig && <QuerySortSelector sortConfig={sortConfig} />}
         <CardContainer {...props} />
         <QueryContextConsumer>
           {queryContext => <ErrorBanner error={queryContext?.error} />}

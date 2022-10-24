@@ -29,11 +29,20 @@ import {
   MOCK_USER_ID,
   MOCK_USER_NAME,
 } from '../../../mocks/user/mock_user_profile'
+import { QueryVisualizationContextProvider } from '../../../lib/containers/QueryVisualizationWrapper'
 
 const renderComponent = (props: GenericCardProps) => {
-  return render(<GenericCard {...props} />, {
-    wrapper: createWrapper(),
-  })
+  return render(
+    <GenericCard
+      {...props}
+      queryVisualizationContext={{
+        getColumnDisplayName: jest.fn().mockImplementation(col => col),
+      }}
+    />,
+    {
+      wrapper: createWrapper(),
+    },
+  )
 }
 
 mockAllIsIntersecting(true)

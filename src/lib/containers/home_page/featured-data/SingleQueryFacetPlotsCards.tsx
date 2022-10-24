@@ -10,7 +10,7 @@ import FacetPlotsCard from './FacetPlotsCard'
 export type SingleQueryFacetPlotsCardsProps = {
   rgbIndex?: number
   facetsToPlot?: string[]
-  facetAliases?: Record<string, string>
+  columnAliases?: Record<string, string>
   sql?: string
 }
 export function getQueryRequest(sql: string): QueryBundleRequest {
@@ -33,14 +33,14 @@ export function getQueryRequest(sql: string): QueryBundleRequest {
 const SingleQueryFacetPlotsCards: React.FunctionComponent<
   SingleQueryFacetPlotsCardsProps
 > = props => {
-  const { sql, facetsToPlot, rgbIndex, facetAliases } = props
+  const { sql, facetsToPlot, rgbIndex, columnAliases } = props
   const initQueryRequest: QueryBundleRequest = getQueryRequest(sql!)
   return (
     <div className="SingleQueryFacetPlotsCards">
       <QueryWrapper initQueryRequest={initQueryRequest}>
         <QueryVisualizationWrapper
           rgbIndex={rgbIndex}
-          facetAliases={facetAliases}
+          columnAliases={columnAliases}
         >
           <QueryWrapperErrorBanner />
           {facetsToPlot?.map(facetName => {

@@ -24,14 +24,12 @@ import syn16787123Json from '../../../mocks/query/syn16787123'
 const renderComponent = (
   props: QuerySortSelectorProps,
   queryContext: Partial<QueryContextType>,
+  queryVisualizationContext: Partial<QueryVisualizationContextType>,
 ) => {
-  const defaultQueryVisualizationContext: Partial<QueryVisualizationContextType> =
-    {}
-
   return render(
     <QueryContextProvider queryContext={queryContext}>
       <QueryVisualizationContextProvider
-        queryVisualizationContext={defaultQueryVisualizationContext}
+        queryVisualizationContext={queryVisualizationContext}
       >
         <QuerySortSelector {...props} />
       </QueryVisualizationContextProvider>
@@ -69,7 +67,6 @@ describe('QuerySortSelector tests', () => {
       defaultDirection: 'ASC',
       sortableColumns: ['authors', 'title', 'createdOn', 'journal'],
     },
-    facetAliases: { journal: 'Open Access Journals' },
   }
 
   const queryContext: Partial<QueryContextType> = {
@@ -77,6 +74,10 @@ describe('QuerySortSelector tests', () => {
     hasNextPage: false,
     getLastQueryRequest: getLastQueryRequest,
     executeQueryRequest: executeQueryRequest,
+  }
+
+  const queryVisualizationContext: Partial<QueryVisualizationContextType> = {
+    getColumnDisplayName: jest.fn(() => 'Open Access Journals'),
   }
 
   const sortByOpenAccessJournals = async () => {
@@ -103,7 +104,7 @@ describe('QuerySortSelector tests', () => {
   }
 
   it('Executes query request on sort', async () => {
-    renderComponent(props, queryContext)
+    renderComponent(props, queryContext, queryVisualizationContext)
     await sortByOpenAccessJournals()
 
     const expectedSortItem: SortItem = {

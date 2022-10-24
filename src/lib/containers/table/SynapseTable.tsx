@@ -44,7 +44,6 @@ import {
   applyChangesToValuesColumn,
   applyMultipleChangesToValuesColumn,
 } from '../widgets/query-filter/FacetFilterControls'
-import { unCamelCase } from './../../utils/functions/unCamelCase'
 import SearchResultsNotFound from './SearchResultsNotFound'
 import { ICON_STATE } from './SynapseTableConstants'
 import {
@@ -774,7 +773,7 @@ export default class SynapseTable extends React.Component<
   ) {
     const { sortedColumnSelection, columnIconSortState } = this.state
     const {
-      queryVisualizationContext: { facetAliases = {}, columnsToShowInTable },
+      queryVisualizationContext: { getColumnDisplayName, columnsToShowInTable },
       queryContext: { lockedColumn },
     } = this.props
     const tableColumnHeaderElements: JSX.Element[] = headers.map(
@@ -806,9 +805,8 @@ export default class SynapseTable extends React.Component<
             ? 'SRC-selected-table-icon tool-icon'
             : 'SRC-primary-text-color tool-icon'
           const sortSpanBackgoundClass = `SRC-tableHead SRC-hand-cursor SRC-sortPadding SRC-primary-background-color-hover  ${isSelectedSpanClass}`
-          const displayColumnName: string | undefined = unCamelCase(
+          const displayColumnName: string | undefined = getColumnDisplayName(
             column.name,
-            facetAliases,
           )
           const columnModel = columnModels.find(el => el.name === column.name)!
           const isLockedColumn =
@@ -831,7 +829,6 @@ export default class SynapseTable extends React.Component<
                       facet,
                       columnModel,
                       lastQueryRequest,
-                      facetAliases,
                     )}
                   {this.isSortableColumn(column.columnType) && (
                     <span
@@ -954,14 +951,12 @@ export default class SynapseTable extends React.Component<
     facetColumnResult: FacetColumnResultValues,
     columnModel: ColumnModel,
     lastQueryRequest: QueryBundleRequest,
-    facetAliases?: Record<string, string>,
   ) {
     return (
       <EnumFacetFilter
         containerAs="Dropdown"
         facetValues={facetColumnResult.facetValues}
         columnModel={columnModel}
-        facetAliases={facetAliases}
         onChange={(facetNamesMap: Record<string, string>) => {
           applyMultipleChangesToValuesColumn(
             lastQueryRequest,
