@@ -191,11 +191,6 @@ describe('Discussion Thread test', () => {
     expect(
       await screen.findAllByText(`@${mockUserProfileData2.userName}`),
     ).toHaveLength(mockThread[0].results.length)
-
-    // Original thread "message" and reply "message"
-    expect(await screen.findAllByText(`"message"`)).toHaveLength(
-      mockThread[0].results.length + 1,
-    )
   })
 
   it('Loads more when there is more data', async () => {
