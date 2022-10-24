@@ -21,7 +21,7 @@ export const MarkdownEditor: React.FunctionComponent<MarkdownEditorProps> = ({
 
   return (
     <div className="bootstrap-4-backport MarkdownEditor">
-      <div className="TopController">
+      <div className="MarkdownEditorControls">
         <div className="Tabs">
           {Object.keys(MarkdownEditorTabs).map((tabName: string) => {
             return (
@@ -41,7 +41,7 @@ export const MarkdownEditor: React.FunctionComponent<MarkdownEditorProps> = ({
           })}
         </div>
         {currentTab === MarkdownEditorTabs.WRITE && (
-          <div className="ControllerContainer">
+          <div className="MarkdownEditorControlsToolbar">
             <button>
               <IconSvg options={{ icon: 'title' }} />
             </button>
