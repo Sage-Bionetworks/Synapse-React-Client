@@ -24,7 +24,7 @@ import { EnumFacetFilter } from '../query-filter/EnumFacetFilter'
 import {
   applyChangesToValuesColumn,
   applyMultipleChangesToValuesColumn,
-} from '../query-filter/QueryFilter'
+} from '../query-filter/FacetFilterControls'
 import Tooltip from '../../../utils/tooltip/Tooltip'
 
 const Plot = createPlotlyComponent(Plotly)
