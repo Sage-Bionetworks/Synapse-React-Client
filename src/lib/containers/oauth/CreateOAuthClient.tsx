@@ -14,6 +14,7 @@ import { WarningModal } from '../synapse_form_wrapper/WarningModal'
 import { HelpOutlineTwoTone } from '@material-ui/icons'
 import Tooltip from '../../utils/tooltip/Tooltip'
 import { SynapseClientError } from '../../utils/SynapseClientError'
+import { SynapseSpinner } from '../LoadingScreen'
 
 export type CreateOAuthModalProps = {
   isShowingModal: boolean
@@ -101,17 +102,18 @@ export const CreateOAuthModal: React.FunctionComponent<
     },
   })
 
-  const { mutate: updateClient } = useUpdateOAuthClient({
-    onSuccess: () => {
-      displayToast('Successfully saved', 'success')
-      setError(undefined)
-      hide()
-    },
-    onError: err => {
-      setError(err)
-      setIsShowingModal(true)
-    },
-  })
+  const { mutate: updateClient, isLoading: isLoadingUpdate } =
+    useUpdateOAuthClient({
+      onSuccess: () => {
+        displayToast('Successfully saved', 'success')
+        setError(undefined)
+        hide()
+      },
+      onError: err => {
+        setError(err)
+        setIsShowingModal(true)
+      },
+    })
 
   const { mutate: deleteClient } = useDeleteOAuthClient({
     onSuccess: () => {
@@ -178,7 +180,7 @@ export const CreateOAuthModal: React.FunctionComponent<
   return (
     <div className="bootstrap-4-backport">
       <Modal
-        show={isShowingModal}
+        show={isShowingModal && !isShowingConfirmModal}
         animation={false}
         backdrop="static"
         onHide={() => {
@@ -194,193 +196,207 @@ export const CreateOAuthModal: React.FunctionComponent<
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <Typography variant="body1">
-            To protect you and your users, your consent screen and application
-            will need to be verified by Sage Bionetworks. Before your consent
-            screen and application are verified by Sage Bionetworks, you can
-            still test your application with limitations.
-          </Typography>
-
-          {isEdit && (
-            <Typography style={{ marginTop: '16px' }} variant="label">
-              Client ID: {client?.client_id}
-            </Typography>
+          {isLoadingUpdate && (
+            <div className={'SRC-center-text'}>
+              <SynapseSpinner size={40} />
+            </div>
           )}
-          <Row>
-            <Col lg={6} md={6} sm={12} xs={12}>
-              <Form.Group className="required">
-                <Form.Label htmlFor="clientName">Client Name</Form.Label>
-                <Form.Control
-                  required
-                  onChange={e => setClientName(e.target.value)}
-                  placeholder="Client Name"
-                  type="text"
-                  value={clientName}
-                  id="clientName"
-                />
-              </Form.Group>
-            </Col>
-            <Col lg={6} md={6} sm={12} xs={12}>
-              <Form.Label className="required" htmlFor="clientUri">
-                Client Homepage
-              </Form.Label>
-              <Form.Control
-                onChange={e => setClientUri(e.target.value)}
-                placeholder="https://"
-                type="text"
-                value={clientUri}
-                id="clientUri"
-              />
-            </Col>
-          </Row>
-          <Row>
-            {!isEdit && (
-              <>
+          {!isLoadingUpdate && (
+            <>
+              <Typography variant="body1">
+                To protect you and your users, your consent screen and
+                application will need to be verified by Sage Bionetworks. Before
+                your consent screen and application are verified by Sage
+                Bionetworks, you can still test your application with
+                limitations.
+              </Typography>
+
+              {isEdit && (
+                <Typography style={{ marginTop: '16px' }} variant="label">
+                  Client ID: {client?.client_id}
+                </Typography>
+              )}
+              <Row>
                 <Col lg={6} md={6} sm={12} xs={12}>
                   <Form.Group className="required">
-                    <Form.Label htmlFor="redirect-uri-0">
-                      Redirect URI(s)
-                    </Form.Label>
-                    <Tooltip title={uriHelpMessage} placement="top">
-                      <HelpOutlineTwoTone className={`HelpButton`} />
-                    </Tooltip>
-                    {redirectUris?.map((singleUri, idx) => (
-                      <div key={idx}>
-                        <Form.Control
-                          name="uri"
-                          required
-                          id={`redirect-uri-${idx}`}
-                          onChange={e => handleUriChange(e, idx)}
-                          value={singleUri.uri}
-                          placeholder="https://"
-                          type="text"
-                        />
-                        {redirectUris.length > 1 && (
-                          <button onClick={() => handleRedirectUriRemove(idx)}>
-                            <IconSvg
-                              options={{ icon: 'delete', color: '#f44336' }}
-                            />
-                          </button>
-                        )}
-
-                        {redirectUris.length - 1 === idx && (
-                          <Button
-                            onClick={handleRedirectUriAdd}
-                            disabled={singleUri.uri.length === 0}
-                          >
-                            Add URI
-                          </Button>
-                        )}
-                      </div>
-                    ))}
+                    <Form.Label htmlFor="clientName">Client Name</Form.Label>
+                    <Form.Control
+                      required
+                      onChange={e => setClientName(e.target.value)}
+                      placeholder="Client Name"
+                      type="text"
+                      value={clientName}
+                      id="clientName"
+                    />
                   </Form.Group>
                 </Col>
                 <Col lg={6} md={6} sm={12} xs={12}>
-                  <Form.Label>Sector Identifier URI</Form.Label>
-                  <Form.Control
-                    onChange={e => setSectorUri(e.target.value)}
-                    placeholder="https://"
-                    type="text"
-                  />
-                </Col>
-              </>
-            )}
-          </Row>
-          <Row>
-            <Col lg={6} md={6} sm={12} xs={12}>
-              <Form.Label>Link to Privacy Policy</Form.Label>
-              <Form.Control
-                onChange={e => setPolicyUri(e.target.value)}
-                placeholder="https://"
-                type="text"
-                value={policyUri}
-              />
-            </Col>
-            <Col lg={6} md={6} sm={12} xs={12}>
-              <Form.Label>Links to Terms of Service</Form.Label>
-              <Form.Control
-                onChange={e => setTosUri(e.target.value)}
-                placeholder="https://"
-                type="text"
-                value={tosUri}
-              />
-            </Col>
-          </Row>
-          {isEdit && (
-            <div className="danger">
-              <Typography
-                style={{ marginTop: '8px' }}
-                color="error"
-                variant="headline3"
-              >
-                DANGER ZONE
-              </Typography>
-              <Typography variant="smallText1">
-                Editing the following information will render your client
-                invalid and will require you to create it again and resubmit
-                verification if needed.
-              </Typography>
-              <Row>
-                <Col lg={6} md={6} sm={12} xs={12}>
-                  <Form.Label htmlFor="redirect-uri-0">
-                    Redirect URI(s)
+                  <Form.Label className="required" htmlFor="clientUri">
+                    Client Homepage
                   </Form.Label>
-                  <Tooltip title={uriHelpMessage} placement="top">
-                    <HelpOutlineTwoTone className={`HelpButton`} />
-                  </Tooltip>
-
-                  {redirectUris?.map((singleUri, idx) => (
-                    <div key={idx}>
-                      <Form.Control
-                        id={`redirect-uri-${idx}`}
-                        required
-                        name="uri"
-                        onChange={e => handleUriChange(e, idx)}
-                        value={singleUri.uri}
-                        placeholder="https://"
-                        type="text"
-                      />
-                      {redirectUris.length > 1 && (
-                        <button onClick={() => handleRedirectUriRemove(idx)}>
-                          <IconSvg
-                            options={{ icon: 'delete', color: '#f44336' }}
-                          />
-                        </button>
-                      )}
-
-                      {redirectUris.length - 1 === idx && (
-                        <Button
-                          onClick={handleRedirectUriAdd}
-                          disabled={singleUri.uri.length === 0}
-                        >
-                          Add Uri
-                        </Button>
-                      )}
-                    </div>
-                  ))}
-                </Col>
-                <Col lg={6} md={6} sm={12} xs={12}>
-                  <Form.Label>Sector Identifier URI</Form.Label>
                   <Form.Control
-                    onChange={e => setSectorUri(e.target.value)}
+                    onChange={e => setClientUri(e.target.value)}
                     placeholder="https://"
                     type="text"
-                    value={sectorUri}
+                    value={clientUri}
+                    id="clientUri"
                   />
                 </Col>
               </Row>
+              <Row>
+                {!isEdit && (
+                  <>
+                    <Col lg={6} md={6} sm={12} xs={12}>
+                      <Form.Group className="required">
+                        <Form.Label htmlFor="redirect-uri-0">
+                          Redirect URI(s)
+                        </Form.Label>
+                        <Tooltip title={uriHelpMessage} placement="top">
+                          <HelpOutlineTwoTone className={`HelpButton`} />
+                        </Tooltip>
+                        {redirectUris?.map((singleUri, idx) => (
+                          <div key={idx}>
+                            <Form.Control
+                              name="uri"
+                              required
+                              id={`redirect-uri-${idx}`}
+                              onChange={e => handleUriChange(e, idx)}
+                              value={singleUri.uri}
+                              placeholder="https://"
+                              type="text"
+                            />
+                            {redirectUris.length > 1 && (
+                              <button
+                                onClick={() => handleRedirectUriRemove(idx)}
+                              >
+                                <IconSvg
+                                  options={{ icon: 'delete', color: '#f44336' }}
+                                />
+                              </button>
+                            )}
 
-              <button
-                className="delete-button"
-                onClick={() => {
-                  setIsDelete(true)
-                  setIsShowingConfirmModal(true)
-                }}
-              >
-                <IconSvg options={{ icon: 'delete', color: '#f44336' }} />
-                DELETE CLIENT
-              </button>
-            </div>
+                            {redirectUris.length - 1 === idx && (
+                              <Button
+                                onClick={handleRedirectUriAdd}
+                                disabled={singleUri.uri.length === 0}
+                              >
+                                Add URI
+                              </Button>
+                            )}
+                          </div>
+                        ))}
+                      </Form.Group>
+                    </Col>
+                    <Col lg={6} md={6} sm={12} xs={12}>
+                      <Form.Label>Sector Identifier URI</Form.Label>
+                      <Form.Control
+                        onChange={e => setSectorUri(e.target.value)}
+                        placeholder="https://"
+                        type="text"
+                      />
+                    </Col>
+                  </>
+                )}
+              </Row>
+              <Row>
+                <Col lg={6} md={6} sm={12} xs={12}>
+                  <Form.Label>Link to Privacy Policy</Form.Label>
+                  <Form.Control
+                    onChange={e => setPolicyUri(e.target.value)}
+                    placeholder="https://"
+                    type="text"
+                    value={policyUri}
+                  />
+                </Col>
+                <Col lg={6} md={6} sm={12} xs={12}>
+                  <Form.Label>Links to Terms of Service</Form.Label>
+                  <Form.Control
+                    onChange={e => setTosUri(e.target.value)}
+                    placeholder="https://"
+                    type="text"
+                    value={tosUri}
+                  />
+                </Col>
+              </Row>
+              {isEdit && (
+                <div className="danger">
+                  <Typography
+                    style={{ marginTop: '8px' }}
+                    color="error"
+                    variant="headline3"
+                  >
+                    DANGER ZONE
+                  </Typography>
+                  <Typography variant="smallText1">
+                    Editing the following information will render your client
+                    invalid and will require you to create it again and resubmit
+                    verification if needed.
+                  </Typography>
+                  <Row>
+                    <Col lg={6} md={6} sm={12} xs={12}>
+                      <Form.Label htmlFor="redirect-uri-0">
+                        Redirect URI(s)
+                      </Form.Label>
+                      <Tooltip title={uriHelpMessage} placement="top">
+                        <HelpOutlineTwoTone className={`HelpButton`} />
+                      </Tooltip>
+
+                      {redirectUris?.map((singleUri, idx) => (
+                        <div key={idx}>
+                          <Form.Control
+                            id={`redirect-uri-${idx}`}
+                            required
+                            name="uri"
+                            onChange={e => handleUriChange(e, idx)}
+                            value={singleUri.uri}
+                            placeholder="https://"
+                            type="text"
+                          />
+                          {redirectUris.length > 1 && (
+                            <button
+                              onClick={() => handleRedirectUriRemove(idx)}
+                            >
+                              <IconSvg
+                                options={{ icon: 'delete', color: '#f44336' }}
+                              />
+                            </button>
+                          )}
+
+                          {redirectUris.length - 1 === idx && (
+                            <Button
+                              onClick={handleRedirectUriAdd}
+                              disabled={singleUri.uri.length === 0}
+                            >
+                              Add Uri
+                            </Button>
+                          )}
+                        </div>
+                      ))}
+                    </Col>
+                    <Col lg={6} md={6} sm={12} xs={12}>
+                      <Form.Label>Sector Identifier URI</Form.Label>
+                      <Form.Control
+                        onChange={e => setSectorUri(e.target.value)}
+                        placeholder="https://"
+                        type="text"
+                        value={sectorUri}
+                      />
+                    </Col>
+                  </Row>
+
+                  <button
+                    className="delete-button"
+                    onClick={() => {
+                      setIsDelete(true)
+                      setIsShowingConfirmModal(true)
+                    }}
+                  >
+                    <IconSvg options={{ icon: 'delete', color: '#f44336' }} />
+                    DELETE CLIENT
+                  </button>
+                </div>
+              )}
+            </>
           )}
         </Modal.Body>
         {error && <Alert variant="danger">{error?.reason as string}</Alert>}
