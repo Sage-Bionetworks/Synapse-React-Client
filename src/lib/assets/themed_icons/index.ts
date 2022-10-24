@@ -1,4 +1,5 @@
 import { Project } from './Project'
+import { Program } from './Program'
 import { Publication } from './Publication'
 import { Study } from './Study'
 import { ToolClinical } from './ToolClinical'
@@ -24,6 +25,7 @@ import { ExternalLink } from './ExternalLink'
 
 export {
   Project,
+  Program,
   Publication,
   Study,
   ToolClinical,

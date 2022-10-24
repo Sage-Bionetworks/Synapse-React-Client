@@ -14,6 +14,7 @@ import { WarningModal } from '../synapse_form_wrapper/WarningModal'
 import { HelpOutlineTwoTone } from '@material-ui/icons'
 import Tooltip from '../../utils/tooltip/Tooltip'
 import { SynapseClientError } from '../../utils/SynapseClientError'
+import { SynapseSpinner } from '../LoadingScreen'
 
 export type CreateOAuthModalProps = {
   isShowingModal: boolean
@@ -100,7 +101,7 @@ export const CreateOAuthModal: React.FunctionComponent<
     },
   })
 
-  const { mutate: updateClient } = useUpdateOAuthClient({
+  const { mutate: updateClient, isLoading } = useUpdateOAuthClient({
     onSuccess: () => {
       displayToast('Successfully saved', 'success')
       setError(undefined)
@@ -121,7 +122,7 @@ export const CreateOAuthModal: React.FunctionComponent<
     },
   })
 
-  const onCreateClient = async () => {
+  const onCreateClient = () => {
     try {
       if (accessToken) {
         const oAuthClient: OAuthClient = {
@@ -139,9 +140,9 @@ export const CreateOAuthModal: React.FunctionComponent<
           setIsShowingConfirmModal(true)
         } else {
           if (isEdit) {
-            await updateClient(oAuthClient)
+            updateClient(oAuthClient)
           } else {
-            await createClient(oAuthClient)
+            createClient(oAuthClient)
           }
         }
       }
@@ -413,6 +414,11 @@ export const CreateOAuthModal: React.FunctionComponent<
         confirmButtonVariant="danger"
         confirmButtonText="Yes, Continue"
       />
+      {isLoading && (
+        <div className="Loader">
+          <SynapseSpinner size={50} />
+        </div>
+      )}
     </div>
   )
 }

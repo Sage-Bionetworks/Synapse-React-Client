@@ -377,7 +377,12 @@ const ProvenanceReactFlow = (props: ProvenanceProps) => {
 
   const onPaneScrollFunction: (event?: React.WheelEvent) => void = useCallback(
     event => {
-      if (event && event.deltaX && event.deltaY) {
+      // Cannot simply check the truthy value of event.deltaX (or Y) because the value might be 0 (or -0), which is falsy
+      if (
+        event &&
+        typeof event.deltaX !== 'undefined' &&
+        typeof event.deltaY !== 'undefined'
+      ) {
         window.scrollTo(
           window.scrollX + event.deltaX,
           window.scrollY + event.deltaY,

@@ -17,4 +17,5 @@ export const ForumTableDemo = Template.bind({})
 ForumTableDemo.args = {
   forumId: '1032',
   limit: 20,
+  onClickLink: () => alert('This functionality has not been implemented yet'),
 }
