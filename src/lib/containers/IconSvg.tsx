@@ -59,6 +59,8 @@ import {
   SyncTwoTone,
   TableChartTwoTone,
   ViewAgendaTwoTone,
+  VisibilityTwoTone,
+  VisibilityOffTwoTone,
   VpnKeyTwoTone,
   WarningTwoTone,
   WatchLater,
@@ -187,6 +189,8 @@ export const IconStrings = [
   'pushpin',
   'addBoxOutline',
   'minusBoxOutline',
+  'visibility',
+  'visibilityOff',
 ] as const
 
 export type Icon = typeof IconStrings[number]
@@ -435,6 +439,10 @@ const getIcon = (options: IconSvgOptions) => {
       return <AddBoxOutlined style={muiSvgStyle} />
     case 'minusBoxOutline':
       return <IndeterminateCheckBoxOutlined style={muiSvgStyle} />
+    case 'visibility':
+      return <VisibilityTwoTone style={muiSvgStyle} />
+    case 'visibilityOff':
+      return <VisibilityOffTwoTone style={muiSvgStyle} />
     default:
       return <></>
   }

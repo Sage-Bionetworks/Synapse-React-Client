@@ -155,6 +155,7 @@ import {
 import {
   DiscussionFilter,
   DiscussionReplyBundle,
+  DiscussionReplyOrder,
   DiscussionThreadBundle,
   DiscussionThreadOrder,
 } from './synapseTypes/DiscussionBundle'
@@ -3573,6 +3574,36 @@ Target users: anyone who has READ permission to the project.
 export const getReply = (replyId: string, accessToken: string | undefined) => {
   return doGet<DiscussionReplyBundle>(
     `/repo/v1/reply/${replyId}`,
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ * This API is used to get N number of replies for a given thread ID.
+ * Target users: anyone who has READ permission to the project.
+ * https://rest-docs.synapse.org/rest/GET/thread/threadId/replies.html
+ */
+export const getReplies = (
+  accessToken: string | undefined,
+  threadId: string,
+  limit: number = 30,
+  offset: number = 0,
+  sort: DiscussionReplyOrder = DiscussionReplyOrder.CREATED_ON,
+  ascending: boolean = true,
+  filter: DiscussionFilter = DiscussionFilter.EXCLUDE_DELETED,
+) => {
+  const params = new URLSearchParams()
+  params.set('offset', offset.toString())
+  params.set('limit', limit.toString())
+  params.set('sort', sort)
+  params.set('ascending', ascending.toString())
+  params.set('filter', filter)
+
+  const url = `/repo/v1/thread/${threadId}/replies?${params.toString()}`
+
+  return doGet<PaginatedResults<DiscussionReplyBundle>>(
+    url,
     accessToken,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
