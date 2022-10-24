@@ -12,9 +12,9 @@ import {
   QueryVisualizationContextType,
 } from '../../../../../lib/containers/QueryVisualizationWrapper'
 import {
-  QueryFilter,
-  QueryFilterProps,
-} from '../../../../../lib/containers/widgets/query-filter/QueryFilter'
+  FacetFilterControls,
+  FacetFilterControlsProps,
+} from '../../../../../lib/containers/widgets/query-filter/FacetFilterControls'
 import { SynapseContextProvider } from '../../../../../lib/utils/SynapseContext'
 import { QueryResultBundle } from '../../../../../lib/utils/synapseTypes'
 import mockQueryResponseData from '../../../../../mocks/mockQueryResponseData.json'
@@ -89,7 +89,9 @@ const lastQueryRequestResult = {
 const mockExecuteQueryRequest = jest.fn(_selectedFacets => null)
 const mockGetQueryRequest = jest.fn(() => _.cloneDeep(lastQueryRequestResult))
 
-function createTestProps(overrides?: QueryFilterProps): QueryFilterProps {
+function createTestProps(
+  overrides?: FacetFilterControlsProps,
+): FacetFilterControlsProps {
   return {
     ...overrides,
   }
@@ -115,11 +117,11 @@ const defaultQueryVisualizationContext: Partial<QueryVisualizationContextType> =
     },
   }
 
-let props: QueryFilterProps
-function init(overrides?: QueryFilterProps) {
+let props: FacetFilterControlsProps
+function init(overrides?: FacetFilterControlsProps) {
   jest.clearAllMocks()
   props = createTestProps(overrides)
-  return render(<QueryFilter {...props} />, {
+  return render(<FacetFilterControls {...props} />, {
     wrapper: ({ children }) => {
       return (
         <SynapseContextProvider synapseContext={MOCK_CONTEXT_VALUE}>
@@ -136,7 +138,7 @@ function init(overrides?: QueryFilterProps) {
   })
 }
 
-describe('QueryFilter tests', () => {
+describe('FacetFilterControls tests', () => {
   it('should only show three facets and be expanded', () => {
     init()
     const facetFilters = screen.getAllByTestId(/(Enum|Range)FacetFilter/)

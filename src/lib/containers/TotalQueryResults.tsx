@@ -41,7 +41,7 @@ import SelectionCriteriaPill, {
 import {
   applyChangesToRangeColumn,
   applyChangesToValuesColumn,
-} from './widgets/query-filter/QueryFilter'
+} from './widgets/query-filter/FacetFilterControls'
 import { RadioValuesEnum } from './widgets/query-filter/RangeFacetFilter'
 import IconSvg from './IconSvg'
 

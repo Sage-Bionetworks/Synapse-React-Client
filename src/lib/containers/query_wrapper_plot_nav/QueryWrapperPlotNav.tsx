@@ -28,7 +28,7 @@ import TopLevelControls, {
   TopLevelControlsProps,
 } from '../table/TopLevelControls'
 import FacetNav, { FacetNavProps } from '../widgets/facet-nav/FacetNav'
-import { QueryFilter } from '../widgets/query-filter/QueryFilter'
+import { FacetFilterControls } from '../widgets/query-filter/FacetFilterControls'
 import FilterAndView from './FilterAndView'
 
 const QUERY_FILTERS_EXPANDED_CSS = 'isShowingFacetFilters'
@@ -222,7 +222,9 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = (
                         />
                         {isFaceted && (
                           <>
-                            <QueryFilter facetsToFilter={facetsToFilter} />
+                            <FacetFilterControls
+                              facetsToFilter={facetsToFilter}
+                            />
                           </>
                         )}
                         <FacetNav facetsToPlot={facetsToPlot} />

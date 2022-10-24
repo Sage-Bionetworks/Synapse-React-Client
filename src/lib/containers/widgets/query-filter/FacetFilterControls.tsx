@@ -1,4 +1,4 @@
-import * as React from 'react'
+import React from 'react'
 import { useDeepCompareEffectNoCheck } from 'use-deep-compare-effect'
 import { isSingleNotSetValue } from '../../../utils/functions/queryUtils'
 import { QueryBundleRequest } from '../../../utils/synapseTypes'
@@ -22,7 +22,7 @@ import { EnumFacetFilter } from './EnumFacetFilter'
 import { FacetChip } from './FacetChip'
 import { RangeFacetFilter } from './RangeFacetFilter'
 
-export type QueryFilterProps = {
+export type FacetFilterControlsProps = {
   facetsToFilter?: string[]
 }
 
@@ -137,19 +137,23 @@ export const applyChangesToRangeColumn = (
   onChangeFn(result)
 }
 
-export const QueryFilter: React.FunctionComponent<QueryFilterProps> = ({
-  facetsToFilter,
-}): JSX.Element => {
+export function FacetFilterControls(props: FacetFilterControlsProps) {
+  const { facetsToFilter: facetFiltersToShow } = props
   const { data, isLoadingNewBundle, getLastQueryRequest, executeQueryRequest } =
     useQueryContext()
 
-  const facets = data?.facets
+  const facets = data?.facets?.filter(
+    facet =>
+      // Don't show facets where there are no values
+      !isSingleNotSetValue(facet),
+  )
 
   let shownChips: string[]
-  if (facetsToFilter == null) {
+  if (facetFiltersToShow == null) {
     shownChips = facets?.map(facet => facet.columnName) ?? []
   } else {
-    shownChips = facetsToFilter
+    // The facets to show have been explicitly specified
+    shownChips = facetFiltersToShow
   }
   const [facetFiltersShown, setFacetFiltersShown] = React.useState<string[]>([])
   const { facetAliases, topLevelControlsState } = useQueryVisualizationContext()
@@ -187,7 +191,7 @@ export const QueryFilter: React.FunctionComponent<QueryFilterProps> = ({
 
   return (
     <div
-      className={`QueryFilter ${
+      className={`FacetFilterControls ${
         showFacetFilter
           ? QUERY_FILTERS_EXPANDED_CSS
           : QUERY_FILTERS_COLLAPSED_CSS
@@ -201,11 +205,11 @@ export const QueryFilter: React.FunctionComponent<QueryFilterProps> = ({
             const columnModel = columnModels!.find(
               model => model.name === facet.columnName,
             )
-            if (isSingleNotSetValue(facet)) {
-              return
-            }
             return (
-              <div className="QueryFilter__facet" key={facet.columnName}>
+              <div
+                className="FacetFilterControls__facet"
+                key={facet.columnName}
+              >
                 {facet.facetType === 'enumeration' && columnModel && (
                   <EnumFacetFilter
                     containerAs="Collapsible"

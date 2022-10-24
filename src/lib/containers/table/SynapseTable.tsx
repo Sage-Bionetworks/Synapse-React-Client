@@ -43,7 +43,7 @@ import { EnumFacetFilter } from '../widgets/query-filter/EnumFacetFilter'
 import {
   applyChangesToValuesColumn,
   applyMultipleChangesToValuesColumn,
-} from '../widgets/query-filter/QueryFilter'
+} from '../widgets/query-filter/FacetFilterControls'
 import { unCamelCase } from './../../utils/functions/unCamelCase'
 import SearchResultsNotFound from './SearchResultsNotFound'
 import { ICON_STATE } from './SynapseTableConstants'
