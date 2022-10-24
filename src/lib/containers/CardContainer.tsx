@@ -32,6 +32,22 @@ export type CardContainerProps = {
   unitDescription?: string
 } & CardConfiguration
 
+function Card(props: { propsToPass: any; type: string }) {
+  const { propsToPass, type } = props
+  switch (type) {
+    case DATASET:
+      return <Dataset {...propsToPass} />
+    case FUNDER:
+      return <Funder {...propsToPass} />
+    case GENERIC_CARD:
+      return <GenericCard {...propsToPass} />
+    case OBSERVATION_CARD:
+      return <ObservationCard {...propsToPass} />
+    default:
+      return <div /> // this should never happen
+  }
+}
+
 export const CardContainer = (props: CardContainerProps) => {
   const {
     isHeader = false,
@@ -49,27 +65,6 @@ export const CardContainer = (props: CardContainerProps) => {
   const queryRequest = getLastQueryRequest()
 
   const queryVisualizationContext = useQueryVisualizationContext()
-
-  const renderCard = (props: any, type: string) => {
-    switch (type) {
-      case DATASET:
-        return <Dataset {...props} />
-      case FUNDER:
-        return <Funder {...props} />
-      case GENERIC_CARD:
-        return (
-          <GenericCard
-            {...props}
-            queryContext={infiniteQueryContext}
-            queryVisualizationContext={queryVisualizationContext}
-          />
-        )
-      case OBSERVATION_CARD:
-        return <ObservationCard {...props} />
-      default:
-        return <div key={props.key} /> // this should never happen
-    }
-  }
 
   const ids = data?.queryResult!.queryResults.tableId
     ? [data?.queryResult.queryResults.tableId]
@@ -132,7 +127,7 @@ export const CardContainer = (props: CardContainerProps) => {
     // render the cards
     const cardsData = data.queryResult!.queryResults.rows
     cards = cardsData.length ? (
-      cardsData.map((rowData: Row) => {
+      cardsData.map((rowData: Row, index) => {
         const key = JSON.stringify(rowData.values)
         const propsForCard = {
           key,
@@ -147,9 +142,17 @@ export const CardContainer = (props: CardContainerProps) => {
           tableEntityConcreteType:
             tableEntityConcreteType[0] && tableEntityConcreteType[0].type,
           tableId: data?.queryResult!.queryResults.tableId,
+          queryContext: infiniteQueryContext,
+          queryVisualizationContext,
           ...rest,
         }
-        return renderCard(propsForCard, type)
+        return (
+          <Card
+            key={rowData.rowId ?? index}
+            propsToPass={propsForCard}
+            type={type}
+          />
+        )
       })
     ) : (
       <></>

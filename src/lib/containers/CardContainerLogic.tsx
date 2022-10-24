@@ -153,7 +153,7 @@ export const CardContainerLogic = (props: CardContainerLogicProps) => {
     concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
     entityId: parseEntityIdFromSqlStatement(sql),
     query: {
-      sql: props.sql,
+      sql: sql,
       limit: props.limit,
       sort: defaultSortItems,
     },
