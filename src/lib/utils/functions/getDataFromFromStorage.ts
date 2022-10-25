@@ -1,4 +1,4 @@
-import { EntityHeader, UserProfile } from '../synapseTypes'
+import { EntityHeader, Evaluation, UserProfile } from '../synapseTypes'
 import { SynapseConstants } from '..'
 
 export const getStoredEntityHeaders = (): EntityHeader[] => {
@@ -18,6 +18,17 @@ export const getStoredUserProfiles = (): UserProfile[] => {
       sessionStorage.getItem(SynapseConstants.USER_PROFILE_STORAGE_KEY) || '',
     )
     return lookUpUserIds
+  } catch (e) {
+    return []
+  }
+}
+
+export const getStoredEvaluation = (): Evaluation[] => {
+  try {
+    const lookUpEvaluations: UserProfile[] = JSON.parse(
+      sessionStorage.getItem(SynapseConstants.EVALUATIONS_STORAGE_KEY) || '',
+    )
+    return lookUpEvaluations
   } catch (e) {
     return []
   }

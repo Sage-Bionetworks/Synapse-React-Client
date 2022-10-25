@@ -5,7 +5,11 @@ import useDeepCompareEffect from 'use-deep-compare-effect'
 import { ElementWithTooltip } from '../../../containers/widgets/ElementWithTooltip'
 import { SynapseConstants } from '../../../utils'
 import useGetInfoFromIds from '../../../utils/hooks/useGetInfoFromIds'
-import { ColumnType, UserGroupHeader } from '../../../utils/synapseTypes'
+import {
+  ColumnType,
+  Evaluation,
+  UserGroupHeader,
+} from '../../../utils/synapseTypes'
 import { EntityHeader } from '../../../utils/synapseTypes/EntityHeader'
 import {
   FacetColumnResultValueCount,
@@ -33,6 +37,7 @@ function valueToLabel(
   facet: FacetColumnResultValueCount,
   profiles: UserGroupHeader[] = [],
   entityHeaders: EntityHeader[] = [],
+  evaluations: Evaluation[] = [],
 ): string {
   const { value } = facet
   let displayValue = value
@@ -47,6 +52,11 @@ function valueToLabel(
   const eh = entityHeaders.find(eh => eh.id === value)
   if (eh) {
     displayValue = eh ? eh.name : `unknown (${value})`
+  }
+
+  const evaluation = evaluations.find(evaluation => evaluation.id === value)
+  if (evaluation?.name) {
+    displayValue = evaluation.name
   }
 
   return `${displayValue}`
@@ -122,6 +132,15 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
     type: 'ENTITY_HEADER',
   })
 
+  const evaluationIds =
+    columnModel?.columnType === ColumnType.EVALUATIONID
+      ? facetValues.map(facet => facet.value)
+      : []
+  const evaluations = useGetInfoFromIds<Evaluation>({
+    ids: evaluationIds,
+    type: 'EVALUATION_QUEUE',
+  })
+
   const handleTextInputFilterEvent = (
     e: React.ChangeEvent<HTMLInputElement>,
   ) => {
@@ -138,7 +157,12 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
     } else {
       // display only facet values that contain text from the text input field
       const filtered = facetValues.filter(obj => {
-        const label = valueToLabel(obj, userGroupHeaders, entityHeaders)
+        const label = valueToLabel(
+          obj,
+          userGroupHeaders,
+          entityHeaders,
+          evaluations,
+        )
         return label.toLowerCase().indexOf(inputValue.trim().toLowerCase()) > -1
           ? obj
           : null
@@ -234,7 +258,12 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
               key={`checkLabel${index}`}
               id={valueToId(facet.value)}
               index={index}
-              label={valueToLabel(facet, userGroupHeaders, entityHeaders)}
+              label={valueToLabel(
+                facet,
+                userGroupHeaders,
+                entityHeaders,
+                evaluations,
+              )}
               count={facet.count}
               isDropdown={isDropdown}
               initialIsSelected={facet.isSelected}
