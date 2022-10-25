@@ -1,4 +1,4 @@
-import { act, render, screen, waitFor, fireEvent } from '@testing-library/react'
+import { act, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import React from 'react'
 import { SynapseConstants } from '../../../lib/utils'
@@ -20,6 +20,7 @@ import {
   SortItem,
 } from '../../../lib/utils/synapseTypes'
 import syn16787123Json from '../../../mocks/query/syn16787123'
+import selectEvent from 'react-select-event'
 
 const renderComponent = (
   props: QuerySortSelectorProps,
@@ -84,7 +85,9 @@ describe('QuerySortSelector tests', () => {
     const input = screen.getByRole('combobox')
     await userEvent.type(input, 'journal')
     await screen.findAllByText(new RegExp('Open Access Journals'))
-    await userEvent.keyboard('{Enter}')
+    await act(async () => {
+      await selectEvent.select(input, 'Open Access Journals')
+    })
   }
 
   const verifyExpectedSortItem = async (expectedSortItem: SortItem) => {
