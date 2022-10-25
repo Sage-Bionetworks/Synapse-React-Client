@@ -118,7 +118,6 @@
 
   .TotalQueryResults.hasFilters {
     background-color: map.get(SRC.$colors, 'gray-100');
-    border-top: 1px solid map.get(SRC.$colors, 'gray-300');
     border-bottom: 1px solid map.get(SRC.$colors, 'gray-300');
     padding-left: 15px;
     padding-bottom: 13px;
@@ -147,12 +146,13 @@
     display: flex;
     justify-content: space-between;
     font-weight: bold;
-    margin: 0px 0px 0px 15px;
+    padding: 10px 10px 10px 15px;
     p {
       margin-top: 0px;
     }
   }
   background-color: rgba(map.get(SRC.$primary-color-palette, 500), 0.05);
+  border-bottom: 1px solid map.get(SRC.$colors, 'gray-300');
   &__showhidefacetfilters {
     display: none;
   }
