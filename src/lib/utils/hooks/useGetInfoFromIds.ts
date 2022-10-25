@@ -149,9 +149,6 @@ export default function useGetInfoFromIds<
       if (!data.length) {
         return
       }
-      if (type === 'EVALUATION_QUEUE') {
-        debugger
-      }
       //get what's there
       const dataInStorage = sessionStorage.getItem(storageKey(type))
       try {
