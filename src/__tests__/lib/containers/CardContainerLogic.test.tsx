@@ -8,6 +8,7 @@ import CardContainerLogic, {
 import { QueryVisualizationWrapper } from '../../../lib/containers/QueryVisualizationWrapper'
 import { InfiniteQueryWrapper } from '../../../lib/containers/InfiniteQueryWrapper'
 import { createWrapper } from '../../../lib/testutils/TestingLibraryUtils'
+import { NoContentPlaceholderType } from '../../../lib/containers/table/NoContentPlaceholderType'
 
 const renderComponent = (props: CardContainerLogicProps) => {
   return render(<CardContainerLogic {...props} />, { wrapper: createWrapper() })
@@ -90,6 +91,7 @@ describe('it performs basic functionality', () => {
           rgbIndex: props.rgbIndex,
           unitDescription: props.unitDescription,
           columnAliases: props.columnAliases,
+          noContentPlaceholderType: NoContentPlaceholderType.STATIC,
         }),
         expect.anything(),
       ),

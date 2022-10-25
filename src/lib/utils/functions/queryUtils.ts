@@ -7,7 +7,12 @@ import {
   QueryBundleRequest,
   QueryResultBundle,
   SelectColumn,
+  Query,
 } from '../synapseTypes/'
+import {
+  isColumnMultiValueFunctionQueryFilter,
+  isColumnSingleValueQueryFilter,
+} from '../synapseTypes/Table/QueryFilter'
 
 type PartialStateObject = {
   hasMoreData: boolean
@@ -118,4 +123,30 @@ export function removeLockedColumnFromFacetData(
     // for other pages, just return the data
     return data
   }
+}
+
+/**
+ * Returns true iff the query has filters applied that can be reset.
+ * This includes facet filters and additional filters that are not applied to a locked column.
+ */
+export function hasResettableFilters(
+  query: Query,
+  lockedColumn?: LockedColumn,
+): boolean {
+  console.log('query', query, lockedColumn)
+  const hasFacetFilters =
+    Array.isArray(query.selectedFacets) &&
+    query.selectedFacets.filter(
+      facet => facet.columnName !== lockedColumn?.columnName,
+    ).length > 0
+  const hasAdditionalFilters =
+    Array.isArray(query.additionalFilters) &&
+    query.additionalFilters.filter(queryFilter =>
+      isColumnSingleValueQueryFilter(queryFilter) ||
+      isColumnMultiValueFunctionQueryFilter(queryFilter)
+        ? queryFilter.columnName !== lockedColumn?.columnName
+        : true,
+    ).length > 0
+
+  return hasFacetFilters || hasAdditionalFilters
 }
