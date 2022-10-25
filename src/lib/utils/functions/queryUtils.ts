@@ -106,6 +106,7 @@ export const isSingleNotSetValue = (facet: FacetColumnResult): boolean => {
   )
 }
 
+// TODO Instead of removing the facet from the data, the facet renderers should just be aware of what to hide
 export function removeLockedColumnFromFacetData(
   data?: QueryResultBundle,
   lockedColumn?: LockedColumn,

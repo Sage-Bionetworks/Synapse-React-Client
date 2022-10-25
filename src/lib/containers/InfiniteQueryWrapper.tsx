@@ -58,6 +58,11 @@ export function InfiniteQueryWrapper(props: InfiniteQueryWrapperProps) {
     getInitQueryRequest,
     getLastQueryRequest,
     setQuery,
+    resetQuery,
+    removeQueryFilter,
+    removeValueFromQueryFilter,
+    removeSelectedFacet,
+    removeValueFromSelectedFacet,
   } = useImmutableTableQuery({
     initQueryRequest,
     componentIndex,
@@ -203,6 +208,12 @@ export function InfiniteQueryWrapper(props: InfiniteQueryWrapperProps) {
     goToNextPage,
     goToPreviousPage,
     hasResettableFilters,
+    resetQuery,
+    removeQueryFilter,
+    removeValueFromQueryFilter,
+    removeSelectedFacet,
+    removeValueFromSelectedFacet,
+    lockedColumn,
   }
   /**
    * Render the children without any formatting

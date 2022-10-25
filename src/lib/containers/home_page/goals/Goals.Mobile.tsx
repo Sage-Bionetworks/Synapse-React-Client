@@ -14,7 +14,7 @@ export default function GoalsMobile({
     <div className="Goals__Mobile__Header">
       {countSql && (
         <span className="Goals__Mobile__Header__Count">
-          <QueryCount parens={false} sql={countSql} />
+          <QueryCount parens={false} query={{ sql: countSql }} />
         </span>
       )}
       <span className="Goals__Mobile__Header__Title"> {title} </span>

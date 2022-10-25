@@ -64,6 +64,11 @@ export function QueryWrapper(props: QueryWrapperProps) {
     pageSize,
     goToPage,
     setPageSize,
+    resetQuery,
+    removeSelectedFacet,
+    removeValueFromSelectedFacet,
+    removeQueryFilter,
+    removeValueFromQueryFilter,
   } = useImmutableTableQuery({
     initQueryRequest,
     shouldDeepLink,
@@ -108,7 +113,7 @@ export function QueryWrapper(props: QueryWrapperProps) {
     : true
 
   /**
-   * remove a particular facet name (e.g. study) and all possible values based on the parameter specified in the url
+   * Remove a particular facet name (e.g. study) and all possible values based on the parameter specified in the url
    * this is to remove the facet from the charts, search and filter.
    * @return data: QueryResultBundle
    */
@@ -136,6 +141,12 @@ export function QueryWrapper(props: QueryWrapperProps) {
     asyncJobStatus: currentAsyncStatus,
     goToPage,
     hasResettableFilters,
+    removeSelectedFacet,
+    removeValueFromSelectedFacet,
+    resetQuery,
+    removeQueryFilter,
+    removeValueFromQueryFilter,
+    lockedColumn,
   }
   /**
    * Render the children without any formatting

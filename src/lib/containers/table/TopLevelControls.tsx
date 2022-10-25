@@ -1,7 +1,7 @@
 import { cloneDeep } from 'lodash-es'
-import React from 'react'
+import React, { useMemo } from 'react'
 import { SQL_EDITOR } from '../../utils/SynapseConstants'
-import { QueryResultBundle } from '../../utils/synapseTypes'
+import { Query, QueryResultBundle } from '../../utils/synapseTypes'
 import {
   TopLevelControlsState,
   useQueryVisualizationContext,
@@ -90,6 +90,7 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
     executeQueryRequest,
     getLastQueryRequest,
     getInitQueryRequest,
+    lockedColumn,
   } = useQueryContext()
 
   const {
@@ -119,6 +120,28 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
   const refresh = () => {
     executeQueryRequest(getLastQueryRequest())
   }
+
+  /**
+   * We show the total number of results that would be shown if the user removed their filters.
+   * To do this, we have to create a query that captures those results.
+   */
+  const unfilteredResultsQuery: Query = useMemo(() => {
+    const initQueryRequest = getInitQueryRequest()
+    return {
+      sql: initQueryRequest.query.sql,
+      selectedFacets: (initQueryRequest.query.selectedFacets ?? []).filter(
+        facet => facet.columnName === lockedColumn?.columnName,
+      ),
+      additionalFilters: (
+        initQueryRequest.query.additionalFilters ?? []
+      ).filter(qf =>
+        'columnName' in qf
+          ? qf['columnName'] === lockedColumn?.columnName
+          : true,
+      ),
+    }
+  }, [getInitQueryRequest, lockedColumn?.columnName])
+
   /**
    * Handles the toggle of a column select, this will cause the table to
    * either show the column or hide depending on the prior state of the column
@@ -153,10 +176,7 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
               <Typography variant="sectionTitle" role="heading">
                 {name}{' '}
                 {!hideQueryCount && (
-                  <QueryCount
-                    sql={getInitQueryRequest().query.sql}
-                    parens={true}
-                  />
+                  <QueryCount query={unfilteredResultsQuery} parens={true} />
                 )}
               </Typography>
               {!hideQueryCount && entity && (
@@ -221,7 +241,6 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
             }
             return (
               <ElementWithTooltip
-                idForToolTip={key}
                 tooltipText={tooltipText}
                 key={key}
                 callbackFn={() => setControlState(key)}

@@ -2,30 +2,24 @@ import React from 'react'
 import { SynapseConstants } from '../utils/'
 import { parseEntityIdFromSqlStatement } from '../utils/functions/sqlFunctions'
 import useGetQueryResultBundle from '../utils/hooks/SynapseAPI/entity/useGetQueryResultBundle'
-import {
-  FacetColumnValuesRequest,
-  QueryBundleRequest,
-} from '../utils/synapseTypes/'
+import { Query, QueryBundleRequest } from '../utils/synapseTypes/'
 
 export type QueryCountProps = {
-  sql: string
-  selectedFacets?: FacetColumnValuesRequest[]
+  query: Query
   parens?: boolean
 }
 
-const QueryCount: React.FunctionComponent<QueryCountProps> = ({
-  sql,
-  selectedFacets,
-  parens,
-}) => {
-  const entityId = parseEntityIdFromSqlStatement(sql)
+/**
+ * Shows the count of the query results if all selected facets and query filters are removed, except on locked columns.
+ */
+function QueryCount(props: QueryCountProps) {
+  const { query, parens } = props
+  const entityId = parseEntityIdFromSqlStatement(query.sql)
 
+  // Create a new request to get the total results. Modify the selectedFacets and additionalFilters to remove all unlocked columns.
   const request: QueryBundleRequest = {
     concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
-    query: {
-      sql,
-      selectedFacets,
-    },
+    query: query,
     entityId,
     partMask: SynapseConstants.BUNDLE_MASK_QUERY_COUNT,
   }

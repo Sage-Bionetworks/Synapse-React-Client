@@ -1,6 +1,5 @@
 import { mergeConfig, defineConfig } from 'vite'
 import svgr from 'vite-plugin-svgr'
-import { viteExternalsPlugin } from 'vite-plugin-externals'
 
 module.exports = {
   stories: ['../src/**/*.stories.mdx', '../src/**/*.stories.@(js|jsx|ts|tsx)'],
@@ -25,12 +24,7 @@ module.exports = {
 
     const customStorybookConfig = defineConfig({
       base,
-      plugins: [
-        svgr(),
-        viteExternalsPlugin({
-          'sql-parser': 'SQLParser',
-        }),
-      ],
+      plugins: [svgr()],
       resolve: {
         alias: {
           stream: 'stream-browserify',

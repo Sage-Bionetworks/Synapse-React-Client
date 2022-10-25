@@ -24,5 +24,6 @@
     "noUnusedLocals": true,
     "useUnknownInCatchVariables": false
   },
-  "include": ["src/lib/**.ts", "src/lib/**.tsx"]
+  "include": ["src/lib/**.ts", "src/lib/**.tsx"],
+  "exclude": [".storybook/**/*.ts"]
 }

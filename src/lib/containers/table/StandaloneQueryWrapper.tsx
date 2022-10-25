@@ -1,7 +1,7 @@
 import React from 'react'
 import { cloneDeep } from 'lodash-es'
 import {
-  insertConditionsFromSearchParams,
+  generateQueryFilterFromSearchParams,
   parseEntityIdFromSqlStatement,
   SQLOperator,
 } from '../../utils/functions/sqlFunctions'
@@ -110,13 +110,23 @@ const StandaloneQueryWrapper: React.FunctionComponent<
   const derivedQueryRequestFromSearchParams = generateInitQueryRequest(sql)
 
   if (searchParams) {
-    derivedQueryRequestFromSearchParams.query.sql =
-      insertConditionsFromSearchParams(
-        derivedQueryRequestFromSearchParams.query.sql,
-        searchParams,
-        sqlOperator,
+    const queryFiltersToAdd = generateQueryFilterFromSearchParams(
+      searchParams,
+      sqlOperator,
+    )
+    if (queryFiltersToAdd) {
+      if (
+        derivedQueryRequestFromSearchParams.query.additionalFilters ===
+        undefined
+      ) {
+        derivedQueryRequestFromSearchParams.query.additionalFilters = []
+      }
+      derivedQueryRequestFromSearchParams.query.additionalFilters.push(
+        ...queryFiltersToAdd,
       )
+    }
   }
+
   const synapseContext = useSynapseContext()
   const entityId = parseEntityIdFromSqlStatement(sql)
   const { data: entity } = useGetEntity(entityId)
