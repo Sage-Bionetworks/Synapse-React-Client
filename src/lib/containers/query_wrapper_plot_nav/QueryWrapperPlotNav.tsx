@@ -64,7 +64,7 @@ type OwnProps = {
   hideSqlEditorControl?: boolean
   defaultColumn?: string
   defaultShowSearchBox?: boolean
-  lockedColumn: QueryWrapperProps['lockedColumn']
+  lockedColumn?: QueryWrapperProps['lockedColumn']
 } & Omit<TopLevelControlsProps, 'entityId'> &
   Pick<
     QueryVisualizationWrapperProps,
