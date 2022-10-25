@@ -1,4 +1,5 @@
 import * as React from 'react'
+import validator from '@rjsf/validator-ajv6'
 import { Button, Modal } from 'react-bootstrap'
 import Form, { IChangeEvent } from '@rjsf/core'
 import { SynapseClient } from '../utils'
@@ -24,7 +25,7 @@ export type ModalDownloadState = {
   isLoading: boolean
   step: number
   data?: DownloadFromTableResult
-  formData: {}
+  formData: Record<string, unknown>
 }
 
 export type ModalDownloadProps = {
@@ -149,6 +150,7 @@ export default class ModalDownload extends React.Component<
             <IconSvg options={{ icon: 'close' }} />
           </button>
           <Form
+            validator={validator}
             schema={formSchemaArray[this.state.step]}
             uiSchema={formSchemaUIArray[this.state.step]}
             onChange={this.handleChange}

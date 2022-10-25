@@ -1,9 +1,9 @@
-import { AjvError } from '@rjsf/core'
+import { RJSFValidationError } from '@rjsf/utils'
 import {
   dropNullishArrayValues,
   getFriendlyPropertyName,
   transformErrors,
-} from '../../../../../lib/containers/entity/annotations/AnnotationEditorUtils'
+} from '../../../../../lib/containers/entity/SchemaDrivenAnnotationEditor/AnnotationEditorUtils'
 
 describe('AnnotationEditorUtils tests', () => {
   describe('dropNullishArrayValues', () => {
@@ -53,7 +53,7 @@ describe('AnnotationEditorUtils tests', () => {
 
   describe('transformErrors', () => {
     it('combines errors caused by an enumeration defined using anyOf', () => {
-      const errors: AjvError[] = [
+      const errors: RJSFValidationError[] = [
         {
           name: 'type',
           property: '.study[0]',
@@ -100,7 +100,7 @@ describe('AnnotationEditorUtils tests', () => {
     })
 
     it('returns a custom message when using a key that collides with a reserved property', () => {
-      const errors: AjvError[] = [
+      const errors: RJSFValidationError[] = [
         {
           name: 'not',
           property: "['name']",

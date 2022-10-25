@@ -4,6 +4,7 @@
 // Will give you the Synapse ID of the FileEntity that contains the user form data.
 import * as React from 'react'
 import Form from '@rjsf/core'
+import validator from '@rjsf/validator-ajv6'
 import { SynapseClient } from '../utils'
 import {
   EntityId,
@@ -323,6 +324,7 @@ export default class EntityForm extends React.Component<
           this.state.formUiSchema &&
           !this.state.error && (
             <Form
+              validator={validator}
               formData={this.state.formData}
               schema={this.state.formSchema}
               uiSchema={this.state.formUiSchema}

@@ -1,4 +1,4 @@
-import { utils } from '@sage-bionetworks/rjsf-core'
+import { getDefaultRegistry } from '@rjsf/core'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import React from 'react'
@@ -8,7 +8,7 @@ import {
   guessPropertyType,
   PropertyType,
   transformDataFromPropertyType,
-} from '../../../../../lib/containers/entity/annotations/AdditionalPropertiesSchemaField'
+} from '../../../../../lib/containers/entity/SchemaDrivenAnnotationEditor/field/AdditionalPropertiesSchemaField'
 
 describe('AdditionalPropertiesSchemaField unit tests', () => {
   describe('guessPropertyType tests', () => {
@@ -126,7 +126,7 @@ describe('AdditionalPropertiesSchemaField unit tests', () => {
           uiSchema={{}}
           idSchema={{ $id: 'root' }}
           formData={initialData}
-          registry={utils.getDefaultRegistry()}
+          registry={getDefaultRegistry()}
           onChange={jest.fn()}
         />,
       )
@@ -161,7 +161,7 @@ describe('AdditionalPropertiesSchemaField unit tests', () => {
           uiSchema={{}}
           idSchema={{ $id: 'root' }}
           formData={initialData}
-          registry={utils.getDefaultRegistry()}
+          registry={getDefaultRegistry()}
           onChange={jest.fn()}
         />,
       )
@@ -209,7 +209,7 @@ describe('AdditionalPropertiesSchemaField unit tests', () => {
           uiSchema={{}}
           idSchema={{ $id: 'root' }}
           formData={initialData}
-          registry={utils.getDefaultRegistry()}
+          registry={getDefaultRegistry()}
           onChange={jest.fn()}
         />,
       )

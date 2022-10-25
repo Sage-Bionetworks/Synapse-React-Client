@@ -1,4 +1,4 @@
-import { Widget, WidgetProps } from '@sage-bionetworks/rjsf-core'
+import { Widget, WidgetProps } from '@rjsf/utils'
 import React from 'react'
 import Creatable from 'react-select/creatable'
 import { components, ControlProps, GroupBase } from 'react-select'
@@ -47,7 +47,7 @@ export function findValueOption(
 /**
  * Select widget compatible with react-jsonschema-form enumerations
  */
-export const CustomSelectWidget: Widget = (props: WidgetProps) => {
+export const SelectWidget: Widget = (props: WidgetProps) => {
   const {
     id,
     options,

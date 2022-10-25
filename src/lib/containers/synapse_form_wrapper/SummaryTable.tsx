@@ -1,6 +1,6 @@
 import * as React from 'react'
 
-import { UiSchema } from '@rjsf/core'
+import { UiSchema } from '@rjsf/utils'
 import { SummaryFormat, Step, FormSchema } from './types'
 import {
   first,

@@ -1,11 +1,11 @@
-import { Widget, WidgetProps } from '@sage-bionetworks/rjsf-core'
+import { Widget, WidgetProps } from '@rjsf/utils'
 import React from 'react'
 import { FormControl } from 'react-bootstrap'
 
 /**
  * Select widget compatible with react-jsonschema-form booleans
  */
-export const CustomBooleanWidget: Widget = ({
+export const BooleanWidget: Widget = ({
   id,
   disabled,
   value,

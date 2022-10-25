@@ -1,12 +1,12 @@
-import { Widget, WidgetProps } from '@sage-bionetworks/rjsf-core'
+import { Widget, WidgetProps } from '@rjsf/utils'
 import moment, { Moment } from 'moment'
 import React from 'react'
-import { CalendarWithIconFormGroup } from '../../evaluation_queues/CalendarWithIconFormGroup'
+import { CalendarWithIconFormGroup } from '../../../evaluation_queues/CalendarWithIconFormGroup'
 
 /**
  * DateTime picker widget compatible with react-jsonschema-form and Synapse Datetime annotations.
  */
-export const CustomDateTimeWidget: Widget = ({
+export const DateTimeWidget: Widget = ({
   disabled,
   value,
   onChange,
