@@ -1,6 +1,13 @@
-import React, { createContext, useContext, useEffect, useState } from 'react'
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from 'react'
 import { useDeepCompareMemoize } from 'use-deep-compare-effect'
 import { useQueryContext } from './QueryContext'
+import { unCamelCase } from '../utils/functions/unCamelCase'
 
 export type QueryVisualizationContextType = {
   topLevelControlsState: TopLevelControlsState
@@ -11,12 +18,12 @@ export type QueryVisualizationContextType = {
   setColumnsToShowInTable: (newState: string[]) => void
   selectedRowIndices: number[]
   setSelectedRowIndices: (newState: number[]) => void
-  // General UI related:
-  facetAliases?: Record<string, string>
   rgbIndex?: number
   unitDescription?: string
   /** Whether to show when the table or view was last updated. */
   showLastUpdatedOn?: boolean
+  /** Given a column name, return the display name for the column */
+  getColumnDisplayName: (columnName?: string) => string | undefined
 }
 
 /**
@@ -61,7 +68,8 @@ export type QueryVisualizationWrapperProps = {
   children: React.ReactNode | React.ReactNode[]
   rgbIndex?: number
   unitDescription?: string
-  facetAliases?: Record<string, string>
+  /** Mapping from column name to the name that should be shown for the column */
+  columnAliases?: Record<string, string>
   visibleColumnCount?: number
   hiddenColumns?: string[]
   defaultShowFacetVisualization?: boolean
@@ -88,6 +96,8 @@ export function QueryVisualizationWrapper(
 ) {
   const { data, getLastQueryRequest, isFacetsAvailable, isLoadingNewBundle } =
     useQueryContext()
+
+  const { columnAliases = {} } = props
 
   const [topLevelControlsState, setTopLevelControlsState] =
     useState<TopLevelControlsState>({
@@ -133,6 +143,23 @@ export function QueryVisualizationWrapper(
     )
   }, [selectColumns, lastQueryRequest.query.sql, props.visibleColumnCount])
 
+  const getColumnDisplayName = useCallback(
+    (columnName?: string) => {
+      // SWC-5982: if force-display-original-column-names is set, then just return the string
+      const forceDisplayOriginalColumnName =
+        localStorage.getItem('force-display-original-column-names') === 'true'
+
+      if (!columnName || forceDisplayOriginalColumnName) {
+        return columnName
+      }
+      if (columnAliases[columnName]) {
+        return columnAliases[columnName]
+      }
+      return unCamelCase(columnName)
+    },
+    [columnAliases],
+  )
+
   const context: QueryVisualizationContextType = {
     topLevelControlsState,
     setTopLevelControlsState,
@@ -140,11 +167,10 @@ export function QueryVisualizationWrapper(
     setColumnsToShowInTable: setVisibleColumns,
     selectedRowIndices,
     setSelectedRowIndices,
-
-    facetAliases: props.facetAliases,
     rgbIndex: props.rgbIndex,
     unitDescription: props.unitDescription,
     showLastUpdatedOn: props.showLastUpdatedOn,
+    getColumnDisplayName,
   }
   /**
    * Render the children without any formatting

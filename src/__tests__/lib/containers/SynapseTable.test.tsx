@@ -118,6 +118,7 @@ const queryVisualizationContext: Partial<QueryVisualizationContextType> = {
     showColumnSelectDropdown: false,
     showSqlEditor: false,
   },
+  getColumnDisplayName: jest.fn((col: string) => col),
 }
 
 const props: SynapseTableProps = {

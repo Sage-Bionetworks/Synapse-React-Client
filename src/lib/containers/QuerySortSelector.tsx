@@ -2,7 +2,6 @@ import React, { useState } from 'react'
 import { SortConfiguration } from './CardContainerLogic'
 import { useQueryContext } from './QueryContext'
 import { SortDirection, SortItem } from '../utils/synapseTypes'
-import { unCamelCase } from '../utils/functions/unCamelCase'
 import Typography from '../utils/typography/Typography'
 import Select from 'react-select'
 import {
@@ -10,19 +9,19 @@ import {
   findValueOption,
   Control,
 } from './entity/annotations/CustomSelectWidget'
+import { useQueryVisualizationContext } from './QueryVisualizationWrapper'
 
 export type QuerySortSelectorProps = {
   sortConfig: SortConfiguration
-  facetAliases?: Record<string, string>
 }
 
 const QuerySortSelector: React.FunctionComponent<QuerySortSelectorProps> = ({
   sortConfig,
-  facetAliases,
 }) => {
   const { defaultColumn, defaultDirection, sortableColumns } = sortConfig
   const queryContext = useQueryContext()
   const { getLastQueryRequest, executeQueryRequest } = queryContext
+  const { getColumnDisplayName } = useQueryVisualizationContext()
   const [sortColumn, setSortColumn] = useState<string | undefined>(
     defaultColumn,
   )
@@ -31,7 +30,7 @@ const QuerySortSelector: React.FunctionComponent<QuerySortSelectorProps> = ({
   const enumOptions: EnumOption[] = sortableColumns.map(sortableColumn => {
     return {
       value: sortableColumn,
-      label: unCamelCase(sortableColumn, facetAliases)!,
+      label: getColumnDisplayName(sortableColumn)!,
     }
   })
 

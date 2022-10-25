@@ -12,6 +12,7 @@ import { render, fireEvent, screen, waitFor } from '@testing-library/react'
 import { act } from '@testing-library/react'
 import { SynapseConstants } from '../../../../lib/utils'
 import { SynapseTestContext } from '../../../../mocks/MockSynapseContext'
+import { QueryVisualizationContextProvider } from '../../../../lib/containers/QueryVisualizationWrapper'
 
 const SynapseClient = require('../../../../lib/utils/SynapseClient')
 
@@ -83,7 +84,6 @@ function createTestProps(
     onClear: mockOnClear,
     ...overrides,
     containerAs: 'Collapsible',
-    facetAliases: {},
   }
 }
 
@@ -94,7 +94,13 @@ function init(overrides?: Partial<EnumFacetFilterProps>) {
   props = createTestProps(overrides)
   container = render(
     <SynapseTestContext>
-      <EnumFacetFilter {...props} />
+      <QueryVisualizationContextProvider
+        queryVisualizationContext={{
+          getColumnDisplayName: jest.fn(col => col),
+        }}
+      >
+        <EnumFacetFilter {...props} />
+      </QueryVisualizationContextProvider>
     </SynapseTestContext>,
   ).container
 }

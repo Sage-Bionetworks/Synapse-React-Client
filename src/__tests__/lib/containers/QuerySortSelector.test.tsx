@@ -1,4 +1,4 @@
-import { act, render, screen, waitFor, fireEvent } from '@testing-library/react'
+import { act, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import React from 'react'
 import { SynapseConstants } from '../../../lib/utils'
@@ -20,18 +20,17 @@ import {
   SortItem,
 } from '../../../lib/utils/synapseTypes'
 import syn16787123Json from '../../../mocks/query/syn16787123'
+import selectEvent from 'react-select-event'
 
 const renderComponent = (
   props: QuerySortSelectorProps,
   queryContext: Partial<QueryContextType>,
+  queryVisualizationContext: Partial<QueryVisualizationContextType>,
 ) => {
-  const defaultQueryVisualizationContext: Partial<QueryVisualizationContextType> =
-    {}
-
   return render(
     <QueryContextProvider queryContext={queryContext}>
       <QueryVisualizationContextProvider
-        queryVisualizationContext={defaultQueryVisualizationContext}
+        queryVisualizationContext={queryVisualizationContext}
       >
         <QuerySortSelector {...props} />
       </QueryVisualizationContextProvider>
@@ -69,7 +68,6 @@ describe('QuerySortSelector tests', () => {
       defaultDirection: 'ASC',
       sortableColumns: ['authors', 'title', 'createdOn', 'journal'],
     },
-    facetAliases: { journal: 'Open Access Journals' },
   }
 
   const queryContext: Partial<QueryContextType> = {
@@ -79,11 +77,17 @@ describe('QuerySortSelector tests', () => {
     executeQueryRequest: executeQueryRequest,
   }
 
+  const queryVisualizationContext: Partial<QueryVisualizationContextType> = {
+    getColumnDisplayName: jest.fn(() => 'Open Access Journals'),
+  }
+
   const sortByOpenAccessJournals = async () => {
     const input = screen.getByRole('combobox')
     await userEvent.type(input, 'journal')
     await screen.findAllByText(new RegExp('Open Access Journals'))
-    await userEvent.keyboard('{Enter}')
+    await act(async () => {
+      await selectEvent.select(input, 'Open Access Journals')
+    })
   }
 
   const verifyExpectedSortItem = async (expectedSortItem: SortItem) => {
@@ -103,7 +107,7 @@ describe('QuerySortSelector tests', () => {
   }
 
   it('Executes query request on sort', async () => {
-    renderComponent(props, queryContext)
+    renderComponent(props, queryContext, queryVisualizationContext)
     await sortByOpenAccessJournals()
 
     const expectedSortItem: SortItem = {

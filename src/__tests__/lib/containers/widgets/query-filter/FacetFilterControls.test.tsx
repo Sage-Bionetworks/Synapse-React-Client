@@ -115,6 +115,7 @@ const defaultQueryVisualizationContext: Partial<QueryVisualizationContextType> =
       showColumnSelectDropdown: false,
       showSqlEditor: false,
     },
+    getColumnDisplayName: jest.fn(col => col),
   }
 
 let props: FacetFilterControlsProps
