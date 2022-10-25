@@ -133,7 +133,6 @@ export function hasResettableFilters(
   query: Query,
   lockedColumn?: LockedColumn,
 ): boolean {
-  console.log('query', query, lockedColumn)
   const hasFacetFilters =
     Array.isArray(query.selectedFacets) &&
     query.selectedFacets.filter(
