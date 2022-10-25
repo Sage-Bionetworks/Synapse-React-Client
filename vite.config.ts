@@ -42,7 +42,7 @@ export default defineConfig({
       process: 'process/browser',
       path: 'path-browserify',
       timers: 'timers-browserify',
-      fs: 'browserify-fs',
+      fs: 'memfs',
       https: 'https-browserify',
       stream: 'stream-browserify',
       http: 'stream-http',

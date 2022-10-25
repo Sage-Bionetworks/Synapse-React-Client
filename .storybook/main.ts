@@ -37,7 +37,7 @@ module.exports = {
           buffer: 'buffer/',
           timers: 'timers-browserify',
           path: 'path-browserify',
-          fs: 'browserify-fs',
+          fs: 'memfs',
           util: 'util/',
         },
       },
