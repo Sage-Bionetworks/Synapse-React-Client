@@ -1,5 +1,5 @@
 import { chunk, uniq, without } from 'lodash-es'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import useDeepCompareEffect from 'use-deep-compare-effect'
 import { SynapseConstants } from '..'
 import {
@@ -109,7 +109,7 @@ const getEvaluationItems = async (
 }
 
 /**
- * React hook to get user profiles or entities or evaluation queues.
+ * React hook to get user profiles or entities or evaluation queues. Utilizes a custom cache in sessionStorage.
  *
  * For fetching just one entity or usergroup, see useGetEntity/useGetUserGroupHeader hooks powered by react-query
  * @returns
@@ -125,13 +125,60 @@ export default function useGetInfoFromIds<
   const idProp = (type: HookType) =>
     type === 'USER_PROFILE' ? 'ownerId' : 'id'
 
+  const storageKey = (type: HookType) => {
+    switch (type) {
+      case 'USER_PROFILE':
+        return SynapseConstants.USER_PROFILE_STORAGE_KEY
+      case 'ENTITY_HEADER':
+        return SynapseConstants.ENTITY_HEADER_STORAGE_KEY
+      case 'EVALUATION_QUEUE':
+        return SynapseConstants.EVALUATIONS_STORAGE_KEY
+      default:
+        return ''
+    }
+  }
+
   // look at current list of data, see if incoming ids has new data,
   // if so grab those ids
   const curList = data.map(el => el[idProp(type)])
   const incomingList = ids.filter(el => el !== SynapseConstants.VALUE_NOT_SET)
   const newValues = uniq(without(incomingList, ...curList))
 
-  // Jay TODO: Rewrite to use react-query. Removed session storage since this was not attempting to read before making the server call.
+  useEffect(() => {
+    const saveToSessionStorage = (data: T[], type: HookType) => {
+      if (!data.length) {
+        return
+      }
+      if (type === 'EVALUATION_QUEUE') {
+        debugger
+      }
+      //get what's there
+      const dataInStorage = sessionStorage.getItem(storageKey(type))
+      try {
+        const dataInStorageAsObjectArr: T[] = dataInStorage
+          ? JSON.parse(dataInStorage)
+          : []
+        //get an array of ids for items already in storage
+        const ids = dataInStorageAsObjectArr.map(item => item[idProp(type)])
+        //push all the new data if ids are new
+        for (const dataObject of data) {
+          if (!ids.includes(dataObject[idProp(type)])) {
+            dataInStorageAsObjectArr.push(dataObject)
+          }
+        }
+        sessionStorage.setItem(
+          storageKey(type),
+          JSON.stringify(dataInStorageAsObjectArr),
+        )
+      } catch (e) {
+        sessionStorage.setItem(storageKey(type), JSON.stringify(data))
+      }
+    }
+    saveToSessionStorage(data, type)
+  }, [data, type])
+
+  // Alina TODO: check if the items are already in Local Storage before making server call.
+
   // Michael TODO: There's a bug where the data held in useGetInfoFromIds will be stale if the user token changes,
   // this can be solved by using the useCompare hook on the token to track when it changes
   useDeepCompareEffect(() => {

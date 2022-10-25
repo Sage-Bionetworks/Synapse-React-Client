@@ -116,6 +116,10 @@ export const USER_BUNDLE_MASK_IS_CERTIFIED = 0x8
 export const USER_BUNDLE_MASK_IS_VERIFIED = 0x10
 export const USER_BUNDLE_MASK_IS_ACT_MEMBER = 0x20
 export const USER_BUNDLE_MASK_IS_AR_REVIEWER = 0x40
+// SessionStorage keys for info from ids
+export const USER_PROFILE_STORAGE_KEY = 'INFO_FROM_IDS_USER_PROFILE'
+export const ENTITY_HEADER_STORAGE_KEY = 'INFO_FROM_IDS_ENTITY_HEADER'
+export const EVALUATIONS_STORAGE_KEY = 'INFO_FROM_IDS_EVALUATION_QUEUE'
 
 export const DATETIME_UTC_COOKIE_KEY =
   'org.sagebionetworks.synapse.datetime.utc'
