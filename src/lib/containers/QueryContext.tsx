@@ -13,7 +13,7 @@ export const QUERY_FILTERS_COLLAPSED_CSS: string = 'isHidingFacetFilters'
 
 /*
   For details page: to lock a column (e.g. study, grant) so that the facet values and active filters
-  will not appear on the details page. The facet name is given by the url's search param. 
+  will not appear on the details page. The facet name is given by the URL search param.
   The type is defined here so that other child components in SRC won't generate type errors.
  */
 export type LockedColumn = {
@@ -32,13 +32,13 @@ export type QueryContextType = {
   getInitQueryRequest: () => QueryBundleRequest
   /** Updates the current query with the passed request */
   executeQueryRequest: (param: QueryBundleRequest) => void
-  /** Returns true when loading a brand new query result bundle. Will not be true when just loading the next page of query results. */
+  /** Returns true when loading a brand-new query result bundle. Will not be true when just loading the next page of query results. */
   isLoadingNewBundle: boolean
   /** The error returned by the query request, if one is encountered */
   error: SynapseClientError | null
   /** The status of the asynchronous job. */
   asyncJobStatus?: AsynchronousJobStatus<QueryBundleRequest, QueryResultBundle>
-  /** Whether or not facets are available to be filtered upon based on the current data */
+  /** Whether facets are available to be filtered upon based on the current data */
   isFacetsAvailable: boolean
   /**
    * A column name may be "locked" so that it is both (1) not shown to the user that the filter is active, and (2) not modifiable by the user.
@@ -46,6 +46,8 @@ export type QueryContextType = {
    * The presence of a locked filter will result in a client-side modification of the active query and result bundle data.
    */
   lockedColumn?: LockedColumn
+  /** Returns true iff the current request has resettable filters applied via facet filters or additionalFilters. Excludes filters applied to a locked column */
+  hasResettableFilters: boolean
 }
 
 export type PaginatedQueryContextType = QueryContextType & {
@@ -62,13 +64,13 @@ export type PaginatedQueryContextType = QueryContextType & {
 export type InfiniteQueryContextType = QueryContextType & {
   /** Returns true when loading a new page of query results */
   isLoadingNewPage: boolean
-  /** Whether or not the query result bundle has a next page */
+  /** Whether the query result bundle has a next page */
   hasNextPage: boolean
   /** Invoke this method to fetch and append the next page of rows to the data  */
   appendNextPageToResults: () => Promise<void>
   /** Invoke to fetch and update the data with the next page of query results */
   goToNextPage: () => Promise<void>
-  /** Whether or not the query result bundle has a previous page */
+  /** Whether the query result bundle has a previous page */
   hasPreviousPage: boolean
   /** Invoke to fetch and update the data with the previous page of query results */
   goToPreviousPage: () => Promise<void>

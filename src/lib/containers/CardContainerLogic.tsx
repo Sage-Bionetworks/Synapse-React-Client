@@ -17,6 +17,7 @@ import {
 import { QueryContextConsumer } from './QueryContext'
 import { InfiniteQueryWrapper } from './InfiniteQueryWrapper'
 import QuerySortSelector from './QuerySortSelector'
+import { NoContentPlaceholderType } from './table/NoContentPlaceholderType'
 
 /**
  *  Used when a column value should link to an external URL defined by a value in another column.
@@ -128,7 +129,10 @@ export type CardContainerLogicProps = {
 } & CardConfiguration &
   Pick<
     QueryVisualizationWrapperProps,
-    'rgbIndex' | 'unitDescription' | 'columnAliases'
+    | 'rgbIndex'
+    | 'unitDescription'
+    | 'columnAliases'
+    | 'noContentPlaceholderType'
   >
 
 /**
@@ -174,6 +178,9 @@ export const CardContainerLogic = (props: CardContainerLogicProps) => {
         rgbIndex={props.rgbIndex}
         unitDescription={props.unitDescription}
         columnAliases={columnAliases}
+        noContentPlaceholderType={
+          props.noContentPlaceholderType ?? NoContentPlaceholderType.STATIC
+        }
       >
         {sortConfig && <QuerySortSelector sortConfig={sortConfig} />}
         <CardContainer {...props} />
