@@ -44,6 +44,7 @@ import UserCard from './containers/UserCard'
 import UserProfileLinks from './containers/user_profile_links/UserProfileLinks'
 import CertificationQuiz from './containers/CertificationQuiz'
 import ProvenanceGraph from './containers/provenance/ProvenanceGraph'
+import IDUReport from './containers/IDUReport'
 import { SynapseClient, SynapseConstants } from './utils'
 import {
   SynapseContextConsumer,
@@ -109,6 +110,7 @@ const SynapseComponents = {
   OAuthManagement,
   CertificationQuiz,
   HtmlPreview,
+  IDUReport,
 }
 
 // Include the version in the build
