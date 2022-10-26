@@ -94,7 +94,7 @@ describe('FileHandleContentRenderer tests', () => {
 
     await screen.findByTestId('HtmlPreview')
   })
-  it('Throws an error if the file content size is > 10MB', async () => {
+  it('Throws an error if the file content size is > 30MB', async () => {
     jest.spyOn(console, 'error').mockImplementation(() => {})
     const fileSize = 100 * MB
     const fileHandle: FileHandle = {
@@ -121,7 +121,7 @@ describe('FileHandleContentRenderer tests', () => {
     })
     const errorBoundary = await screen.findByRole('alert')
     await within(errorBoundary).findByText(
-      /File size \(100.00 MB\) exceeds the maximum size that can be downloaded \(10.00 MB\)/,
+      /File size \(100.00 MB\) exceeds the maximum size that can be downloaded \(30.00 MB\)/,
     )
   })
 
