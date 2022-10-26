@@ -1,12 +1,15 @@
-import * as React from 'react'
+import React from 'react'
 import { useMemo, useState } from 'react'
 import { useDeepCompareEffectNoCheck } from 'use-deep-compare-effect'
 import {
   isFacetAvailable,
+  hasResettableFilters as hasResettableFiltersUtil,
   removeLockedColumnFromFacetData,
 } from '../utils/functions/queryUtils'
-import { useGetEntity } from '../utils/hooks/SynapseAPI/entity/useEntity'
-import { useGetQueryResultBundleWithAsyncStatus } from '../utils/hooks/SynapseAPI/entity/useGetQueryResultBundle'
+import {
+  useGetEntity,
+  useGetQueryResultBundleWithAsyncStatus,
+} from '../utils/hooks/SynapseAPI'
 import {
   AsynchronousJobStatus,
   QueryBundleRequest,
@@ -31,11 +34,6 @@ export type QueryWrapperProps = {
   onQueryChange?: (newQueryJson: string) => void
   onQueryResultBundleChange?: (newQueryResultBundleJson: string) => void
   lockedColumn?: LockedColumn
-}
-
-export type SearchQuery = {
-  columnName: string
-  searchText: string
 }
 
 /**
@@ -93,7 +91,7 @@ export function QueryWrapper(props: QueryWrapperProps) {
 
   const data = asyncJobStatus?.responseBody
 
-  // Indicate if we're fetching data for the first time (queryIsLoading) or if we're fetching data for a brand new query (newQueryIsFetching)
+  // Indicate if we're fetching data for the first time (queryIsLoading) or if we're fetching data for a brand-new query (newQueryIsFetching)
   const isLoadingNewBundle = queryIsLoading || newQueryIsFetching
 
   const { data: entity } = useGetEntity<Table>(entityId, versionNumber)
@@ -110,13 +108,18 @@ export function QueryWrapper(props: QueryWrapperProps) {
     : true
 
   /**
-   * remove a particular facet name (e.g. study) and its all possible values based on the parameter specified in the url
+   * remove a particular facet name (e.g. study) and all possible values based on the parameter specified in the url
    * this is to remove the facet from the charts, search and filter.
    * @return data: QueryResultBundle
    */
   const dataWithLockedColumnFacetRemoved = useMemo(() => {
     return removeLockedColumnFromFacetData(data, lockedColumn)
   }, [data, lockedColumn])
+
+  const hasResettableFilters = useMemo(() => {
+    const request = getLastQueryRequest()
+    return hasResettableFiltersUtil(request.query, lockedColumn)
+  }, [getLastQueryRequest, lockedColumn])
 
   const context: PaginatedQueryContextType = {
     data: dataWithLockedColumnFacetRemoved,
@@ -132,6 +135,7 @@ export function QueryWrapper(props: QueryWrapperProps) {
     isFacetsAvailable,
     asyncJobStatus: currentAsyncStatus,
     goToPage,
+    hasResettableFilters,
   }
   /**
    * Render the children without any formatting

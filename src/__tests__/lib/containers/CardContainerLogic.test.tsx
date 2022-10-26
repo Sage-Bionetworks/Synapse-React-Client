@@ -8,6 +8,7 @@ import CardContainerLogic, {
 import { QueryVisualizationWrapper } from '../../../lib/containers/QueryVisualizationWrapper'
 import { InfiniteQueryWrapper } from '../../../lib/containers/InfiniteQueryWrapper'
 import { createWrapper } from '../../../lib/testutils/TestingLibraryUtils'
+import { NoContentPlaceholderType } from '../../../lib/containers/table/NoContentPlaceholderType'
 
 const renderComponent = (props: CardContainerLogicProps) => {
   return render(<CardContainerLogic {...props} />, { wrapper: createWrapper() })
@@ -44,7 +45,7 @@ describe('it performs basic functionality', () => {
     unitDescription: 'files',
     type: SynapseConstants.STUDY,
     rgbIndex: 2,
-    facetAliases: { facetName: 'alias' },
+    columnAliases: { facetName: 'alias' },
   }
 
   it('renders without crashing', async () => {
@@ -89,7 +90,8 @@ describe('it performs basic functionality', () => {
         expect.objectContaining({
           rgbIndex: props.rgbIndex,
           unitDescription: props.unitDescription,
-          facetAliases: props.facetAliases,
+          columnAliases: props.columnAliases,
+          noContentPlaceholderType: NoContentPlaceholderType.STATIC,
         }),
         expect.anything(),
       ),

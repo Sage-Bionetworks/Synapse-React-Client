@@ -1,21 +1,22 @@
 import * as React from 'react'
-import { unCamelCase } from '../../../utils/functions/unCamelCase'
 import IconPlus from '../../../assets/icons/IconPlus'
 import IconMinus from '../../../assets/icons/IconMinus'
+import { useQueryVisualizationContext } from '../../QueryVisualizationWrapper'
 
 export type FacetFilterHeaderProps = {
   label: string
   isCollapsed: boolean
-  onClick: Function
-  facetAliases: {} | undefined
+  onClick: (newValue: boolean) => void
 }
+
 export const FacetFilterHeader: React.FunctionComponent<
   FacetFilterHeaderProps
-> = ({ label, isCollapsed, onClick, facetAliases }: FacetFilterHeaderProps) => {
+> = ({ label, isCollapsed, onClick }: FacetFilterHeaderProps) => {
+  const { getColumnDisplayName } = useQueryVisualizationContext()
   return (
     <div className="FacetFilterHeader">
       <label className="FacetFilterHeader__label">
-        {unCamelCase(label, facetAliases)}
+        {getColumnDisplayName(label)}
       </label>
       <button
         className="FacetFilterHeader__collapseToggleBtn"

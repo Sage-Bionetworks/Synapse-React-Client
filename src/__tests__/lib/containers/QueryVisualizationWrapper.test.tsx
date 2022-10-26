@@ -7,6 +7,7 @@ import {
 import {
   QueryVisualizationContextType,
   QueryVisualizationWrapper,
+  QueryVisualizationWrapperProps,
   useQueryVisualizationContext,
 } from '../../../lib/containers/QueryVisualizationWrapper'
 import {
@@ -36,12 +37,17 @@ function QueryVizWrapperConsumer(props: { mockFn?: jest.Mock }) {
   return null
 }
 
-function TestComponent(
-  props: Partial<QueryWrapperProps & { mockFn: jest.Mock }> = {},
-) {
+function TestComponent(props: {
+  mockFn?: jest.Mock
+  queryWrapperProps?: Partial<QueryWrapperProps>
+  queryWrapperVisualizationProps?: Partial<QueryVisualizationWrapperProps>
+}) {
   return (
-    <QueryWrapper initQueryRequest={initialQueryRequest} {...props}>
-      <QueryVisualizationWrapper>
+    <QueryWrapper
+      initQueryRequest={initialQueryRequest}
+      {...props.queryWrapperProps}
+    >
+      <QueryVisualizationWrapper {...props.queryWrapperVisualizationProps}>
         <QueryVizWrapperConsumer mockFn={props.mockFn} />
       </QueryVisualizationWrapper>
     </QueryWrapper>
@@ -227,5 +233,50 @@ describe('QueryVisualizationWrapper', () => {
 
     // The array of visible columns should not have changed, and should have referential equality
     expect(firstSetOfVisibleColumns).toBe(secondSetOfVisibleColumns)
+  })
+
+  describe('getColumnDisplayName', () => {
+    test('Returns the columnName as-is if force-display-original-column-names is true', async () => {
+      localStorage.setItem('force-display-original-column-names', 'true')
+
+      render(<TestComponent />, { wrapper: createWrapper() })
+
+      await waitFor(() => {
+        const getColumnDisplayName =
+          onContextReceived.mock.lastCall[0].getColumnDisplayName
+        expect(getColumnDisplayName).toBeDefined()
+        expect(getColumnDisplayName('testColumnName')).toBe('testColumnName')
+      })
+    })
+
+    test('Returns the columnName unCamelCased if force-display-original-column-names is not set', async () => {
+      localStorage.setItem('force-display-original-column-names', '')
+      render(<TestComponent />, { wrapper: createWrapper() })
+
+      await waitFor(() => {
+        const getColumnDisplayName =
+          onContextReceived.mock.lastCall[0].getColumnDisplayName
+        expect(getColumnDisplayName).toBeDefined()
+        expect(getColumnDisplayName('testColumnName')).toBe('Test Column Name')
+      })
+    })
+
+    test('Returns an alias if defined', async () => {
+      render(
+        <TestComponent
+          queryWrapperVisualizationProps={{
+            columnAliases: { testColumnName: 'test column alias' },
+          }}
+        />,
+        { wrapper: createWrapper() },
+      )
+
+      await waitFor(() => {
+        const getColumnDisplayName =
+          onContextReceived.mock.lastCall[0].getColumnDisplayName
+        expect(getColumnDisplayName).toBeDefined()
+        expect(getColumnDisplayName('testColumnName')).toBe('test column alias')
+      })
+    })
   })
 })

@@ -56,6 +56,7 @@ const defaultQueryVisualizationContext: Partial<QueryVisualizationContextType> =
       showColumnSelectDropdown: false,
       showSqlEditor: false,
     },
+    getColumnDisplayName: jest.fn(col => col),
   }
 
 function renderComponent(props: FacetChipProps) {

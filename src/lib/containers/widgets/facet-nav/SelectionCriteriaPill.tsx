@@ -2,13 +2,13 @@ import { Close } from '@material-ui/icons'
 import React from 'react'
 import { FunctionComponent } from 'react'
 import { SynapseConstants } from '../../../utils'
-import { unCamelCase } from '../../../utils/functions/unCamelCase'
 import {
   FacetColumnResult,
   FacetColumnResultRange,
   FacetColumnResultValueCount,
 } from '../../../utils/synapseTypes'
 import { ElementWithTooltip } from '../ElementWithTooltip'
+import { useQueryVisualizationContext } from '../../QueryVisualizationWrapper'
 
 export type FacetWithSelection = {
   facet: FacetColumnResult
@@ -31,6 +31,7 @@ export type SelectionCriteriaPillProps = (
 const SelectionCriteriaPill: FunctionComponent<
   SelectionCriteriaPillProps
 > = props => {
+  const { getColumnDisplayName } = useQueryVisualizationContext()
   let innerText,
     tooltipText: string | null = ''
   if ('facetWithSelection' in props) {
@@ -45,8 +46,8 @@ const SelectionCriteriaPill: FunctionComponent<
         .selectedMin!} 
         - ${(facetWithSelection.facet as FacetColumnResultRange).selectedMax!}`
     }
-    tooltipText = `${unCamelCase(
-      facetWithSelection.facet.columnName!,
+    tooltipText = `${getColumnDisplayName(
+      facetWithSelection.facet.columnName,
     )}: ${innerText}`
   } else if ('filter' in props) {
     const { filter } = props
@@ -62,8 +63,12 @@ const SelectionCriteriaPill: FunctionComponent<
 
     // If searching in a specific column, use different inner/tooltip text
     if (filter.columnName) {
-      innerText = `"${filterValue}" in ${unCamelCase(filter?.columnName)}`
-      tooltipText = `${unCamelCase(filter?.columnName)}: ${filterValue}`
+      innerText = `"${filterValue}" in ${getColumnDisplayName(
+        filter?.columnName,
+      )}`
+      tooltipText = `${getColumnDisplayName(
+        filter?.columnName,
+      )}: ${filterValue}`
     }
   } else {
     console.warn(

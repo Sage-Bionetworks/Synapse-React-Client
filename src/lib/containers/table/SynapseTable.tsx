@@ -2,7 +2,6 @@ import ColumnResizer from 'column-resizer'
 import { cloneDeep, eq } from 'lodash-es'
 import * as React from 'react'
 import { Modal } from 'react-bootstrap'
-import NoData from '../../assets/icons/NoData'
 import { SynapseClient } from '../../utils'
 import {
   hasFilesInView,
@@ -43,9 +42,7 @@ import { EnumFacetFilter } from '../widgets/query-filter/EnumFacetFilter'
 import {
   applyChangesToValuesColumn,
   applyMultipleChangesToValuesColumn,
-} from '../widgets/query-filter/QueryFilter'
-import { unCamelCase } from './../../utils/functions/unCamelCase'
-import SearchResultsNotFound from './SearchResultsNotFound'
+} from '../widgets/query-filter/FacetFilterControls'
 import { ICON_STATE } from './SynapseTableConstants'
 import {
   getColumnIndiciesWithType,
@@ -54,7 +51,6 @@ import {
   getUniqueEntities,
 } from './SynapseTableUtils'
 import { TablePagination } from './TablePagination'
-import NoContentAvailable from './NoContentAvailable'
 import EntityIDColumnCopyIcon from './EntityIDColumnCopyIcon'
 import ExpandableTableDataCell from './ExpandableTableDataCell'
 
@@ -360,7 +356,7 @@ export default class SynapseTable extends React.Component<
     // unpack all the data
     const {
       queryContext: { data },
-      showNoContentAvailableWhenEmpty,
+      queryVisualizationContext: { NoContentPlaceholder },
     } = this.props
     const { queryResult, columnModels = [] } = data
     const { facets = [] } = data
@@ -370,22 +366,7 @@ export default class SynapseTable extends React.Component<
     const hasResults = (data.queryResult?.queryResults.rows.length ?? 0) > 0
     // Show the No Results UI if the current page has no rows, and this is the first page of data (offset === 0).
     if (!hasResults && queryRequest.query.offset === 0) {
-      if (queryRequest.query.additionalFilters) {
-        return <SearchResultsNotFound />
-      } else {
-        if (showNoContentAvailableWhenEmpty) {
-          return <NoContentAvailable />
-        } else {
-          return (
-            <div className="text-center SRCBorderedPanel SRCBorderedPanel--padded2x">
-              {NoData}
-              <div style={{ marginTop: '20px', fontStyle: 'italic' }}>
-                This table is currently empty
-              </div>
-            </div>
-          )
-        }
-      }
+      return <NoContentPlaceholder />
     }
 
     const { rows, headers } = queryResult!.queryResults
@@ -774,7 +755,7 @@ export default class SynapseTable extends React.Component<
   ) {
     const { sortedColumnSelection, columnIconSortState } = this.state
     const {
-      queryVisualizationContext: { facetAliases = {}, columnsToShowInTable },
+      queryVisualizationContext: { getColumnDisplayName, columnsToShowInTable },
       queryContext: { lockedColumn },
     } = this.props
     const tableColumnHeaderElements: JSX.Element[] = headers.map(
@@ -806,9 +787,8 @@ export default class SynapseTable extends React.Component<
             ? 'SRC-selected-table-icon tool-icon'
             : 'SRC-primary-text-color tool-icon'
           const sortSpanBackgoundClass = `SRC-tableHead SRC-hand-cursor SRC-sortPadding SRC-primary-background-color-hover  ${isSelectedSpanClass}`
-          const displayColumnName: string | undefined = unCamelCase(
+          const displayColumnName: string | undefined = getColumnDisplayName(
             column.name,
-            facetAliases,
           )
           const columnModel = columnModels.find(el => el.name === column.name)!
           const isLockedColumn =
@@ -831,7 +811,6 @@ export default class SynapseTable extends React.Component<
                       facet,
                       columnModel,
                       lastQueryRequest,
-                      facetAliases,
                     )}
                   {this.isSortableColumn(column.columnType) && (
                     <span
@@ -954,14 +933,12 @@ export default class SynapseTable extends React.Component<
     facetColumnResult: FacetColumnResultValues,
     columnModel: ColumnModel,
     lastQueryRequest: QueryBundleRequest,
-    facetAliases?: Record<string, string>,
   ) {
     return (
       <EnumFacetFilter
         containerAs="Dropdown"
         facetValues={facetColumnResult.facetValues}
         columnModel={columnModel}
-        facetAliases={facetAliases}
         onChange={(facetNamesMap: Record<string, string>) => {
           applyMultipleChangesToValuesColumn(
             lastQueryRequest,

@@ -14,6 +14,7 @@ import {
   ColumnType,
   FacetColumnResultRange,
 } from '../../../../lib/utils/synapseTypes'
+import { QueryVisualizationContextProvider } from '../../../../lib/containers/QueryVisualizationWrapper'
 
 let capturedOnChange:
   | ((range: { min: string | number; max: string | number }) => void)
@@ -85,7 +86,15 @@ describe('RangeFacetFilter tests', () => {
   let props: RangeFacetFilterProps
   function init(overrides?: RangeFacetFilterProps) {
     props = createTestProps(overrides)
-    return render(<RangeFacetFilter {...props} />)
+    return render(
+      <QueryVisualizationContextProvider
+        queryVisualizationContext={{
+          getColumnDisplayName: jest.fn(col => col),
+        }}
+      >
+        <RangeFacetFilter {...props} />
+      </QueryVisualizationContextProvider>,
+    )
   }
   describe('setting correct range value', () => {
     it('should set for any', () => {

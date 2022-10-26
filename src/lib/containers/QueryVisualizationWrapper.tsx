@@ -1,6 +1,17 @@
-import React, { createContext, useContext, useEffect, useState } from 'react'
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from 'react'
 import { useDeepCompareMemoize } from 'use-deep-compare-effect'
 import { useQueryContext } from './QueryContext'
+import NoContentAvailable from './table/NoContentAvailable'
+import { NoContentPlaceholderType } from './table/NoContentPlaceholderType'
+import SearchResultsNotFound from './table/SearchResultsNotFound'
+import ThisTableIsEmpty from './table/TableIsEmpty'
+import { unCamelCase } from '../utils/functions/unCamelCase'
 
 export type QueryVisualizationContextType = {
   topLevelControlsState: TopLevelControlsState
@@ -11,12 +22,14 @@ export type QueryVisualizationContextType = {
   setColumnsToShowInTable: (newState: string[]) => void
   selectedRowIndices: number[]
   setSelectedRowIndices: (newState: number[]) => void
-  // General UI related:
-  facetAliases?: Record<string, string>
   rgbIndex?: number
   unitDescription?: string
   /** Whether to show when the table or view was last updated. */
   showLastUpdatedOn?: boolean
+  /** Given a column name, return the display name for the column */
+  getColumnDisplayName: (columnName?: string) => string | undefined
+  /** React node to display in place of cards/table when there are no results. */
+  NoContentPlaceholder: () => JSX.Element
 }
 
 /**
@@ -61,12 +74,15 @@ export type QueryVisualizationWrapperProps = {
   children: React.ReactNode | React.ReactNode[]
   rgbIndex?: number
   unitDescription?: string
-  facetAliases?: Record<string, string>
+  /** Mapping from column name to the name that should be shown for the column */
+  columnAliases?: Record<string, string>
   visibleColumnCount?: number
   hiddenColumns?: string[]
   defaultShowFacetVisualization?: boolean
   defaultShowSearchBar?: boolean
   showLastUpdatedOn?: boolean
+  /** Default is INTERACTIVE */
+  noContentPlaceholderType?: NoContentPlaceholderType
 }
 
 export type TopLevelControlsState = {
@@ -86,8 +102,18 @@ export type TopLevelControlsState = {
 export function QueryVisualizationWrapper(
   props: QueryVisualizationWrapperProps,
 ) {
-  const { data, getLastQueryRequest, isFacetsAvailable, isLoadingNewBundle } =
-    useQueryContext()
+  const { noContentPlaceholderType = NoContentPlaceholderType.INTERACTIVE } =
+    props
+
+  const {
+    data,
+    getLastQueryRequest,
+    isFacetsAvailable,
+    isLoadingNewBundle,
+    hasResettableFilters,
+  } = useQueryContext()
+
+  const { columnAliases = {} } = props
 
   const [topLevelControlsState, setTopLevelControlsState] =
     useState<TopLevelControlsState>({
@@ -133,6 +159,37 @@ export function QueryVisualizationWrapper(
     )
   }, [selectColumns, lastQueryRequest.query.sql, props.visibleColumnCount])
 
+  const getColumnDisplayName = useCallback(
+    (columnName?: string) => {
+      // SWC-5982: if force-display-original-column-names is set, then just return the string
+      const forceDisplayOriginalColumnName =
+        localStorage.getItem('force-display-original-column-names') === 'true'
+
+      if (!columnName || forceDisplayOriginalColumnName) {
+        return columnName
+      }
+      if (columnAliases[columnName]) {
+        return columnAliases[columnName]
+      }
+      return unCamelCase(columnName)
+    },
+    [columnAliases],
+  )
+
+  const NoContentPlaceholder = useCallback(() => {
+    switch (noContentPlaceholderType) {
+      case NoContentPlaceholderType.INTERACTIVE:
+        if (hasResettableFilters) {
+          return <SearchResultsNotFound />
+        } else {
+          return <ThisTableIsEmpty />
+        }
+      case NoContentPlaceholderType.STATIC:
+      default:
+        return <NoContentAvailable />
+    }
+  }, [noContentPlaceholderType, hasResettableFilters])
+
   const context: QueryVisualizationContextType = {
     topLevelControlsState,
     setTopLevelControlsState,
@@ -140,11 +197,11 @@ export function QueryVisualizationWrapper(
     setColumnsToShowInTable: setVisibleColumns,
     selectedRowIndices,
     setSelectedRowIndices,
-
-    facetAliases: props.facetAliases,
     rgbIndex: props.rgbIndex,
     unitDescription: props.unitDescription,
     showLastUpdatedOn: props.showLastUpdatedOn,
+    getColumnDisplayName,
+    NoContentPlaceholder,
   }
   /**
    * Render the children without any formatting

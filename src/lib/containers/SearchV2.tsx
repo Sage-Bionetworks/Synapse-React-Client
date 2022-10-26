@@ -1,7 +1,6 @@
 import { Collapse } from '@material-ui/core'
 import React from 'react'
 import { CSSTransition } from 'react-transition-group'
-import { unCamelCase } from '../utils/functions/unCamelCase'
 import { ColumnModel, ColumnType } from '../utils/synapseTypes'
 import {
   ColumnMultiValueFunction,
@@ -218,7 +217,10 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
       searchable,
       lockedColumn,
       queryContext: { data },
-      queryVisualizationContext: { topLevelControlsState, facetAliases },
+      queryVisualizationContext: {
+        topLevelControlsState,
+        getColumnDisplayName,
+      },
     } = this.props
     const { searchText, show, columnName } = this.state
     let searchColumns: string[] = []
@@ -302,7 +304,7 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
                 <i> Search In Field: </i>
               </p>
               {searchColumns.map((name, index) => {
-                const displayName = unCamelCase(name, facetAliases)
+                const displayName = getColumnDisplayName(name)
                 const isSelected =
                   (columnName === '' && index === 0) || columnName === name
                 return (

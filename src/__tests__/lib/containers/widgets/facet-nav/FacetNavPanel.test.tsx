@@ -70,7 +70,11 @@ function init(
         ...queryContextProps,
       }}
     >
-      <QueryVisualizationContextProvider queryVisualizationContext={{}}>
+      <QueryVisualizationContextProvider
+        queryVisualizationContext={{
+          getColumnDisplayName: jest.fn(col => col),
+        }}
+      >
         <FacetNavPanel {...props} />
       </QueryVisualizationContextProvider>
     </QueryContextProvider>,

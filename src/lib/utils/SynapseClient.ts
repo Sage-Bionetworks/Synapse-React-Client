@@ -25,6 +25,7 @@ import {
   ENTITY_SCHEMA_VALIDATION,
   EVALUATION,
   EVALUATION_BY_ID,
+  EVALUATIONS_BY_ID,
   FAVORITES,
   FORUM_THREAD,
   NOTIFICATION_EMAIL,
@@ -937,6 +938,21 @@ export const getGroupHeadersBatch = (
 ): Promise<UserGroupHeaderResponsePage> => {
   return doGet<UserGroupHeaderResponsePage>(
     USER_GROUP_HEADERS_BATCH + `?ids=${ids.join(',')}`,
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ * Return a batch of Evaluation queues
+ * https://rest-docs.synapse.org/rest/GET/evaluation.html
+ */
+export const getEvaluations = (
+  evalIds: string[],
+  accessToken: string | undefined,
+): Promise<PaginatedResults<Evaluation>> => {
+  return doGet<PaginatedResults<Evaluation>>(
+    EVALUATIONS_BY_ID(evalIds),
     accessToken,
     BackendDestinationEnum.REPO_ENDPOINT,
   )

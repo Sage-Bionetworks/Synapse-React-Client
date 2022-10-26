@@ -1,8 +1,7 @@
-import * as React from 'react'
+import React from 'react'
 import { SynapseConstants } from '../utils'
 import {
   insertConditionsFromSearchParams,
-  KeyValue,
   parseEntityIdFromSqlStatement,
   SQLOperator,
 } from '../utils/functions/sqlFunctions'
@@ -11,10 +10,14 @@ import CardContainer from './CardContainer'
 import { ErrorBanner } from './ErrorBanner'
 import { GenericCardSchema, IconOptions } from './GenericCard'
 import { IconSvgOptions } from './IconSvg'
-import { QueryVisualizationWrapper } from './QueryVisualizationWrapper'
+import {
+  QueryVisualizationWrapper,
+  QueryVisualizationWrapperProps,
+} from './QueryVisualizationWrapper'
 import { QueryContextConsumer } from './QueryContext'
 import { InfiniteQueryWrapper } from './InfiniteQueryWrapper'
 import QuerySortSelector from './QuerySortSelector'
+import { NoContentPlaceholderType } from './table/NoContentPlaceholderType'
 
 /**
  *  Used when a column value should link to an external URL defined by a value in another column.
@@ -117,16 +120,20 @@ export type CardConfiguration = {
 export type CardContainerLogicProps = {
   limit?: number
   title?: string
-  unitDescription?: string
   sqlOperator?: SQLOperator
-  searchParams?: KeyValue
-  facetAliases?: Record<string, string>
-  rgbIndex?: number
+  searchParams?: Record<string, string>
   isHeader?: boolean
   isAlignToLeftNav?: boolean
   sql: string
   sortConfig?: SortConfiguration
-} & CardConfiguration
+} & CardConfiguration &
+  Pick<
+    QueryVisualizationWrapperProps,
+    | 'rgbIndex'
+    | 'unitDescription'
+    | 'columnAliases'
+    | 'noContentPlaceholderType'
+  >
 
 /**
  * Class wraps around CardContainer and serves as a standalone logic container for rendering cards.
@@ -137,7 +144,7 @@ export const CardContainerLogic = (props: CardContainerLogicProps) => {
     props.searchParams,
     props.sqlOperator,
   )
-  const { sortConfig, facetAliases } = props
+  const { sortConfig, columnAliases } = props
   const defaultSortItems = sortConfig
     ? [
         {
@@ -170,14 +177,12 @@ export const CardContainerLogic = (props: CardContainerLogicProps) => {
       <QueryVisualizationWrapper
         rgbIndex={props.rgbIndex}
         unitDescription={props.unitDescription}
-        facetAliases={props.facetAliases}
+        columnAliases={columnAliases}
+        noContentPlaceholderType={
+          props.noContentPlaceholderType ?? NoContentPlaceholderType.STATIC
+        }
       >
-        {sortConfig && (
-          <QuerySortSelector
-            sortConfig={sortConfig}
-            facetAliases={facetAliases}
-          />
-        )}
+        {sortConfig && <QuerySortSelector sortConfig={sortConfig} />}
         <CardContainer {...props} />
         <QueryContextConsumer>
           {queryContext => <ErrorBanner error={queryContext?.error} />}

@@ -89,7 +89,7 @@ describe('Create OAuth Client', () => {
       expect(inputRedirectURI).toHaveValue(mockClient.redirect_uris[0])
     })
 
-    await userEvent.click(saveButton!)
+    await userEvent.click(saveButton)
 
     await waitFor(() =>
       expect(mockToastFn).toBeCalledWith('Successfully created', 'success'),
@@ -99,7 +99,7 @@ describe('Create OAuth Client', () => {
   it('Shows a warning modal when deleteing a client', async () => {
     renderComponent({ ...defaultProps, isEdit: true, client: mockClient })
     const deleteButton = screen.getByRole('button', { name: 'DELETE CLIENT' })
-    await userEvent.click(deleteButton!)
+    await userEvent.click(deleteButton)
 
     expect(mockWarningModal).toBeCalledWith(
       expect.objectContaining({
@@ -139,7 +139,7 @@ describe('Create OAuth Client', () => {
     await waitFor(() =>
       expect(inputName).toHaveValue(`${mockClient.client_name}rename`),
     )
-    await userEvent.click(saveButton!)
+    await userEvent.click(saveButton)
 
     await waitFor(() =>
       expect(mockToastFn).toBeCalledWith('Successfully saved', 'success'),
@@ -152,7 +152,7 @@ describe('Create OAuth Client', () => {
     const saveButton = screen.getByRole('button', { name: 'Save' })
 
     await userEvent.type(inputRedirectURI, 'xxx')
-    await userEvent.click(saveButton!)
+    await userEvent.click(saveButton)
 
     expect(mockWarningModal).toBeCalledWith(
       expect.objectContaining({

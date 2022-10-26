@@ -16,8 +16,12 @@ import ModalDownload from '../ModalDownload'
 import {
   QueryVisualizationContextConsumer,
   QueryVisualizationWrapper,
+  QueryVisualizationWrapperProps,
 } from '../QueryVisualizationWrapper'
-import { QueryWrapper as PaginatedQueryWrapper } from '../QueryWrapper'
+import {
+  QueryWrapper as PaginatedQueryWrapper,
+  QueryWrapperProps,
+} from '../QueryWrapper'
 import { InfiniteQueryWrapper } from '../InfiniteQueryWrapper'
 import { QueryContextConsumer } from '../QueryContext'
 import { QueryWrapperErrorBanner } from '../QueryWrapperErrorBanner'
@@ -28,8 +32,9 @@ import TopLevelControls, {
   TopLevelControlsProps,
 } from '../table/TopLevelControls'
 import FacetNav, { FacetNavProps } from '../widgets/facet-nav/FacetNav'
-import { QueryFilter } from '../widgets/query-filter/QueryFilter'
+import { FacetFilterControls } from '../widgets/query-filter/FacetFilterControls'
 import FilterAndView from './FilterAndView'
+import { NoContentPlaceholderType } from '../table/NoContentPlaceholderType'
 
 const QUERY_FILTERS_EXPANDED_CSS = 'isShowingFacetFilters'
 const QUERY_FILTERS_COLLAPSED_CSS = 'isHidingFacetFilters'
@@ -53,19 +58,21 @@ type OwnProps = {
     SearchV2Props,
     'queryContext' | 'queryVisualizationContext'
   >
-  rgbIndex?: number
   facetsToPlot?: string[]
   facetsToFilter?: string[]
-  visibleColumnCount?: number
-  facetAliases?: Record<string, string>
-  hideDownload?: boolean
-  hideQueryCount?: boolean
-  hideSqlEditorControl?: boolean
   defaultColumn?: string
-  defaultShowFacetVisualization?: boolean
   defaultShowSearchBox?: boolean
-  showLastUpdatedOn?: boolean
-} & Omit<TopLevelControlsProps, 'entityId'>
+  lockedColumn?: QueryWrapperProps['lockedColumn']
+} & Omit<TopLevelControlsProps, 'entityId'> &
+  Pick<
+    QueryVisualizationWrapperProps,
+    | 'defaultShowFacetVisualization'
+    | 'visibleColumnCount'
+    | 'columnAliases'
+    | 'rgbIndex'
+    | 'showLastUpdatedOn'
+    | 'noContentPlaceholderType'
+  >
 
 type SearchParams = {
   searchParams?: {
@@ -144,13 +151,14 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = (
         <QueryVisualizationWrapper
           unitDescription={'results'}
           rgbIndex={props.rgbIndex}
-          facetAliases={props.facetAliases}
+          columnAliases={props.columnAliases}
           visibleColumnCount={props.visibleColumnCount}
           defaultShowFacetVisualization={props.defaultShowFacetVisualization}
           defaultShowSearchBar={
             props.defaultShowSearchBox || isFullTextSearchEnabled
           }
           showLastUpdatedOn={showLastUpdatedOn}
+          noContentPlaceholderType={NoContentPlaceholderType.INTERACTIVE}
         >
           <QueryContextConsumer>
             {queryContext => {
@@ -222,7 +230,9 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = (
                         />
                         {isFaceted && (
                           <>
-                            <QueryFilter facetsToFilter={facetsToFilter} />
+                            <FacetFilterControls
+                              facetsToFilter={facetsToFilter}
+                            />
                           </>
                         )}
                         <FacetNav facetsToPlot={facetsToPlot} />

@@ -9,7 +9,6 @@ import { SkeletonInlineBlock } from '../../../assets/skeletons/SkeletonInlineBlo
 import getColorPalette from '../../../containers/ColorGradient'
 import { ElementWithTooltip } from '../../../containers/widgets/ElementWithTooltip'
 import { SynapseClient, SynapseConstants } from '../../../utils'
-import { unCamelCase } from '../../../utils/functions/unCamelCase'
 import { useSynapseContext } from '../../../utils/SynapseContext'
 import {
   ColumnType,
@@ -24,7 +23,7 @@ import { EnumFacetFilter } from '../query-filter/EnumFacetFilter'
 import {
   applyChangesToValuesColumn,
   applyMultipleChangesToValuesColumn,
-} from '../query-filter/QueryFilter'
+} from '../query-filter/FacetFilterControls'
 import Tooltip from '../../../utils/tooltip/Tooltip'
 
 const Plot = createPlotlyComponent(Plotly)
@@ -355,12 +354,12 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = (
   const { accessToken } = useSynapseContext()
   const { data, isLoadingNewBundle, getLastQueryRequest } = useQueryContext()
 
-  const { facetAliases } = useQueryVisualizationContext()
+  const { getColumnDisplayName } = useQueryVisualizationContext()
 
   const [plotData, setPlotData] = useState<GraphData>()
   const [showModal, setShowModal] = useState(false)
 
-  const plotTitle = unCamelCase(facetToPlot.columnName, facetAliases)
+  const plotTitle = getColumnDisplayName(facetToPlot.columnName)
 
   const getColumnType = useCallback(
     (): ColumnType | undefined =>
@@ -468,7 +467,6 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = (
                       el => el.name === facetToPlot.columnName,
                     )!
                   }
-                  facetAliases={facetAliases}
                   onChange={(facetNamesMap: Record<string, string>) => {
                     applyMultipleChangesToValuesColumn(
                       getLastQueryRequest(),
@@ -520,7 +518,6 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = (
                       el => el.name === facetToPlot.columnName,
                     )!
                   }
-                  facetAliases={facetAliases}
                   onChange={(facetNamesMap: Record<string, string>) => {
                     applyMultipleChangesToValuesColumn(
                       getLastQueryRequest(),

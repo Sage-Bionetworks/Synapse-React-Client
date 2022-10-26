@@ -20,6 +20,7 @@ import { useSynapseContext } from '../../utils/SynapseContext'
 import {
   QueryVisualizationContextConsumer,
   QueryVisualizationWrapper,
+  QueryVisualizationWrapperProps,
 } from '../QueryVisualizationWrapper'
 import { isTable } from '../../utils/functions/EntityTypeUtils'
 import LastUpdatedOn from '../query_wrapper_plot_nav/LastUpdatedOn'
@@ -39,16 +40,20 @@ export type QueryCount = {
 
 type OwnProps = {
   sql: string
-  rgbIndex?: number
-  unitDescription?: string
-  facetAliases?: Record<string, string>
   showTopLevelControls?: boolean
   searchConfiguration?: Omit<
     SearchV2Props,
     'queryContext' | 'queryVisualizationContext'
   >
-  showLastUpdatedOn?: boolean
-} & Omit<TopLevelControlsProps, 'entityId'>
+} & Omit<TopLevelControlsProps, 'entityId'> &
+  Pick<
+    QueryVisualizationWrapperProps,
+    | 'rgbIndex'
+    | 'unitDescription'
+    | 'columnAliases'
+    | 'noContentPlaceholderType'
+    | 'showLastUpdatedOn'
+  >
 
 export type StandaloneQueryWrapperProps = Partial<
   Omit<

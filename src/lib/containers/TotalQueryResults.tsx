@@ -9,11 +9,13 @@ import { SkeletonInlineBlock } from '../assets/skeletons/SkeletonInlineBlock'
 import {
   getStoredEntityHeaders,
   getStoredUserProfiles,
+  getStoredEvaluation,
 } from '../utils/functions/getDataFromFromStorage'
 import {
   ColumnModel,
   ColumnType,
   EntityHeader,
+  Evaluation,
   FacetColumnRequest,
   FacetColumnResult,
   FacetColumnResultRange,
@@ -41,7 +43,7 @@ import SelectionCriteriaPill, {
 import {
   applyChangesToRangeColumn,
   applyChangesToValuesColumn,
-} from './widgets/query-filter/QueryFilter'
+} from './widgets/query-filter/FacetFilterControls'
 import { RadioValuesEnum } from './widgets/query-filter/RangeFacetFilter'
 import IconSvg from './IconSvg'
 
@@ -119,6 +121,14 @@ const TotalQueryResults: FunctionComponent<TotalQueryResultsProps> = ({
     return entity?.name ?? facetValue
   }
 
+  const getDisplayValueEvaluationIdColumn = (
+    evaluations: Evaluation[],
+    facetValue: string,
+  ): string => {
+    const evaluation = evaluations.find(item => item.id === facetValue)
+    return evaluation?.name || facetValue
+  }
+
   const getDisplayValueUserIdColumn = (
     userProfiles: UserProfile[],
     facetValue: string,
@@ -134,6 +144,7 @@ const TotalQueryResults: FunctionComponent<TotalQueryResultsProps> = ({
     ): FacetWithSelection[] => {
       const lookUpEntityHeaders = getStoredEntityHeaders()
       const lookUpUserProfiles = getStoredUserProfiles()
+      const lookUpEvaluations = getStoredEvaluation()
       const filteredEnumWithSelectedValuesOnly: FacetWithSelection[] = []
       facets.forEach(facet => {
         const columnModel = columnModels.find(
@@ -142,24 +153,31 @@ const TotalQueryResults: FunctionComponent<TotalQueryResultsProps> = ({
         facet.facetValues.forEach(facetValue => {
           if (facetValue.isSelected) {
             let displayValue = facetValue.value
-            if (
-              columnModel?.columnType === ColumnType.ENTITYID ||
-              columnModel?.columnType === ColumnType.ENTITYID_LIST
-            ) {
-              displayValue = getDisplayValueForEntityColumn(
-                lookUpEntityHeaders,
-                facetValue.value,
-              )
-            } else if (
-              columnModel?.columnType === ColumnType.USERID ||
-              columnModel?.columnType === ColumnType.USERID_LIST
-            ) {
-              displayValue = getDisplayValueUserIdColumn(
-                lookUpUserProfiles,
-                facetValue.value,
-              )
+            switch (columnModel?.columnType) {
+              case ColumnType.ENTITYID:
+              case ColumnType.ENTITYID_LIST:
+                displayValue = getDisplayValueForEntityColumn(
+                  lookUpEntityHeaders,
+                  facetValue.value,
+                )
+                break
+              case ColumnType.USERID:
+              case ColumnType.USERID_LIST:
+                displayValue = getDisplayValueUserIdColumn(
+                  lookUpUserProfiles,
+                  facetValue.value,
+                )
+                break
+              case ColumnType.EVALUATIONID:
+                displayValue = getDisplayValueEvaluationIdColumn(
+                  lookUpEvaluations,
+                  facetValue.value,
+                )
+                break
+              default:
+                displayValue = facetValue.value
+                break
             }
-
             filteredEnumWithSelectedValuesOnly.push({
               facet,
               displayValue,

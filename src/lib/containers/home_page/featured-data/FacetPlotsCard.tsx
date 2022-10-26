@@ -12,7 +12,6 @@ import {
 } from '../../../utils/synapseTypes'
 
 import { getColorPalette } from '../../../containers/ColorGradient'
-import { unCamelCase } from '../../../utils/functions/unCamelCase'
 import { useEffect, useState } from 'react'
 import loadingScreen from '../../LoadingScreen'
 import {
@@ -57,7 +56,7 @@ const FacetPlotsCard: React.FunctionComponent<FacetPlotsCardProps> = ({
 }: FacetPlotsCardProps): JSX.Element => {
   const { accessToken } = useSynapseContext()
   const { data, isLoadingNewBundle } = useQueryContext()
-  const { facetAliases, rgbIndex } = useQueryVisualizationContext()
+  const { getColumnDisplayName, rgbIndex } = useQueryVisualizationContext()
   const [facetPlotDataArray, setFacetPlotDataArray] = useState<GraphData[]>([])
   const [facetDataArray, setFacetDataArray] = useState<FacetColumnResult[]>([])
   const [selectedFacetValue, setSelectedFacetValue] = useState<string>('')
@@ -137,7 +136,7 @@ const FacetPlotsCard: React.FunctionComponent<FacetPlotsCardProps> = ({
       title ??
       (isShowingMultiplePlots
         ? selectedFacetValue
-        : unCamelCase(facetDataArray[0].columnName, facetAliases))
+        : getColumnDisplayName(facetDataArray[0].columnName))
     return (
       <div className="FacetPlotsCard cardContainer">
         <div
@@ -162,10 +161,7 @@ const FacetPlotsCard: React.FunctionComponent<FacetPlotsCardProps> = ({
                 {isShowingMultiplePlots && (
                   <div className="FacetPlotsCard__body__facetname">
                     <span>
-                      {unCamelCase(
-                        facetDataArray[index].columnName,
-                        facetAliases,
-                      )}
+                      {getColumnDisplayName(facetDataArray[index].columnName)}
                     </span>
                   </div>
                 )}

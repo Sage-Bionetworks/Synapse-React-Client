@@ -8,18 +8,17 @@ import {
   MEDIUM_USER_CARD,
   OBSERVATION_CARD,
 } from '../utils/SynapseConstants'
-import { EntityHeader, Row, ColumnType } from '../utils/synapseTypes/'
+import { ColumnType, EntityHeader, Row } from '../utils/synapseTypes/'
 import { CardConfiguration } from './CardContainerLogic'
 import GenericCard from './GenericCard'
 import loadingScreen from './LoadingScreen'
 import { useInfiniteQueryContext } from './QueryContext'
+import { useQueryVisualizationContext } from './QueryVisualizationWrapper'
 import { Dataset, Funder } from './row_renderers'
 import {
   LoadingObservationCard,
   ObservationCard,
 } from './row_renderers/ObservationCard'
-import NoContentAvailable from './table/NoContentAvailable'
-import SearchResultsNotFound from './table/SearchResultsNotFound'
 import TotalQueryResults from './TotalQueryResults'
 import UserCardList from './UserCardList'
 
@@ -27,10 +26,25 @@ export type CardContainerProps = {
   isHeader?: boolean
   isAlignToLeftNav?: boolean
   title?: string
-  facetAliases?: Record<string, string>
   isLoading?: boolean
   unitDescription?: string
 } & CardConfiguration
+
+function Card(props: { propsToPass: any; type: string }) {
+  const { propsToPass, type } = props
+  switch (type) {
+    case DATASET:
+      return <Dataset {...propsToPass} />
+    case FUNDER:
+      return <Funder {...propsToPass} />
+    case GENERIC_CARD:
+      return <GenericCard {...propsToPass} />
+    case OBSERVATION_CARD:
+      return <ObservationCard {...propsToPass} />
+    default:
+      return <div /> // this should never happen
+  }
+}
 
 export const CardContainer = (props: CardContainerProps) => {
   const {
@@ -43,24 +57,10 @@ export const CardContainer = (props: CardContainerProps) => {
     ...rest
   } = props
   const infiniteQueryContext = useInfiniteQueryContext()
-  const { data, getLastQueryRequest, appendNextPageToResults, hasNextPage } =
-    infiniteQueryContext
+  const { NoContentPlaceholder } = useQueryVisualizationContext()
+  const { data, appendNextPageToResults, hasNextPage } = infiniteQueryContext
 
-  const queryRequest = getLastQueryRequest()
-  const renderCard = (props: any, type: string) => {
-    switch (type) {
-      case DATASET:
-        return <Dataset {...props} />
-      case FUNDER:
-        return <Funder {...props} />
-      case GENERIC_CARD:
-        return <GenericCard {...props} queryContext={infiniteQueryContext} />
-      case OBSERVATION_CARD:
-        return <ObservationCard {...props} />
-      default:
-        return <div key={props.key} /> // this should never happen
-    }
-  }
+  const queryVisualizationContext = useQueryVisualizationContext()
 
   const ids = data?.queryResult!.queryResults.tableId
     ? [data?.queryResult.queryResults.tableId]
@@ -78,12 +78,8 @@ export const CardContainer = (props: CardContainerProps) => {
       </div>
     )
   } else if (data && data.queryResult!.queryResults.rows.length === 0) {
-    // data was retrieved from the backend but there is none to show.
-    if (queryRequest.query.additionalFilters) {
-      return <SearchResultsNotFound />
-    }
-    // else show "no results" UI (see PORTALS-1497)
-    return <NoContentAvailable />
+    // Show "no results" UI (see PORTALS-1497)
+    return <NoContentPlaceholder />
   }
   const schema = {}
   data.queryResult!.queryResults.headers.forEach((element, index) => {
@@ -123,7 +119,7 @@ export const CardContainer = (props: CardContainerProps) => {
     // render the cards
     const cardsData = data.queryResult!.queryResults.rows
     cards = cardsData.length ? (
-      cardsData.map((rowData: Row) => {
+      cardsData.map((rowData: Row, index) => {
         const key = JSON.stringify(rowData.values)
         const propsForCard = {
           key,
@@ -138,9 +134,17 @@ export const CardContainer = (props: CardContainerProps) => {
           tableEntityConcreteType:
             tableEntityConcreteType[0] && tableEntityConcreteType[0].type,
           tableId: data?.queryResult!.queryResults.tableId,
+          queryContext: infiniteQueryContext,
+          queryVisualizationContext,
           ...rest,
         }
-        return renderCard(propsForCard, type)
+        return (
+          <Card
+            key={rowData.rowId ?? index}
+            propsToPass={propsForCard}
+            type={type}
+          />
+        )
       })
     ) : (
       <></>
