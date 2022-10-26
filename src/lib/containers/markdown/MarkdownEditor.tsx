@@ -26,6 +26,10 @@ export const MarkdownEditor: React.FunctionComponent<MarkdownEditorProps> = ({
   const [selectionStart, setSelectionStart] = useState<number>(0)
   const textAreaRef = useRef<HTMLTextAreaElement>(null)
 
+  /**
+   * Updates the position of the cursor. This must occur within `useEffect` because we need to ensure that the
+   * cursor position is updated after the state of `text` is updated.
+   */
   useEffect(() => {
     const input = textAreaRef.current
     if (input) {
@@ -39,23 +43,24 @@ export const MarkdownEditor: React.FunctionComponent<MarkdownEditorProps> = ({
       const start = textVal.selectionStart
       const end = textVal.selectionEnd
       const selected = text.substring(start, end)
-      const first = text.substring(0, start)
-      const later = text.substring(end, text.length)
+      const textBeforeSelection = text.substring(0, start)
+      const textAfterSelection = text.substring(end, text.length)
 
       const openSyntax = MARKDOWN_COMMANDS_DATA[command].openSyntax
       const closeSyntax = MARKDOWN_COMMANDS_DATA[command].closeSyntax
 
       switch (command) {
         case 'code': {
-          const newText = `${first}
-          ${openSyntax}
-          ${selected}
-          ${closeSyntax}
-          ${later}`
-            .split('\n')
-            .map(s => s.trim())
-            .join('\n')
-          setText(newText)
+          const newText: string[] = []
+          newText.push(
+            textBeforeSelection,
+            openSyntax,
+            selected,
+            closeSyntax,
+            textAfterSelection,
+          )
+
+          setText(newText.join('\r\n'))
           textAreaRef.current.focus()
           // adds 2 due to new line
           setSelectionStart(start + openSyntax.length + 2)
@@ -70,7 +75,7 @@ export const MarkdownEditor: React.FunctionComponent<MarkdownEditorProps> = ({
         case 'superscript':
         case 'link':
         case 'image': {
-          const newText = `${first}${openSyntax}${selected}${closeSyntax}${later}`
+          const newText = `${textBeforeSelection}${openSyntax}${selected}${closeSyntax}${textAfterSelection}`
           textAreaRef.current.focus()
           setSelectionStart(start + openSyntax.length)
           setText(newText)
