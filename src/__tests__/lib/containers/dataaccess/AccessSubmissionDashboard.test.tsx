@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from '@testing-library/react'
+import { act, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { createMemoryHistory, MemoryHistory } from 'history'
 import React from 'react'
@@ -109,10 +109,12 @@ describe('AccessSubmissionDashboard tests', () => {
     await screen.findByText(
       getOptionLabel(mockAccessRequirement.id, mockAccessRequirement.name),
     )
-    await selectEvent.select(
-      arNameInput,
-      getOptionLabel(mockAccessRequirement.id, mockAccessRequirement.name),
-    )
+    await act(async () => {
+      await selectEvent.select(
+        arNameInput,
+        getOptionLabel(mockAccessRequirement.id, mockAccessRequirement.name),
+      )
+    })
 
     await waitFor(() =>
       expect(
@@ -137,7 +139,9 @@ describe('AccessSubmissionDashboard tests', () => {
     const requesterInput = (await screen.findAllByRole('combobox'))[1]
     await userEvent.type(requesterInput, MOCK_USER_NAME.substring(0, 1))
     await screen.findByText(new RegExp('@' + MOCK_USER_NAME))
-    await selectEvent.select(requesterInput, new RegExp('@' + MOCK_USER_NAME))
+    await act(async () => {
+      await selectEvent.select(requesterInput, new RegExp('@' + MOCK_USER_NAME))
+    })
 
     await waitFor(() =>
       expect(
@@ -159,7 +163,9 @@ describe('AccessSubmissionDashboard tests', () => {
     const reviewerInput = (await screen.findAllByRole('combobox'))[2]
     await userEvent.type(reviewerInput, MOCK_USER_NAME.substring(0, 1))
     await screen.findByText(new RegExp('@' + MOCK_USER_NAME))
-    await selectEvent.select(reviewerInput, new RegExp('@' + MOCK_USER_NAME))
+    await act(async () => {
+      await selectEvent.select(reviewerInput, new RegExp('@' + MOCK_USER_NAME))
+    })
 
     await waitFor(() =>
       expect(

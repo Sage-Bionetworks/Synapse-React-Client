@@ -2,7 +2,6 @@ import ColumnResizer from 'column-resizer'
 import { cloneDeep, eq } from 'lodash-es'
 import * as React from 'react'
 import { Modal } from 'react-bootstrap'
-import NoData from '../../assets/icons/NoData'
 import { SynapseClient } from '../../utils'
 import {
   hasFilesInView,
@@ -44,7 +43,6 @@ import {
   applyChangesToValuesColumn,
   applyMultipleChangesToValuesColumn,
 } from '../widgets/query-filter/FacetFilterControls'
-import SearchResultsNotFound from './SearchResultsNotFound'
 import { ICON_STATE } from './SynapseTableConstants'
 import {
   getColumnIndiciesWithType,
@@ -53,7 +51,6 @@ import {
   getUniqueEntities,
 } from './SynapseTableUtils'
 import { TablePagination } from './TablePagination'
-import NoContentAvailable from './NoContentAvailable'
 import EntityIDColumnCopyIcon from './EntityIDColumnCopyIcon'
 import ExpandableTableDataCell from './ExpandableTableDataCell'
 
@@ -359,7 +356,7 @@ export default class SynapseTable extends React.Component<
     // unpack all the data
     const {
       queryContext: { data },
-      showNoContentAvailableWhenEmpty,
+      queryVisualizationContext: { NoContentPlaceholder },
     } = this.props
     const { queryResult, columnModels = [] } = data
     const { facets = [] } = data
@@ -369,22 +366,7 @@ export default class SynapseTable extends React.Component<
     const hasResults = (data.queryResult?.queryResults.rows.length ?? 0) > 0
     // Show the No Results UI if the current page has no rows, and this is the first page of data (offset === 0).
     if (!hasResults && queryRequest.query.offset === 0) {
-      if (queryRequest.query.additionalFilters) {
-        return <SearchResultsNotFound />
-      } else {
-        if (showNoContentAvailableWhenEmpty) {
-          return <NoContentAvailable />
-        } else {
-          return (
-            <div className="text-center SRCBorderedPanel SRCBorderedPanel--padded2x">
-              {NoData}
-              <div style={{ marginTop: '20px', fontStyle: 'italic' }}>
-                This table is currently empty
-              </div>
-            </div>
-          )
-        }
-      }
+      return <NoContentPlaceholder />
     }
 
     const { rows, headers } = queryResult!.queryResults

@@ -48,7 +48,11 @@ type OwnProps = {
 } & Omit<TopLevelControlsProps, 'entityId'> &
   Pick<
     QueryVisualizationWrapperProps,
-    'rgbIndex' | 'unitDescription' | 'columnAliases' | 'showLastUpdatedOn'
+    | 'rgbIndex'
+    | 'unitDescription'
+    | 'columnAliases'
+    | 'noContentPlaceholderType'
+    | 'showLastUpdatedOn'
   >
 
 export type StandaloneQueryWrapperProps = Partial<

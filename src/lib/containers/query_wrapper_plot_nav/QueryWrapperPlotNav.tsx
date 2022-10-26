@@ -34,6 +34,7 @@ import TopLevelControls, {
 import FacetNav, { FacetNavProps } from '../widgets/facet-nav/FacetNav'
 import { FacetFilterControls } from '../widgets/query-filter/FacetFilterControls'
 import FilterAndView from './FilterAndView'
+import { NoContentPlaceholderType } from '../table/NoContentPlaceholderType'
 
 const QUERY_FILTERS_EXPANDED_CSS = 'isShowingFacetFilters'
 const QUERY_FILTERS_COLLAPSED_CSS = 'isHidingFacetFilters'
@@ -59,9 +60,6 @@ type OwnProps = {
   >
   facetsToPlot?: string[]
   facetsToFilter?: string[]
-  hideDownload?: boolean
-  hideQueryCount?: boolean
-  hideSqlEditorControl?: boolean
   defaultColumn?: string
   defaultShowSearchBox?: boolean
   lockedColumn?: QueryWrapperProps['lockedColumn']
@@ -73,6 +71,7 @@ type OwnProps = {
     | 'columnAliases'
     | 'rgbIndex'
     | 'showLastUpdatedOn'
+    | 'noContentPlaceholderType'
   >
 
 type SearchParams = {
@@ -159,6 +158,7 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = (
             props.defaultShowSearchBox || isFullTextSearchEnabled
           }
           showLastUpdatedOn={showLastUpdatedOn}
+          noContentPlaceholderType={NoContentPlaceholderType.INTERACTIVE}
         >
           <QueryContextConsumer>
             {queryContext => {

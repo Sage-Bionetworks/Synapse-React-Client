@@ -7,6 +7,10 @@ import React, {
 } from 'react'
 import { useDeepCompareMemoize } from 'use-deep-compare-effect'
 import { useQueryContext } from './QueryContext'
+import NoContentAvailable from './table/NoContentAvailable'
+import { NoContentPlaceholderType } from './table/NoContentPlaceholderType'
+import SearchResultsNotFound from './table/SearchResultsNotFound'
+import ThisTableIsEmpty from './table/TableIsEmpty'
 import { unCamelCase } from '../utils/functions/unCamelCase'
 
 export type QueryVisualizationContextType = {
@@ -24,6 +28,8 @@ export type QueryVisualizationContextType = {
   showLastUpdatedOn?: boolean
   /** Given a column name, return the display name for the column */
   getColumnDisplayName: (columnName?: string) => string | undefined
+  /** React node to display in place of cards/table when there are no results. */
+  NoContentPlaceholder: () => JSX.Element
 }
 
 /**
@@ -75,6 +81,8 @@ export type QueryVisualizationWrapperProps = {
   defaultShowFacetVisualization?: boolean
   defaultShowSearchBar?: boolean
   showLastUpdatedOn?: boolean
+  /** Default is INTERACTIVE */
+  noContentPlaceholderType?: NoContentPlaceholderType
 }
 
 export type TopLevelControlsState = {
@@ -94,8 +102,16 @@ export type TopLevelControlsState = {
 export function QueryVisualizationWrapper(
   props: QueryVisualizationWrapperProps,
 ) {
-  const { data, getLastQueryRequest, isFacetsAvailable, isLoadingNewBundle } =
-    useQueryContext()
+  const { noContentPlaceholderType = NoContentPlaceholderType.INTERACTIVE } =
+    props
+
+  const {
+    data,
+    getLastQueryRequest,
+    isFacetsAvailable,
+    isLoadingNewBundle,
+    hasResettableFilters,
+  } = useQueryContext()
 
   const { columnAliases = {} } = props
 
@@ -160,6 +176,20 @@ export function QueryVisualizationWrapper(
     [columnAliases],
   )
 
+  const NoContentPlaceholder = useCallback(() => {
+    switch (noContentPlaceholderType) {
+      case NoContentPlaceholderType.INTERACTIVE:
+        if (hasResettableFilters) {
+          return <SearchResultsNotFound />
+        } else {
+          return <ThisTableIsEmpty />
+        }
+      case NoContentPlaceholderType.STATIC:
+      default:
+        return <NoContentAvailable />
+    }
+  }, [noContentPlaceholderType, hasResettableFilters])
+
   const context: QueryVisualizationContextType = {
     topLevelControlsState,
     setTopLevelControlsState,
@@ -171,6 +201,7 @@ export function QueryVisualizationWrapper(
     unitDescription: props.unitDescription,
     showLastUpdatedOn: props.showLastUpdatedOn,
     getColumnDisplayName,
+    NoContentPlaceholder,
   }
   /**
    * Render the children without any formatting

@@ -19,8 +19,6 @@ import {
   LoadingObservationCard,
   ObservationCard,
 } from './row_renderers/ObservationCard'
-import NoContentAvailable from './table/NoContentAvailable'
-import SearchResultsNotFound from './table/SearchResultsNotFound'
 import TotalQueryResults from './TotalQueryResults'
 import UserCardList from './UserCardList'
 
@@ -59,10 +57,8 @@ export const CardContainer = (props: CardContainerProps) => {
     ...rest
   } = props
   const infiniteQueryContext = useInfiniteQueryContext()
-  const { data, getLastQueryRequest, appendNextPageToResults, hasNextPage } =
-    infiniteQueryContext
-
-  const queryRequest = getLastQueryRequest()
+  const { NoContentPlaceholder } = useQueryVisualizationContext()
+  const { data, appendNextPageToResults, hasNextPage } = infiniteQueryContext
 
   const queryVisualizationContext = useQueryVisualizationContext()
 
@@ -82,12 +78,8 @@ export const CardContainer = (props: CardContainerProps) => {
       </div>
     )
   } else if (data && data.queryResult!.queryResults.rows.length === 0) {
-    // data was retrieved from the backend but there is none to show.
-    if (queryRequest.query.additionalFilters) {
-      return <SearchResultsNotFound />
-    }
-    // else show "no results" UI (see PORTALS-1497)
-    return <NoContentAvailable />
+    // Show "no results" UI (see PORTALS-1497)
+    return <NoContentPlaceholder />
   }
   const schema = {}
   data.queryResult!.queryResults.headers.forEach((element, index) => {

@@ -1,17 +1,15 @@
 import React from 'react'
 import { useDeepCompareEffectNoCheck } from 'use-deep-compare-effect'
 import { isSingleNotSetValue } from '../../../utils/functions/queryUtils'
-import { QueryBundleRequest } from '../../../utils/synapseTypes'
 import {
+  QueryBundleRequest,
   FacetColumnRangeRequest,
   FacetColumnRequest,
   FacetColumnValuesRequest,
-} from '../../../utils/synapseTypes/Table/FacetColumnRequest'
-import {
   FacetColumnResult,
   FacetColumnResultRange,
   FacetColumnResultValues,
-} from '../../../utils/synapseTypes/Table/FacetColumnResult'
+} from '../../../utils/synapseTypes'
 import { useQueryContext } from '../../QueryContext'
 import { useQueryVisualizationContext } from '../../QueryVisualizationWrapper'
 import {
@@ -32,21 +30,21 @@ const convertFacetToFacetColumnValuesRequest = (
   concreteType: 'org.sagebionetworks.repo.model.table.FacetColumnValuesRequest',
   columnName: facet.columnName,
   facetValues: facet.facetValues
-    .filter(facet => facet.isSelected === true)
+    .filter(facet => facet.isSelected)
     .map(facet => facet.value),
 })
 
 const convertFacetColumnRangeRequest = (
   facet: FacetColumnResultRange,
 ): FacetColumnRangeRequest => {
-  let result = {
+  let result: FacetColumnRangeRequest = {
     concreteType:
       'org.sagebionetworks.repo.model.table.FacetColumnRangeRequest',
     columnName: facet.columnName, // The name of the faceted column
   }
 
   if (facet.columnMin) {
-    result = { ...result, ...{ min: facet.columnMin, max: facet.columnMax } }
+    result = { ...result, min: facet.columnMin, max: facet.columnMax }
   }
   return result
 }
