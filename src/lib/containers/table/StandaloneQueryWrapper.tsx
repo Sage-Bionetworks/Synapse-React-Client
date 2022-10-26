@@ -24,6 +24,7 @@ import {
 } from '../QueryVisualizationWrapper'
 import { isTable } from '../../utils/functions/EntityTypeUtils'
 import LastUpdatedOn from '../query_wrapper_plot_nav/LastUpdatedOn'
+import { NoContentPlaceholderType } from './NoContentPlaceholderType'
 
 type SearchParams = {
   searchParams?: {
@@ -104,6 +105,9 @@ const StandaloneQueryWrapper: React.FunctionComponent<
     unitDescription = 'Results',
     rgbIndex,
     showLastUpdatedOn,
+    noContentPlaceholderType = showTopLevelControls
+      ? NoContentPlaceholderType.INTERACTIVE
+      : NoContentPlaceholderType.STATIC,
     ...rest
   } = props
 
@@ -129,6 +133,7 @@ const StandaloneQueryWrapper: React.FunctionComponent<
         rgbIndex={rgbIndex}
         unitDescription={unitDescription}
         showLastUpdatedOn={showLastUpdatedOn}
+        noContentPlaceholderType={noContentPlaceholderType}
         {...rest}
       >
         <QueryContextConsumer>
