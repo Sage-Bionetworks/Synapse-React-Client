@@ -1,0 +1,25 @@
+import{r as i,a as s,j as o,F as g}from"./jsx-runtime.7534b5a0.js";import{h as C,d7 as I,o as j}from"./index.6f245744.js";import{D as k}from"./DiscussionSearchResult.7e683b0f.js";import{T as d}from"./Typography.31b00c6c.js";import{s as E}from"./NoSearchResults.41d27d5b.js";import{I as x}from"./IconSvg.2709626b.js";import{d as B}from"./ToastMessage.1747dfd4.js";import{B as L}from"./Button.facab635.js";import"./iframe.cb5f3f40.js";import"./index.5a0550e3.js";import"./withStyles.ecbbcd0d.js";import"./utils.b18b59db.js";import"./Alert.9c82c23c.js";import"./index.57d09176.js";import"./index.35ce73ec.js";import"./isArray.1150e90d.js";import"./getEndpoint.bb7ded34.js";import"./SvgIcon.9b76f9a1.js";import"./moment.a565bb48.js";import"./UserCard.aa295333.js";import"./IconCopy.66e91ea0.js";import"./SkeletonTable.7dcdf0c1.js";import"./times.837d97f6.js";import"./toInteger.39442f31.js";import"./isSymbol.c1d6cf65.js";import"./Skeleton.30b9665e.js";import"./Tooltip.71890e59.js";import"./createSvgIcon.ae6f4177.js";import"./makeStyles.c0018ba8.js";import"./Overlay.47a63549.js";import"./useWaitForDOMRef.fac5222c.js";import"./usePopperMarginModifiers.c83e318d.js";import"./hasClass.56fd144a.js";import"./Row.7e8abf6d.js";import"./InfoOutlined.9d5ad8e8.js";import"./FullWidthAlert.95dc5339.js";import"./removeClass.27874bcb.js";import"./uniqueId.4137f4c9.js";const u=t=>{const{onSearchResultsVisible:c}=t,{accessToken:m}=C(),[a,f]=i.exports.useState(""),[r,p]=i.exports.useState(),[l,h]=i.exports.useState(),[n,v]=i.exports.useState(),[y,S]=i.exports.useState(!1),F=async()=>{c&&c(!0);try{p(void 0),S(!1);const e=await I({searchString:a,nextPageToken:void 0},t.forumId,m);e.matches.length==0&&S(!0),p(e),h(e.matches)}catch(e){B(e.reason,"danger")}},T=()=>{c&&c(!1),f(""),p(void 0),S(!1),h(void 0)};i.exports.useEffect(()=>{(async()=>{if(t.projectId){const N=await j(m,t.projectId);v(N)}})()},[m,t.projectId]);const R=()=>s("div",{className:"text-center",children:[E,o(d,{variant:"body1",children:"No results with this query"}),o(d,{variant:"body2",children:"Search the full text of posts, replies, and titles"})]}),_=async()=>{const e=await I({searchString:a,nextPageToken:r==null?void 0:r.nextPageToken},t.forumId,m);p(e),l&&h([...l,...e.matches])};return s("div",{className:"bootstrap-4-backport ForumSearch",children:[s("div",{children:[o("span",{className:"SearchIcon",children:o(x,{options:{icon:"search"}})}),o("input",{role:"textbox",type:"search",className:`SearchBar  ${r?"SearchBarResult":""}`,placeholder:"Search discussions",value:a,onChange:e=>{f(e.target.value)},onKeyDown:e=>{e.key==="Enter"&&F()}}),a&&o("button",{className:"ClearSearchIcon",onClick:()=>{T()},children:o(x,{options:{icon:"clear"}})})]}),y&&s(g,{children:[t.projectId&&s(d,{variant:"body2",className:"NoResultsText",children:["No results for '",a,"' in ",n==null?void 0:n.name]}),o(R,{})]}),l&&s(g,{children:[t.projectId&&!y&&s(d,{variant:"body2",className:"ResultsText",children:["Results for '",a,"' in ",n==null?void 0:n.name]}),l.map(e=>o("div",{children:o(k,{threadId:e.threadId,replyId:e.replyId})},`${e.forumId}-${e.threadId}-${e.replyId}`))]}),(r==null?void 0:r.nextPageToken)&&o("div",{className:"text-center",children:o(L,{variant:"primary",onClick:_,children:"Load more"})})]})},b=u;try{u.displayName="ForumSearch",u.__docgenInfo={description:"",displayName:"ForumSearch",props:{forumId:{defaultValue:null,description:"",name:"forumId",required:!0,type:{name:"string"}},projectId:{defaultValue:null,description:"",name:"projectId",required:!1,type:{name:"string"}},onSearchResultsVisible:{defaultValue:null,description:"",name:"onSearchResultsVisible",required:!1,type:{name:"((visible: boolean) => void)"}}}},typeof STORYBOOK_REACT_CLASSES<"u"&&(STORYBOOK_REACT_CLASSES["src/lib/containers/ForumSearch.tsx#ForumSearch"]={docgenInfo:u.__docgenInfo,name:"ForumSearch",path:"src/lib/containers/ForumSearch.tsx#ForumSearch"})}catch{}const xe={parameters:{storySource:{source:`import React from 'react'
+import { ComponentStory, ComponentMeta } from '@storybook/react'
+
+import ForumSearch from './ForumSearch'
+
+// More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
+export default {
+  title: 'Synapse/ForumSearch',
+  component: ForumSearch,
+  // More on argTypes: https://storybook.js.org/docs/react/api/argtypes
+  argTypes: {},
+} as ComponentMeta<typeof ForumSearch>
+
+// More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
+const Template: ComponentStory<typeof ForumSearch> = args => (
+  <ForumSearch {...args} />
+)
+
+export const Demo = Template.bind({})
+
+Demo.args = {
+  forumId: '1032',
+  onSearchResultsVisible: visible => alert(\`Is visible? \${visible}\`),
+}
+`,locationsMap:{demo:{startLoc:{col:53,line:15},endLoc:{col:1,line:17},startBody:{col:53,line:15},endBody:{col:1,line:17}}}}},title:"Synapse/ForumSearch",component:b,argTypes:{}},M=t=>o(b,{...t}),V=M.bind({});V.args={forumId:"1032",onSearchResultsVisible:t=>alert(`Is visible? ${t}`)};const be=["Demo"];export{V as Demo,be as __namedExportsOrder,xe as default};
