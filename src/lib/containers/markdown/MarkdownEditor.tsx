@@ -1,4 +1,9 @@
 import React, { useRef, useState, useEffect } from 'react'
+import {
+  commandList,
+  CommandListType,
+  MARKDOWN_COMMANDS_DATA,
+} from '../../utils/synapseTypes/MarkdownCommands'
 import IconSvg from '../IconSvg'
 import MarkdownSynapse from './MarkdownSynapse'
 
@@ -19,19 +24,6 @@ export const MarkdownEditor: React.FunctionComponent<MarkdownEditorProps> = ({
   )
   const [text, setText] = useState<string>('')
   const [selectionStart, setSelectionStart] = useState<number>(0)
-  const commandList = [
-    'title',
-    'bold',
-    'italic',
-    'strikethrough',
-    'code',
-    'latex',
-    'subscript',
-    'superscript',
-    'link',
-    'image',
-  ]
-
   const textAreaRef = useRef<HTMLTextAreaElement>(null)
 
   useEffect(() => {
@@ -41,7 +33,7 @@ export const MarkdownEditor: React.FunctionComponent<MarkdownEditorProps> = ({
     }
   }, [textAreaRef, selectionStart])
 
-  const handleCommands = (command: string) => {
+  const handleCommands = (command: CommandListType) => {
     const textVal = textAreaRef.current
     if (textVal) {
       const start = textVal.selectionStart
@@ -50,50 +42,40 @@ export const MarkdownEditor: React.FunctionComponent<MarkdownEditorProps> = ({
       const first = text.substring(0, start)
       const later = text.substring(end, text.length)
 
-      let openSyntax = ''
-      let closeSyntax = ''
-      if (command === 'bold') {
-        openSyntax = closeSyntax = '**'
-      } else if (command == 'italic') {
-        openSyntax = closeSyntax = '_'
-      } else if (command === 'strikethrough') {
-        openSyntax = closeSyntax = '--'
-      } else if (command === 'latex') {
-        openSyntax = '$$\\('
-        closeSyntax = '\\)$$'
-      } else if (command === 'subscript') {
-        openSyntax = closeSyntax = '~'
-      } else if (command === 'superscript') {
-        openSyntax = closeSyntax = '^'
-      } else if (command === 'title') {
-        openSyntax = '###'
-      } else if (command === 'link') {
-        openSyntax = '['
-        closeSyntax = '](url)'
-      } else if (command === 'image') {
-        openSyntax = '!['
-        closeSyntax = '](image-url)'
-      } else if (command == 'code') {
-        openSyntax = closeSyntax = '```'
-        const newTextList = `${first}
-        ${openSyntax}
-        ${selected}
-        ${closeSyntax}
-        ${later}`.split('\n')
-        // removes first empty line
-        newTextList.shift()
-        const newText = newTextList.map(s => s.trim()).join('\n')
-        setText(newText)
-        textAreaRef.current.focus()
-        // adds one due to new line
-        setSelectionStart(start + openSyntax.length + 1)
-        return
-      }
+      const openSyntax = MARKDOWN_COMMANDS_DATA[command].openSyntax
+      const closeSyntax = MARKDOWN_COMMANDS_DATA[command].closeSyntax
 
-      const newText = `${first}${openSyntax}${selected}${closeSyntax}${later}`
-      textAreaRef.current.focus()
-      setSelectionStart(start + openSyntax.length)
-      setText(newText)
+      switch (command) {
+        case 'code': {
+          const newText = `${first}
+          ${openSyntax}
+          ${selected}
+          ${closeSyntax}
+          ${later}`
+            .split('\n')
+            .map(s => s.trim())
+            .join('\n')
+          setText(newText)
+          textAreaRef.current.focus()
+          // adds 2 due to new line
+          setSelectionStart(start + openSyntax.length + 2)
+          break
+        }
+        case 'title':
+        case 'bold':
+        case 'italic':
+        case 'strikethrough':
+        case 'latex':
+        case 'subscript':
+        case 'superscript':
+        case 'link':
+        case 'image': {
+          const newText = `${first}${openSyntax}${selected}${closeSyntax}${later}`
+          textAreaRef.current.focus()
+          setSelectionStart(start + openSyntax.length)
+          setText(newText)
+        }
+      }
     }
   }
 
