@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import {
   isFacetAvailable,
   hasResettableFilters as isFilteredUtil,
@@ -58,6 +58,11 @@ export function InfiniteQueryWrapper(props: InfiniteQueryWrapperProps) {
     getInitQueryRequest,
     getLastQueryRequest,
     setQuery,
+    resetQuery,
+    removeQueryFilter,
+    removeValueFromQueryFilter,
+    removeSelectedFacet,
+    removeValueFromSelectedFacet,
   } = useImmutableTableQuery({
     initQueryRequest,
     componentIndex,
@@ -186,6 +191,13 @@ export function InfiniteQueryWrapper(props: InfiniteQueryWrapperProps) {
     return isFilteredUtil(request.query, lockedColumn)
   }, [getLastQueryRequest, lockedColumn])
 
+  const getColumnModel = useCallback(
+    (columnName: string) => {
+      return data?.columnModels?.find(cm => cm.name === columnName) ?? null
+    },
+    [data?.columnModels],
+  )
+
   const context: InfiniteQueryContextType = {
     data: dataWithLockedColumnFacetRemoved,
     isLoadingNewPage: isFetchingNextPage,
@@ -203,6 +215,13 @@ export function InfiniteQueryWrapper(props: InfiniteQueryWrapperProps) {
     goToNextPage,
     goToPreviousPage,
     hasResettableFilters,
+    resetQuery,
+    removeQueryFilter,
+    removeValueFromQueryFilter,
+    removeSelectedFacet,
+    removeValueFromSelectedFacet,
+    lockedColumn,
+    getColumnModel,
   }
   /**
    * Render the children without any formatting
