@@ -39,19 +39,17 @@ const getStoredEvaluation = (): Evaluation[] => {
   }
 }
 
-export const getDisplayValueForEntityColumn = (value: string): string => {
+const getDisplayValueForEntityColumn = (value: string): string => {
   const entity = getStoredEntityHeaders().find(item => item.id === value)
   return entity?.name ?? value
 }
 
-export const getDisplayValueEvaluationIdColumn = (
-  facetValue: string,
-): string => {
+const getDisplayValueEvaluationIdColumn = (facetValue: string): string => {
   const evaluation = getStoredEvaluation().find(item => item.id === facetValue)
   return evaluation?.name || facetValue
 }
 
-export const getDisplayValueUserIdColumn = (facetValue: string): string => {
+const getDisplayValueUserIdColumn = (facetValue: string): string => {
   const userProfile = getStoredUserProfiles().find(
     item => item.ownerId === facetValue,
   )

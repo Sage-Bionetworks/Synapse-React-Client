@@ -30,6 +30,7 @@ export type QueryVisualizationContextType = {
   showLastUpdatedOn?: boolean
   /** Given a column name, return the display name for the column */
   getColumnDisplayName: (columnName?: string) => string | undefined
+  /** Given a cell value and a column type, returns the displayed value for the data */
   getDisplayValue: (value: string, columnType: ColumnType) => string
   /** React node to display in place of cards/table when there are no results. */
   NoContentPlaceholder: () => JSX.Element
