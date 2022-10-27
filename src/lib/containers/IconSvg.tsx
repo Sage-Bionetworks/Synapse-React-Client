@@ -71,6 +71,8 @@ import {
   FormatItalic,
   FormatBold,
   Title,
+  StrikethroughS,
+  Image,
 } from '@material-ui/icons'
 import React, { useEffect } from 'react'
 import AccessManagement from '../assets/mui_components/AccessManagement'
@@ -197,6 +199,11 @@ export const IconStrings = [
   'title',
   'visibility',
   'visibilityOff',
+  'strikethrough',
+  'subscript',
+  'superscript',
+  'latex',
+  'image',
 ] as const
 
 export type Icon = typeof IconStrings[number]
@@ -455,6 +462,16 @@ const getIcon = (options: IconSvgOptions) => {
       return <VisibilityTwoTone style={muiSvgStyle} />
     case 'visibilityOff':
       return <VisibilityOffTwoTone style={muiSvgStyle} />
+    case 'strikethrough':
+      return <StrikethroughS style={muiSvgStyle} />
+    case 'latex':
+      return <span>TeX</span>
+    case 'image':
+      return <Image style={muiSvgStyle} />
+    case 'superscript':
+      return <span>X&sup2;</span>
+    case 'subscript':
+      return <span>X&#8322;</span>
     default:
       return <></>
   }
