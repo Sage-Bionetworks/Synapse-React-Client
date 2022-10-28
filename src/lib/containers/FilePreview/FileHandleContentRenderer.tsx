@@ -10,7 +10,7 @@ import { SynapseSpinner } from '../LoadingScreen'
 import HtmlPreview from './HtmlPreview/HtmlPreview'
 import { PreviewRendererType } from './PreviewRendererType'
 
-const MAX_FILE_SIZE = 10 * MB
+const MAX_FILE_SIZE = 30 * MB
 
 export type FileHandleContentRendererProps = {
   /** The file handle whose contents should be downloaded and rendered */
