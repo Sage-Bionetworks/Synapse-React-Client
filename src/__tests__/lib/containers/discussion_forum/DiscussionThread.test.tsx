@@ -166,7 +166,7 @@ describe('Discussion Thread test', () => {
     })
     await userEvent.click(followButton)
 
-    waitFor(() => {
+    await waitFor(() => {
       expect(SynapseClient.postSubscription).toBeCalledWith(
         MOCK_ACCESS_TOKEN,
         followRequest,
