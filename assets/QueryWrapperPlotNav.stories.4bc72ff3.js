@@ -1,0 +1,175 @@
+import{Q as o}from"./CardContainerLogic.6b85104b.js";import{G as n,L as r}from"./SynapseConstants.b6aa8bf5.js";import{j as i}from"./jsx-runtime.1d4416c9.js";import"./index.733ef2d4.js";import"./index.b4915227.js";import"./iframe.6e2e208e.js";import"./Button.52817769.js";import"./index.57d09176.js";import"./withStyles.d9b674b1.js";import"./utils.12e9eddb.js";import"./Alert.a029b8a7.js";import"./createWithBsPrefix.e9487138.js";import"./index.35ce73ec.js";import"./isArray.cf5064fd.js";import"./getEndpoint.bb7ded34.js";import"./SvgIcon.1ce682e0.js";import"./sqlFunctions.cfb3693d.js";import"./RegularExpressions.3cd69849.js";import"./useGetInfoFromIds.023dc351.js";import"./use-deep-compare-effect.esm.550c47db.js";import"./uniq.2cacf64d.js";import"./_baseSlice.50189bc5.js";import"./toInteger.20441ff0.js";import"./isSymbol.48f5f8d1.js";import"./_cacheHas.45054515.js";import"./without.11794d25.js";import"./uniqueId.b31d8e69.js";import"./_Set.81322f5c.js";import"./_setToArray.a82100c8.js";import"./ColumnType.744125d2.js";import"./EntityIcon.c9f8ea06.js";import"./TypeUtils.a2c41307.js";import"./IconSvg.a5337a6a.js";import"./Tooltip.514cbe94.js";import"./createSvgIcon.1518894e.js";import"./makeStyles.0711e4e8.js";import"./InfoOutlined.bc9acc28.js";import"./FacetNav.18a94871.js";import"./queryUtils.ca99dead.js";import"./useInfiniteQuery.f21582a5.js";import"./queryKeys.e0d3085f.js";import"./cloneDeep.118b9836.js";import"./_baseClone.ef28406f.js";import"./_getTag.9cf40ed3.js";import"./NoSearchResults.17c0b8b2.js";import"./NoData.f802ed9a.js";import"./unCamelCase.07e38083.js";import"./useEntity.0c38a2f1.js";import"./useMutation.c45e7ceb.js";import"./pick.3a49f954.js";import"./isEqual.38765cac.js";import"./ElementWithTooltip.52728afe.js";import"./SynapseTableConstants.07ecdebd.js";import"./Dropdown.0e10b3ef.js";import"./usePrevious.4f8ee04e.js";import"./contains.ed3c5fde.js";import"./usePopperMarginModifiers.ae1274b1.js";import"./hasClass.56fd144a.js";import"./isRequiredForA11y.20ed4857.js";import"./Checkbox.0b72edd3.js";import"./RadioGroup.28342e68.js";import"./moment.a565bb48.js";import"./RangeSlider.25c35388.js";import"./factory.7178a034.js";import"./react-sizeme.ec5fe5ee.js";import"./Skeleton.5fb82d71.js";import"./ColorGradient.16f0e0f2.js";import"./colorPalette.8145e2e2.js";import"./LoadingScreen.2244e51f.js";import"./Typography.8752acbc.js";import"./Modal.0b4122af.js";import"./inheritsLoose.dffc5cd5.js";import"./removeClass.27874bcb.js";import"./useWaitForDOMRef.9692dd43.js";import"./SelectionCriteriaPill.3410af6c.js";import"./Close.897e58c4.js";import"./react-select.esm.67ba8576.js";import"./Select-54ac8379.esm.c7895ad9.js";import"./CustomSelectWidget.bf3784d7.js";import"./index.browser.e60e72d5.js";import"./WarningModal.a1ce61f8.js";import"./react-intersection-observer.esm.c059a8f3.js";import"./UserCard.8a53ad4c.js";import"./IconCopy.027a3c44.js";import"./SkeletonTable.944ff781.js";import"./times.c10c287f.js";import"./ToastMessage.97b225d1.js";import"./FullWidthAlert.fd7cf951.js";import"./Overlay.12b5a369.js";import"./DateFormatter.f8d5f7bf.js";import"./core.esm.2097e0b7.js";import"./isEmpty.74b3e09f.js";import"./union.e1eabe6c.js";import"./isString.c6b3a64b.js";import"./useGetDownloadListStatistics.77a66886.js";import"./QueryCount.39ca8105.js";import"./useGetAccessRequirement.83dcd0d3.js";import"./ManagedACTAccessRequirementStatus.226b91ad.js";import"./FileUpload.708f4707.js";import"./UserSearchBox.d789c0da.js";import"./index.582f6d03.js";import"./UserOrTeamBadge.f7299049.js";import"./EntityLink.b7bb42bf.js";import"./SynapseVideo.1201d15f.js";import"./IconList.d299fd42.js";import"./UserCardList.41c52d50.js";const lo={parameters:{storySource:{source:`import React from 'react'
+import { ComponentStory, ComponentMeta } from '@storybook/react'
+
+import QueryWrapperPlotNav from './QueryWrapperPlotNav'
+import { EXPERIMENTAL_TOOL, GENERIC_CARD } from '../../utils/SynapseConstants'
+
+// More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
+export default {
+  title: 'Explore/QueryWrapperPlotNav',
+  component: QueryWrapperPlotNav,
+  // More on argTypes: https://storybook.js.org/docs/react/api/argtypes
+  argTypes: {},
+} as ComponentMeta<typeof QueryWrapperPlotNav>
+
+// More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
+const Template: ComponentStory<typeof QueryWrapperPlotNav> = args => (
+  <QueryWrapperPlotNav {...args} />
+)
+
+export const Cards = Template.bind({})
+// More on args: https://storybook.js.org/docs/react/writing-stories/args
+Cards.args = {
+  name: 'Tools',
+  sql: 'SELECT * FROM syn26438037',
+  limit: 5,
+  defaultShowFacetVisualization: false,
+  defaultShowSearchBox: true,
+  shouldDeepLink: true,
+  searchConfiguration: {
+    fullTextSearchHelpURL:
+      'https://help.nf.synapse.org/NFdocs/Tips-for-Search.2640478225.html',
+  },
+  cardConfiguration: {
+    type: GENERIC_CARD,
+    titleLinkConfig: {
+      isMarkdown: false,
+      baseURL: 'Explore/Tools/DetailsPage',
+      URLColumnName: 'resourceId',
+      matchColumnName: 'resourceId',
+      overrideLinkURLColumnName: 'biobankURL',
+      // target: TargetEnum.NEW_WINDOW
+    },
+    secondaryLabelLimit: 4,
+    genericCardSchema: {
+      type: EXPERIMENTAL_TOOL,
+      title: 'resourceName',
+      subTitle: 'resourceType',
+      description: 'description',
+      secondaryLabels: [
+        'rrid',
+        'synonyms',
+        'cellLineCategory',
+        'cellLineDisease',
+        'modelofManifestation',
+        'backgroundStrain',
+        'backgroundSubstrain',
+        'animalModelDisease',
+        'animalModelOfManifestation',
+        'targetAntigen',
+        'reactiveSpecies',
+        'hostOrganism',
+        'specimenTissueType',
+        'specimenPreparationMethod',
+        'diseaseType',
+        'tumorType',
+        'specimenFormat',
+        'specimenType',
+      ],
+    },
+    labelLinkConfig: [
+      {
+        isMarkdown: true,
+        matchColumnName: 'rrid',
+        tooltipText:
+          'This is to demo a custom tooltip that describes column data',
+      },
+    ],
+  },
+}
+
+export const FileView = Template.bind({})
+// More on args: https://storybook.js.org/docs/react/writing-stories/args
+FileView.args = {
+  tableConfiguration: {
+    showAccessColumn: true,
+    showDownloadColumn: true,
+    columnLinks: [
+      {
+        matchColumnName: 'study',
+        isMarkdown: false,
+        baseURL: 'Explore/Studies/DetailsPage',
+        URLColumnName: 'Study_Name',
+        wrapValueWithParens: true,
+      },
+      {
+        matchColumnName: 'name',
+        isMarkdown: false,
+        baseURL: 'Explore/Files/DetailsPage',
+        URLColumnName: 'FileId',
+        overrideValueWithRowID: true,
+        wrapValueWithParens: false,
+      },
+    ],
+  },
+  searchConfiguration: {
+    searchable: [
+      'study',
+      'dataType',
+      'assay',
+      'organ',
+      'tissue',
+      'species',
+      'diagnosis',
+      'sex',
+      'consortium',
+      'grant',
+      'modelSystemName',
+      'treatmentType',
+      'specimenID',
+      'individualID',
+      'individualIdSource',
+      'specimenIdSource',
+      'resourceType',
+      'dataSubtype',
+      'metadataType',
+      'assayTarget',
+      'analysisType',
+      'cellType',
+      'nucleicAcidSource',
+      'fileFormat',
+      'group',
+      'name',
+      'isModelSystem',
+      'isConsortiumAnalysis',
+      'isMultiSpecimen',
+      'metaboliteType',
+      'chromosome',
+    ],
+  },
+  shouldDeepLink: true,
+  visibleColumnCount: 10,
+  rgbIndex: 1,
+  name: 'Data',
+  sqlOperator: '=',
+  sql: 'SELECT * FROM syn11346063.28',
+  hideSqlEditorControl: false,
+}
+
+export const Dataset = Template.bind({})
+// More on args: https://storybook.js.org/docs/react/writing-stories/args
+Dataset.args = {
+  sql: 'SELECT * FROM syn26302617',
+  tableConfiguration: {
+    showAccessColumn: true,
+    showDownloadColumn: true,
+  },
+  name: 'Dataset Demo',
+  sqlOperator: '=',
+  hideSqlEditorControl: false,
+  shouldDeepLink: false,
+}
+
+export const DatasetCollection = Template.bind({})
+DatasetCollection.args = {
+  sql: 'SELECT * FROM syn33199585',
+  tableConfiguration: {
+    showAccessColumn: true,
+    showDownloadColumn: true,
+  },
+  name: 'Dataset Collection Demo',
+  sqlOperator: '=',
+  hideSqlEditorControl: false,
+  shouldDeepLink: false,
+}
+`,locationsMap:{cards:{startLoc:{col:61,line:16},endLoc:{col:1,line:18},startBody:{col:61,line:16},endBody:{col:1,line:18}},"file-view":{startLoc:{col:61,line:16},endLoc:{col:1,line:18},startBody:{col:61,line:16},endBody:{col:1,line:18}},dataset:{startLoc:{col:61,line:16},endLoc:{col:1,line:18},startBody:{col:61,line:16},endBody:{col:1,line:18}},"dataset-collection":{startLoc:{col:61,line:16},endLoc:{col:1,line:18},startBody:{col:61,line:16},endBody:{col:1,line:18}}}}},title:"Explore/QueryWrapperPlotNav",component:o,argTypes:{}},e=t=>i(o,{...t}),a=e.bind({});a.args={name:"Tools",sql:"SELECT * FROM syn26438037",limit:5,defaultShowFacetVisualization:!1,defaultShowSearchBox:!0,shouldDeepLink:!0,searchConfiguration:{fullTextSearchHelpURL:"https://help.nf.synapse.org/NFdocs/Tips-for-Search.2640478225.html"},cardConfiguration:{type:n,titleLinkConfig:{isMarkdown:!1,baseURL:"Explore/Tools/DetailsPage",URLColumnName:"resourceId",matchColumnName:"resourceId",overrideLinkURLColumnName:"biobankURL"},secondaryLabelLimit:4,genericCardSchema:{type:r,title:"resourceName",subTitle:"resourceType",description:"description",secondaryLabels:["rrid","synonyms","cellLineCategory","cellLineDisease","modelofManifestation","backgroundStrain","backgroundSubstrain","animalModelDisease","animalModelOfManifestation","targetAntigen","reactiveSpecies","hostOrganism","specimenTissueType","specimenPreparationMethod","diseaseType","tumorType","specimenFormat","specimenType"]},labelLinkConfig:[{isMarkdown:!0,matchColumnName:"rrid",tooltipText:"This is to demo a custom tooltip that describes column data"}]}};const s=e.bind({});s.args={tableConfiguration:{showAccessColumn:!0,showDownloadColumn:!0,columnLinks:[{matchColumnName:"study",isMarkdown:!1,baseURL:"Explore/Studies/DetailsPage",URLColumnName:"Study_Name",wrapValueWithParens:!0},{matchColumnName:"name",isMarkdown:!1,baseURL:"Explore/Files/DetailsPage",URLColumnName:"FileId",overrideValueWithRowID:!0,wrapValueWithParens:!1}]},searchConfiguration:{searchable:["study","dataType","assay","organ","tissue","species","diagnosis","sex","consortium","grant","modelSystemName","treatmentType","specimenID","individualID","individualIdSource","specimenIdSource","resourceType","dataSubtype","metadataType","assayTarget","analysisType","cellType","nucleicAcidSource","fileFormat","group","name","isModelSystem","isConsortiumAnalysis","isMultiSpecimen","metaboliteType","chromosome"]},shouldDeepLink:!0,visibleColumnCount:10,rgbIndex:1,name:"Data",sqlOperator:"=",sql:"SELECT * FROM syn11346063.28",hideSqlEditorControl:!1};const l=e.bind({});l.args={sql:"SELECT * FROM syn26302617",tableConfiguration:{showAccessColumn:!0,showDownloadColumn:!0},name:"Dataset Demo",sqlOperator:"=",hideSqlEditorControl:!1,shouldDeepLink:!1};const m=e.bind({});m.args={sql:"SELECT * FROM syn33199585",tableConfiguration:{showAccessColumn:!0,showDownloadColumn:!0},name:"Dataset Collection Demo",sqlOperator:"=",hideSqlEditorControl:!1,shouldDeepLink:!1};const mo=["Cards","FileView","Dataset","DatasetCollection"];export{a as Cards,l as Dataset,m as DatasetCollection,s as FileView,mo as __namedExportsOrder,lo as default};
