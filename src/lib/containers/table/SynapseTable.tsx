@@ -46,8 +46,6 @@ import {
 import { ICON_STATE } from './SynapseTableConstants'
 import {
   getColumnIndiciesWithType,
-  getCountFunctionColumnIndices,
-  getSqlUnderlyingDataForRow,
   getUniqueEntities,
 } from './SynapseTableUtils'
 import { TablePagination } from './TablePagination'
@@ -103,12 +101,6 @@ export type SynapseTableProps = {
   columnLinks?: LabelLinkConfig
   hideDownload?: boolean
   isRowSelectionVisible?: boolean
-  /**
-   * If true, columns created by the COUNT function will render with a link to Synapse that opens the disaggregated query results filtered by the conditions of that row.
-   * Note that this is very brittle and only supports one column at a time. See SWC-6075 for more information. Default false.
-   */
-  linkCountToDisaggregatedQuery?: boolean
-  showNoContentAvailableWhenEmpty?: boolean
 }
 
 export default class SynapseTable extends React.Component<
@@ -437,21 +429,6 @@ export default class SynapseTable extends React.Component<
     return (entity && (isEntityView(entity) || isDataset(entity))) ?? false
   }
 
-  private showGroupRowData = (selectedRow: Row) => {
-    // magic happens - parse query, deep copy query bundle request, modify, encode, send to Synapse.org.  Easy!
-    const queryCopy = this.props.queryContext.getLastQueryRequest().query
-    const parsed = getSqlUnderlyingDataForRow(
-      selectedRow,
-      queryCopy.sql,
-      this.props.queryContext.data,
-    )
-    queryCopy.sql = parsed.newSql
-    const queryJSON = JSON.stringify(queryCopy)
-    // encode this copy of the query (json)
-    const encodedQuery = btoa(queryJSON)
-    return `${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!Synapse:${parsed.synId}/tables/query/${encodedQuery}`
-  }
-
   private renderTable = (
     headers: SelectColumn[],
     columnModels: ColumnModel[],
@@ -584,14 +561,9 @@ export default class SynapseTable extends React.Component<
         setSelectedRowIndices,
       },
       columnLinks = [],
-      linkCountToDisaggregatedQuery = false,
     } = this.props
     const { selectColumns = [], columnModels = [] } = data!
     const { mapEntityIdToHeader, mapUserIdToHeader } = this.state
-    // find column indices that are COUNT type
-    const countColumnIndexes = getCountFunctionColumnIndices(
-      this.props.queryContext.getLastQueryRequest().query.sql,
-    )
 
     rows.forEach((row, rowIndex) => {
       const entityVersionNumber = row.versionNumber?.toString()
@@ -608,9 +580,6 @@ export default class SynapseTable extends React.Component<
             this.state.sortedColumnSelection,
             columnName,
           )
-          const isCountColumn = countColumnIndexes.includes(colIndex)
-          const linkToDisaggregatedQuery =
-            isCountColumn && linkCountToDisaggregatedQuery
           const isBold = index === -1 ? '' : 'SRC-boldText'
           if (isColumnActive) {
             return (
@@ -618,30 +587,20 @@ export default class SynapseTable extends React.Component<
                 className="SRC_noBorderTop"
                 key={`(${rowIndex}${columnValue}${colIndex})`}
               >
-                {linkToDisaggregatedQuery ? (
-                  <a
-                    href={this.showGroupRowData(row)}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <p className={isBold}>{columnValue}</p>
-                  </a>
-                ) : (
-                  <SynapseTableCell
-                    columnType={headers[colIndex].columnType}
-                    columnValue={columnValue}
-                    isBold={isBold}
-                    mapEntityIdToHeader={mapEntityIdToHeader}
-                    mapUserIdToHeader={mapUserIdToHeader}
-                    columnLinkConfig={columnLinkConfig}
-                    columnName={columnName}
-                    rowData={row.values}
-                    selectColumns={selectColumns}
-                    columnModels={columnModels}
-                    rowId={row.rowId}
-                    rowVersionNumber={row.versionNumber}
-                  />
-                )}
+                <SynapseTableCell
+                  columnType={headers[colIndex].columnType}
+                  columnValue={columnValue}
+                  isBold={isBold}
+                  mapEntityIdToHeader={mapEntityIdToHeader}
+                  mapUserIdToHeader={mapUserIdToHeader}
+                  columnLinkConfig={columnLinkConfig}
+                  columnName={columnName}
+                  rowData={row.values}
+                  selectColumns={selectColumns}
+                  columnModels={columnModels}
+                  rowId={row.rowId}
+                  rowVersionNumber={row.versionNumber}
+                />
               </ExpandableTableDataCell>
             )
           }

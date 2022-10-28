@@ -39,7 +39,22 @@ const MOCK_SUBSCRIPTION_ID = '999'
 
 const SynapseClient = require('../../../../lib/utils/SynapseClient')
 SynapseClient.postSubscription = jest.fn()
-SynapseClient.deleteSubscription = jest.fn()
+SynapseClient.deleteSubscription = jest.fn().mockImplementation(() => {
+  // When the subscription is deleted, update the server to return nothing.
+  server.use(
+    rest.post(
+      `${getEndpoint(
+        BackendDestinationEnum.REPO_ENDPOINT,
+      )}/repo/v1/subscription/list`,
+      async (req, res, ctx) => {
+        return res(
+          ctx.status(200),
+          ctx.json({ results: [], totalNumberOfResults: 0 }),
+        )
+      },
+    ),
+  )
+})
 
 const mockThread: PaginatedResults<DiscussionReplyBundle>[] = [
   {
@@ -161,27 +176,34 @@ describe('Discussion Thread test', () => {
   it('Has a follow button', async () => {
     renderComponent()
 
-    const followButton = await screen.findByRole('button', {
-      name: /follow-button/i,
+    let unfollowButton: HTMLButtonElement | undefined
+    await waitFor(() => {
+      unfollowButton = screen.getByRole<HTMLButtonElement>('button', {
+        name: /Unfollow thread/i,
+      })
+      expect(unfollowButton).not.toBeDisabled()
     })
-    await userEvent.click(followButton)
-
-    waitFor(() => {
-      expect(SynapseClient.postSubscription).toBeCalledWith(
-        MOCK_ACCESS_TOKEN,
-        followRequest,
-      )
-    })
-
-    const unFollowButton = await screen.findByRole('button', {
-      name: /unfollow-button/i,
-    })
-
-    await userEvent.click(unFollowButton)
+    await userEvent.click(unfollowButton!)
     await waitFor(() => {
       expect(SynapseClient.deleteSubscription).toBeCalledWith(
         MOCK_ACCESS_TOKEN,
         MOCK_SUBSCRIPTION_ID,
+      )
+    })
+
+    let followButton: HTMLButtonElement | undefined
+    await waitFor(() => {
+      followButton = screen.getByRole<HTMLButtonElement>('button', {
+        name: /Follow thread/i,
+      })
+      expect(followButton).not.toBeDisabled()
+    })
+
+    await userEvent.click(followButton!)
+    await waitFor(() => {
+      expect(SynapseClient.postSubscription).toBeCalledWith(
+        MOCK_ACCESS_TOKEN,
+        followRequest,
       )
     })
   })

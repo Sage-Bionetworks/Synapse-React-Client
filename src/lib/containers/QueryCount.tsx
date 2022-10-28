@@ -2,30 +2,23 @@ import React from 'react'
 import { SynapseConstants } from '../utils/'
 import { parseEntityIdFromSqlStatement } from '../utils/functions/sqlFunctions'
 import useGetQueryResultBundle from '../utils/hooks/SynapseAPI/entity/useGetQueryResultBundle'
-import {
-  FacetColumnValuesRequest,
-  QueryBundleRequest,
-} from '../utils/synapseTypes/'
+import { Query, QueryBundleRequest } from '../utils/synapseTypes/'
 
 export type QueryCountProps = {
-  sql: string
-  selectedFacets?: FacetColumnValuesRequest[]
+  query: Query
   parens?: boolean
 }
 
-const QueryCount: React.FunctionComponent<QueryCountProps> = ({
-  sql,
-  selectedFacets,
-  parens,
-}) => {
-  const entityId = parseEntityIdFromSqlStatement(sql)
+/**
+ * Shows the total count of results for a table query.
+ */
+function QueryCount(props: QueryCountProps) {
+  const { query, parens } = props
+  const entityId = parseEntityIdFromSqlStatement(query.sql)
 
   const request: QueryBundleRequest = {
     concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
-    query: {
-      sql,
-      selectedFacets,
-    },
+    query: query,
     entityId,
     partMask: SynapseConstants.BUNDLE_MASK_QUERY_COUNT,
   }

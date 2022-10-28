@@ -1,103 +1,29 @@
-import { lexer, parser } from 'sql-parser'
-import { SelectColumn, Row } from '../synapseTypes'
+import { Row, SelectColumn } from '../synapseTypes'
 import { SYNAPSE_ENTITY_ID_REGEX } from '../functions/RegularExpressions'
-
-export type KeyValue = {
-  [index: string]: string
-}
+import {
+  ColumnMultiValueFunction,
+  ColumnMultiValueFunctionQueryFilter,
+  ColumnSingleValueFilterOperator,
+  ColumnSingleValueQueryFilter,
+  QueryFilter,
+} from '../synapseTypes/Table/QueryFilter'
 
 export type SQLOperator = 'LIKE' | '=' | 'HAS'
 
-// look for "group by", multi-line and case insensitive
-const GROUP_BY_REGEX = /group by/im
-export const isGroupByInSql = (sql: string): boolean => {
-  return GROUP_BY_REGEX.test(sql)
-}
 const WITHOUT_SYN_PREFIX = 3
-
-const generateTokenUsingOperator = (
-  literal: string,
-  operator: SQLOperator,
-  match: string,
-) => {
-  let usedMatchForLike = match
-  if (match.match(SYNAPSE_ENTITY_ID_REGEX)) {
-    // If we use a LIKE statement with a synId the backend will look for a string with the first three
-    // characters being 'syn', however, it stores synIds without 'syn', so the query will fail
-    // The backend usually parses 'syn' out, but not with the LIKE clause since its expecting a regex, so we
-    // parse this out. This will cause a bug if something matches the synId regex but is in free text.
-    usedMatchForLike = match.substring(WITHOUT_SYN_PREFIX)
-  }
-  // form the has clause, e.g sql = ".... HAS ('condition1', 'condition2',...,'conditionN')
-  const matchForHas = match
-    .split(',')
-    // NOTE - Using single quotes to surround the search term is necessary for the backend parser.
-    .map(el => `'${el}'`)
-    .join(',')
-  switch (operator) {
-    case 'LIKE':
-      return [
-        ['LITERAL', literal, '1'],
-        ['OPERATOR', operator, '1'],
-        ['STRING', `%${usedMatchForLike}%`, '1'],
-      ]
-    case 'HAS':
-      return [
-        ['LITERAL', literal, '1'],
-        ['OPERATOR', operator, '1'],
-        /* 
-          Using PARAMETER as hack, the parser will use the exact value for a PARAMETER value,
-          it won't add quotes around the argument or remove parens (which is the standard behavior
-          for type STRING) that would cause an error on the backend
-        */
-        ['PARAMETER', `(${matchForHas})`, '1'],
-      ]
-    default:
-      // default use operator as-is
-      return [
-        ['LITERAL', literal, '1'],
-        ['OPERATOR', operator, '1'],
-        ['STRING', match, '1'],
-      ]
-  }
-}
-
-export const getWhereInsertIndex = (tokens: string[][]): number => {
-  const existingWhereIndex = tokens.findIndex(el => el[0] === 'WHERE')
-  if (existingWhereIndex !== -1) {
-    return existingWhereIndex
-  }
-  let targetIndex = tokens.findIndex(el => el[0] === 'GROUP')
-  if (targetIndex !== -1) {
-    return targetIndex
-  }
-  targetIndex = tokens.findIndex(el => el[0] === 'HAVING')
-  if (targetIndex !== -1) {
-    return targetIndex
-  }
-  targetIndex = tokens.findIndex(el => el[0] === 'ORDER')
-  if (targetIndex !== -1) {
-    return targetIndex
-  }
-  //else insert it at the end
-  targetIndex = tokens.findIndex(el => el[0] === 'EOF')
-  return targetIndex
-}
-
 /**
- * This will construct a sql query by adding the conditions in searchParams
- * to the WHERE clause, preserving all other clauses.
- * If the searchParams are not defined, this will simply return the given sql.
+ * Given the search params, return a set of QueryFilters to narrow the the query to view just related data. May return null if a QueryFilter should not be added.
+ * @param sql
+ * @param searchParams
+ * @param operator
+ * @returns
  */
-export const insertConditionsFromSearchParams = (
-  sql: string,
-  searchParams?: KeyValue,
+export const generateQueryFilterFromSearchParams = (
+  searchParams?: Record<string, string>,
   operator: SQLOperator = 'LIKE',
-) => {
-  // TODO: Replace SQL manipulation with QueryFilters. See PORTALS-2157
-  // if there are no search params, or if all search params are QueryWrapper queries
+): QueryFilter[] | undefined => {
   if (!searchParams) {
-    return sql
+    return
   }
   const isQueryWrapperKey = (key: string) => key.startsWith('QueryWrapper')
   const searchParamKeys = Object.keys(searchParams)
@@ -105,73 +31,52 @@ export const insertConditionsFromSearchParams = (
     searchParamKeys.length === 0 ||
     searchParamKeys.every(isQueryWrapperKey)
   ) {
-    return sql
+    return
   }
-  const tokens: string[][] = lexer.tokenize(sql)
-  // we want to either create a where clause or insert into the where clause
-  const foundIndex = tokens.findIndex(el => el[0] === 'WHERE')
-  const whereClauseIndex = getWhereInsertIndex(tokens)
-  const indexAfterWhereClause = whereClauseIndex + 1
-  if (foundIndex === -1) {
-    // insert a where clause
-    tokens.splice(whereClauseIndex, 0, ['WHERE', 'WHERE', '1'])
-  } else {
-    // if this is inserting into a where clause then we have to make sure that the logic is chained
-    tokens.splice(indexAfterWhereClause, 0, ['CONDITIONAL', 'AND', '1'])
-  }
-  const searchParamsLen = Object.keys(searchParams).length
-  Object.keys(searchParams).forEach((key, index) => {
-    const token = generateTokenUsingOperator(key, operator, searchParams[key])
-    if (index < searchParamsLen - 1) {
-      // make sure to chain the ANDs until the last one
-      token.unshift(['CONDITIONAL', 'AND', '1'])
-    }
-    tokens.splice(indexAfterWhereClause, 0, ...token)
-  })
-  return formatSQLFromParser(tokens)
-}
 
-export const formatSQLFromParser = (tokens: string[][]) => {
-  // replace all DBLSTRINGs (escaped strings) with LITERALs
-  tokens.forEach(value => {
-    if (value[0] === 'DBLSTRING') {
-      value[0] = 'LITERAL'
-    }
-  })
-  // if synId has a DOT (e.g. 'syn123.2') then we have to alter the sql produced
-  const dotIndex = tokens.findIndex(val => val[0] === 'DOT')
-  if (dotIndex !== -1) {
-    // Given sql with a versioned entity, e.g. "select * from syn123.2"
-    // Tokens has the form:
-    /*
-    [
-      ["SELECT" , "select"],
-      ..
-      ["FROM", "from"],
-      ["LITERAL", "syn123"],
-      ["DOT", "."],
-      ["LITERAL", "2"],
-
-      which we need to transform to
-
-      ["SELECT" , "select"],
-      ..
-      ["FROM", "from"],
-      ["LITERAL", "syn123.2"],
-    */
-
-    const synId = tokens[dotIndex - 1][1]
-    const version = tokens[dotIndex + 1][1]
-    const synIdWithVersion = `${synId}.${version}`
-    tokens.splice(dotIndex, 2)
-    tokens[dotIndex - 1] = ['LITERAL', synIdWithVersion]
-  }
-  const newSql = parser.parse(tokens).toString() as string
-  // construct the sql using their formatter and then alter it to remove erroneous
-  // backticks from the table identifier: e.g. (their output) `syn1234` ->  (our output) syn1234
-  const synId = tokens[tokens.findIndex(el => el[0] === 'FROM') + 1][1]
-  const synIdWithBackticks = `\`${synId}\``
-  return newSql.replace(synIdWithBackticks, synId)
+  return Object.keys(searchParams)
+    .filter(key => !isQueryWrapperKey(key))
+    .map(key => {
+      if (operator === 'HAS') {
+        const filter: ColumnMultiValueFunctionQueryFilter = {
+          concreteType:
+            'org.sagebionetworks.repo.model.table.ColumnMultiValueFunctionQueryFilter',
+          columnName: key,
+          function: ColumnMultiValueFunction.HAS,
+          values: searchParams[key].split(','),
+        }
+        return filter
+      } else if (operator === 'LIKE') {
+        let value = searchParams[key]
+        if (value.match(SYNAPSE_ENTITY_ID_REGEX)) {
+          // If we use a LIKE statement with a synId the backend will look for a string with the first three
+          // characters being 'syn', however, it stores synIds without 'syn', so the query will fail
+          // The backend usually parses 'syn' out, but not with the LIKE clause since its expecting a regex, so we
+          // parse this out. This will cause a bug if something matches the synId regex but is in free text.
+          value = value.substring(WITHOUT_SYN_PREFIX)
+        }
+        const filter: ColumnSingleValueQueryFilter = {
+          concreteType:
+            'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
+          columnName: key,
+          operator: ColumnSingleValueFilterOperator.LIKE,
+          // Add wildcards around the value
+          values: [`%${value}%`],
+        }
+        return filter
+      } else {
+        // operator is '='
+        // The backend doesn't have an '=' operator for query filters, but we can just use LIKE without wildcards.
+        const filter: ColumnSingleValueQueryFilter = {
+          concreteType:
+            'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
+          columnName: key,
+          operator: ColumnSingleValueFilterOperator.LIKE,
+          values: [searchParams[key]],
+        }
+        return filter
+      }
+    })
 }
 
 //parses synapse entity id from a sql query string
