@@ -64,12 +64,14 @@ describe('generateQueryFilterFromSearchParams', () => {
         '{"sql":"SELECT id AS "File ID", assay, dataType, diagnosis, tumorType,  species, individualID,  fileFormat, dataSubtype, nf1Genotype as \\"NF1 Genotype\\", nf2Genotype as \\"NF2 Genotype\\", studyName, fundingAgency, consortium, name AS \\"File Name\\", accessType, accessTeam  FROM syn16858331 WHERE resourceType = \'experimentalData\'","limit":25,"offset":0,"selectedFacets":[{"concreteType":"org.sagebionetworks.repo.model.table.FacetColumnValuesRequest","columnName":"assay","facetValues":["exomeSeq"]}]}',
     }
     const operator: SQLOperator = 'LIKE'
-    // if no search params are there, then it should return null
-    expect(generateQueryFilterFromSearchParams(undefined, operator)).toBe(null)
-    expect(generateQueryFilterFromSearchParams({}, operator)).toBe(null)
+    // if no search params are there, then it should return undefined
+    expect(generateQueryFilterFromSearchParams(undefined, operator)).toBe(
+      undefined,
+    )
+    expect(generateQueryFilterFromSearchParams({}, operator)).toBe(undefined)
     // if the only search params set are from the QueryWrapper, then it should return the input sql
     expect(generateQueryFilterFromSearchParams(searchParams, operator)).toBe(
-      null,
+      undefined,
     )
   })
 
