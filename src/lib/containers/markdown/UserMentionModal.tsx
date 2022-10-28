@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react'
 import { Modal } from 'react-bootstrap'
-import { UserGroupHeader } from '../../utils/synapseTypes'
+import { TYPE_FILTER, UserGroupHeader } from '../../utils/synapseTypes'
 import UserSearchBoxV2 from '../UserSearchBoxV2'
 
 export type UserMentionModalProps = {
@@ -34,6 +34,7 @@ export const UserMentionModal: React.FC<UserMentionModalProps> = ({
           <UserSearchBoxV2
             placeholder="Search for a user or team name"
             onChange={onUserChange}
+            typeFilter={TYPE_FILTER.USERS_ONLY}
           />
         </Modal.Body>
       </Modal>
