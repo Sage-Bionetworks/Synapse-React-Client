@@ -221,7 +221,6 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
             }
             return (
               <ElementWithTooltip
-                idForToolTip={key}
                 tooltipText={tooltipText}
                 key={key}
                 callbackFn={() => setControlState(key)}

@@ -28,7 +28,6 @@ export type TooltipVisualProps = {
 type ElementWithTooltipProps = React.PropsWithChildren<{
   image?: IconSvgOptions | CustomImageProps
   imageColor?: string
-  idForToolTip: string
   tooltipText: string
   callbackFn?: () => void
   className?: string
@@ -52,7 +51,6 @@ function getTooltipTriggerContents(
 
 export const ElementWithTooltip = ({
   image,
-  idForToolTip,
   callbackFn,
   tooltipText,
   className = '',
@@ -78,7 +76,6 @@ export const ElementWithTooltip = ({
     tooltipTrigger = callbackFn ? (
       <button
         tabIndex={0}
-        id={idForToolTip}
         className={`ElementWithTooltip SRC-hand-cursor SRC-grey-background-hover ${className} ${
           darkTheme ? 'dark-theme' : ''
         } `}

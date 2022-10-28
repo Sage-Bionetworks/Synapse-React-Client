@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useCallback } from 'react'
 import { useMemo, useState } from 'react'
 import { useDeepCompareEffectNoCheck } from 'use-deep-compare-effect'
 import {
@@ -64,6 +64,11 @@ export function QueryWrapper(props: QueryWrapperProps) {
     pageSize,
     goToPage,
     setPageSize,
+    resetQuery,
+    removeSelectedFacet,
+    removeValueFromSelectedFacet,
+    removeQueryFilter,
+    removeValueFromQueryFilter,
   } = useImmutableTableQuery({
     initQueryRequest,
     shouldDeepLink,
@@ -108,7 +113,7 @@ export function QueryWrapper(props: QueryWrapperProps) {
     : true
 
   /**
-   * remove a particular facet name (e.g. study) and all possible values based on the parameter specified in the url
+   * Remove a particular facet name (e.g. study) and all possible values based on the parameter specified in the url
    * this is to remove the facet from the charts, search and filter.
    * @return data: QueryResultBundle
    */
@@ -120,6 +125,13 @@ export function QueryWrapper(props: QueryWrapperProps) {
     const request = getLastQueryRequest()
     return hasResettableFiltersUtil(request.query, lockedColumn)
   }, [getLastQueryRequest, lockedColumn])
+
+  const getColumnModel = useCallback(
+    (columnName: string) => {
+      return data?.columnModels?.find(cm => cm.name === columnName) ?? null
+    },
+    [data?.columnModels],
+  )
 
   const context: PaginatedQueryContextType = {
     data: dataWithLockedColumnFacetRemoved,
@@ -136,6 +148,13 @@ export function QueryWrapper(props: QueryWrapperProps) {
     asyncJobStatus: currentAsyncStatus,
     goToPage,
     hasResettableFilters,
+    removeSelectedFacet,
+    removeValueFromSelectedFacet,
+    resetQuery,
+    removeQueryFilter,
+    removeValueFromQueryFilter,
+    lockedColumn,
+    getColumnModel,
   }
   /**
    * Render the children without any formatting

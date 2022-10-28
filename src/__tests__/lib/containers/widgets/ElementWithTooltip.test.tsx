@@ -18,7 +18,6 @@ function createTestProps(
     image: { icon: 'check' },
     callbackFn: mockCallback,
     tooltipText: 'my tooltip',
-    idForToolTip: 'someId',
     ...overrides,
   }
 }

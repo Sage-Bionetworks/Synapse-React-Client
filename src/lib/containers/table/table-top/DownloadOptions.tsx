@@ -21,7 +21,6 @@ export type DownloadOptionsProps = {
 }
 
 export const DOWNLOAD_FILES_MENU_TEXT = 'Add To Download Cart'
-const tooltipDownloadId = 'download'
 
 export const DownloadOptions: React.FunctionComponent<
   DownloadOptionsProps
@@ -50,7 +49,6 @@ export const DownloadOptions: React.FunctionComponent<
     <React.Fragment>
       <Dropdown as="span">
         <ElementWithTooltip
-          idForToolTip={tooltipDownloadId}
           tooltipText={'Download Options'}
           size="lg"
           darkTheme={darkTheme}
