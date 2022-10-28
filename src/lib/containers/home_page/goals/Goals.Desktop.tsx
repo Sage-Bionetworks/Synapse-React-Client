@@ -20,7 +20,7 @@ export default function GoalsDesktop({
           <span className="Goals__Card__header__title"> {title} </span>
           {countSql && (
             <span className="Goals__Card__header__count">
-              <QueryCount parens={false} sql={countSql} />
+              <QueryCount parens={false} query={{ sql: countSql }} />
             </span>
           )}
         </p>

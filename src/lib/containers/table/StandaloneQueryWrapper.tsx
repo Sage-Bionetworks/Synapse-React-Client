@@ -1,7 +1,6 @@
 import React from 'react'
-import { cloneDeep } from 'lodash-es'
 import {
-  insertConditionsFromSearchParams,
+  generateQueryFilterFromSearchParams,
   parseEntityIdFromSqlStatement,
   SQLOperator,
 } from '../../utils/functions/sqlFunctions'
@@ -35,10 +34,6 @@ export type Operator = {
   sqlOperator?: SQLOperator
 }
 
-export type QueryCount = {
-  showQueryCount?: boolean
-}
-
 type OwnProps = {
   sql: string
   showTopLevelControls?: boolean
@@ -67,7 +62,7 @@ export type StandaloneQueryWrapperProps = Partial<
   OwnProps
 
 const generateInitQueryRequest = (sql: string): QueryBundleRequest => {
-  return cloneDeep({
+  return {
     partMask:
       SynapseConstants.BUNDLE_MASK_QUERY_FACETS |
       SynapseConstants.BUNDLE_MASK_QUERY_COUNT |
@@ -82,7 +77,7 @@ const generateInitQueryRequest = (sql: string): QueryBundleRequest => {
       limit: 25,
       offset: 0,
     },
-  })
+  }
 }
 /**
  * This component was initially implemented on the portal side. It renders a SynapseTable if a title is provided.
@@ -114,13 +109,10 @@ const StandaloneQueryWrapper: React.FunctionComponent<
   const derivedQueryRequestFromSearchParams = generateInitQueryRequest(sql)
 
   if (searchParams) {
-    derivedQueryRequestFromSearchParams.query.sql =
-      insertConditionsFromSearchParams(
-        derivedQueryRequestFromSearchParams.query.sql,
-        searchParams,
-        sqlOperator,
-      )
+    derivedQueryRequestFromSearchParams.query.additionalFilters =
+      generateQueryFilterFromSearchParams(searchParams, sqlOperator)
   }
+
   const synapseContext = useSynapseContext()
   const entityId = parseEntityIdFromSqlStatement(sql)
   const { data: entity } = useGetEntity(entityId)

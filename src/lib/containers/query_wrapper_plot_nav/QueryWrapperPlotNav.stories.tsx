@@ -3,6 +3,7 @@ import { ComponentStory, ComponentMeta } from '@storybook/react'
 
 import QueryWrapperPlotNav from './QueryWrapperPlotNav'
 import { EXPERIMENTAL_TOOL, GENERIC_CARD } from '../../utils/SynapseConstants'
+import { Query } from '../../utils/synapseTypes'
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {
@@ -144,6 +145,36 @@ FileView.args = {
   sqlOperator: '=',
   sql: 'SELECT * FROM syn11346063.28',
   hideSqlEditorControl: false,
+}
+
+const queryWithAdditionalFilter: Query = {
+  sql: 'SELECT * FROM syn11346063.28',
+  additionalFilters: [
+    {
+      concreteType:
+        'org.sagebionetworks.repo.model.table.ColumnMultiValueFunctionQueryFilter',
+      columnName: 'study',
+      function: 'HAS_LIKE',
+      values: ['ADMC_ADNI_BakerLipidomics'],
+    },
+  ],
+}
+
+/**
+ * This demo contains a filter on a locked column. This type of configuration should hide that the filter on the locked
+ * column is applied, making it seem as if the total contents of the table are just the filtered results. Common in
+ * DetailsPages in portals.
+ */
+export const FileViewWithLockedColumn = Template.bind({})
+// More on args: https://storybook.js.org/docs/react/writing-stories/args
+FileViewWithLockedColumn.args = {
+  ...FileView.args,
+  shouldDeepLink: false,
+  initQueryJson: JSON.stringify(queryWithAdditionalFilter),
+  lockedColumn: {
+    columnName: 'study',
+    value: '',
+  },
 }
 
 export const Dataset = Template.bind({})
