@@ -183,7 +183,6 @@ describe('Discussion Thread test', () => {
       })
       expect(unfollowButton).not.toBeDisabled()
     })
-    screen.debug(unfollowButton)
     await userEvent.click(unfollowButton!)
     await waitFor(() => {
       expect(SynapseClient.deleteSubscription).toBeCalledWith(
