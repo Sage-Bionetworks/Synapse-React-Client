@@ -12,6 +12,8 @@ import { NoContentPlaceholderType } from './table/NoContentPlaceholderType'
 import SearchResultsNotFound from './table/SearchResultsNotFound'
 import ThisTableIsEmpty from './table/TableIsEmpty'
 import { unCamelCase } from '../utils/functions/unCamelCase'
+import { ColumnType } from '../utils/synapseTypes'
+import { getDisplayValue } from '../utils/functions/getDataFromFromStorage'
 
 export type QueryVisualizationContextType = {
   topLevelControlsState: TopLevelControlsState
@@ -28,6 +30,8 @@ export type QueryVisualizationContextType = {
   showLastUpdatedOn?: boolean
   /** Given a column name, return the display name for the column */
   getColumnDisplayName: (columnName?: string) => string | undefined
+  /** Given a cell value and a column type, returns the displayed value for the data */
+  getDisplayValue: (value: string, columnType: ColumnType) => string
   /** React node to display in place of cards/table when there are no results. */
   NoContentPlaceholder: () => JSX.Element
 }
@@ -201,6 +205,7 @@ export function QueryVisualizationWrapper(
     unitDescription: props.unitDescription,
     showLastUpdatedOn: props.showLastUpdatedOn,
     getColumnDisplayName,
+    getDisplayValue,
     NoContentPlaceholder,
   }
   /**

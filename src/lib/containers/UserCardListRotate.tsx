@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import {
-  insertConditionsFromSearchParams,
-  KeyValue,
+  generateQueryFilterFromSearchParams,
   parseEntityIdFromSqlStatement,
   SQLOperator,
 } from '../utils/functions/sqlFunctions'
@@ -32,7 +31,7 @@ export type UserCardListRotateProps = {
   summaryLinkText?: string
   selectedFacets?: FacetColumnRequest[]
   sqlOperator?: SQLOperator
-  searchParams?: KeyValue
+  searchParams?: Record<string, string>
 }
 
 export const getDisplayIds = (
@@ -92,8 +91,7 @@ const UserCardListRotate: React.FunctionComponent<UserCardListRotateProps> = ({
   useDeepCompareEffectNoCheck(() => {
     const fetchData = async function () {
       setIsLoading(true)
-      const sqlUsed = insertConditionsFromSearchParams(
-        sql,
+      const additionalFilters = generateQueryFilterFromSearchParams(
         searchParams,
         sqlOperator,
       )
@@ -104,7 +102,8 @@ const UserCardListRotate: React.FunctionComponent<UserCardListRotateProps> = ({
         concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
         entityId,
         query: {
-          sql: sqlUsed,
+          sql,
+          additionalFilters,
           selectedFacets,
         },
       }

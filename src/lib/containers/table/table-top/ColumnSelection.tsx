@@ -54,7 +54,6 @@ export const ColumnSelection: React.FunctionComponent<ColumnSelectionProps> = (
       drop="down"
     >
       <ElementWithTooltip
-        idForToolTip={tooltipColumnSelectionId}
         tooltipText={'Show/Hide Columns'}
         icon={darkTheme ? 'columnsdark' : 'columns'}
         darkTheme={darkTheme}

@@ -1,7 +1,7 @@
 import React from 'react'
 import { SynapseConstants } from '../utils'
 import {
-  insertConditionsFromSearchParams,
+  generateQueryFilterFromSearchParams,
   parseEntityIdFromSqlStatement,
   SQLOperator,
 } from '../utils/functions/sqlFunctions'
@@ -139,8 +139,8 @@ export type CardContainerLogicProps = {
  * Class wraps around CardContainer and serves as a standalone logic container for rendering cards.
  */
 export const CardContainerLogic = (props: CardContainerLogicProps) => {
-  const sql = insertConditionsFromSearchParams(
-    props.sql,
+  const entityId = parseEntityIdFromSqlStatement(props.sql)
+  const queryFilters = generateQueryFilterFromSearchParams(
     props.searchParams,
     props.sqlOperator,
   )
@@ -155,11 +155,12 @@ export const CardContainerLogic = (props: CardContainerLogicProps) => {
     : undefined
   const initQueryRequest: QueryBundleRequest = {
     concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
-    entityId: parseEntityIdFromSqlStatement(sql),
+    entityId: entityId,
     query: {
-      sql: sql,
+      sql: props.sql,
       limit: props.limit,
       sort: defaultSortItems,
+      additionalFilters: queryFilters,
     },
     partMask:
       SynapseConstants.BUNDLE_MASK_QUERY_RESULTS |

@@ -342,7 +342,6 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
           onToggle={onToggle}
         >
           <ElementWithTooltip
-            idForToolTip="facetFilterTooltip"
             tooltipText="Filter by specific facet"
             key="facetFilterTooltip"
             darkTheme={false}

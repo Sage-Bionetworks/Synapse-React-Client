@@ -73,6 +73,5 @@ describe('ProvenanceGraph', () => {
     expect(fileEntityNode).toBeDefined() // found entity node
     const activityNode = await screen.findByText(mockActivity.name)
     expect(activityNode).toBeDefined() // found activity node
-    // screen.debug()
   })
 })

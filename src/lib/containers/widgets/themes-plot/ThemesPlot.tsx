@@ -317,7 +317,6 @@ const ThemesPlot: FunctionComponent<ThemesPlotProps> = ({
                 >
                   <div className="ThemesPlot__dotPlot__barColumn">
                     <ElementWithTooltip
-                      idForToolTip={`plotDiv1_${+i}`}
                       tooltipText={`${getTooltip(dotPlotQueryData, label)} `}
                       tooltipVisualProps={tooltipProps}
                       callbackFn={() => _.noop}

@@ -3,10 +3,12 @@ import { createContext, useContext } from 'react'
 import { SynapseClientError } from '../utils/SynapseClientError'
 import {
   AsynchronousJobStatus,
+  ColumnModel,
   QueryBundleRequest,
   QueryResultBundle,
   Table,
 } from '../utils/synapseTypes'
+import { ImmutableTableQueryResult } from './useImmutableTableQuery'
 
 export const QUERY_FILTERS_EXPANDED_CSS: string = 'isShowingFacetFilters'
 export const QUERY_FILTERS_COLLAPSED_CSS: string = 'isHidingFacetFilters'
@@ -32,6 +34,14 @@ export type QueryContextType = {
   getInitQueryRequest: () => QueryBundleRequest
   /** Updates the current query with the passed request */
   executeQueryRequest: (param: QueryBundleRequest) => void
+  /** Resets the query to its initial state, clearing all filters added by the user */
+  resetQuery: ImmutableTableQueryResult['resetQuery']
+  removeSelectedFacet: ImmutableTableQueryResult['removeSelectedFacet']
+  removeValueFromSelectedFacet: ImmutableTableQueryResult['removeValueFromSelectedFacet']
+  /** Removes a matching QueryFilter from the query */
+  removeQueryFilter: ImmutableTableQueryResult['removeQueryFilter']
+  /** Removes a value from a QueryFilter. If no more values remain in the filter, the filter is also removed */
+  removeValueFromQueryFilter: ImmutableTableQueryResult['removeValueFromQueryFilter']
   /** Returns true when loading a brand-new query result bundle. Will not be true when just loading the next page of query results. */
   isLoadingNewBundle: boolean
   /** The error returned by the query request, if one is encountered */
@@ -48,6 +58,7 @@ export type QueryContextType = {
   lockedColumn?: LockedColumn
   /** Returns true iff the current request has resettable filters applied via facet filters or additionalFilters. Excludes filters applied to a locked column */
   hasResettableFilters: boolean
+  getColumnModel: (columnName: string) => ColumnModel | null
 }
 
 export type PaginatedQueryContextType = QueryContextType & {

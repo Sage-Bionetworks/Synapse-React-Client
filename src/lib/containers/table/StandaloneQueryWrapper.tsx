@@ -1,7 +1,6 @@
 import React from 'react'
-import { cloneDeep } from 'lodash-es'
 import {
-  insertConditionsFromSearchParams,
+  generateQueryFilterFromSearchParams,
   parseEntityIdFromSqlStatement,
   SQLOperator,
 } from '../../utils/functions/sqlFunctions'
@@ -24,6 +23,7 @@ import {
 } from '../QueryVisualizationWrapper'
 import { isTable } from '../../utils/functions/EntityTypeUtils'
 import LastUpdatedOn from '../query_wrapper_plot_nav/LastUpdatedOn'
+import { NoContentPlaceholderType } from './NoContentPlaceholderType'
 
 type SearchParams = {
   searchParams?: {
@@ -32,10 +32,6 @@ type SearchParams = {
 }
 export type Operator = {
   sqlOperator?: SQLOperator
-}
-
-export type QueryCount = {
-  showQueryCount?: boolean
 }
 
 type OwnProps = {
@@ -66,7 +62,7 @@ export type StandaloneQueryWrapperProps = Partial<
   OwnProps
 
 const generateInitQueryRequest = (sql: string): QueryBundleRequest => {
-  return cloneDeep({
+  return {
     partMask:
       SynapseConstants.BUNDLE_MASK_QUERY_FACETS |
       SynapseConstants.BUNDLE_MASK_QUERY_COUNT |
@@ -81,7 +77,7 @@ const generateInitQueryRequest = (sql: string): QueryBundleRequest => {
       limit: 25,
       offset: 0,
     },
-  })
+  }
 }
 /**
  * This component was initially implemented on the portal side. It renders a SynapseTable if a title is provided.
@@ -104,19 +100,19 @@ const StandaloneQueryWrapper: React.FunctionComponent<
     unitDescription = 'Results',
     rgbIndex,
     showLastUpdatedOn,
+    noContentPlaceholderType = showTopLevelControls
+      ? NoContentPlaceholderType.INTERACTIVE
+      : NoContentPlaceholderType.STATIC,
     ...rest
   } = props
 
   const derivedQueryRequestFromSearchParams = generateInitQueryRequest(sql)
 
   if (searchParams) {
-    derivedQueryRequestFromSearchParams.query.sql =
-      insertConditionsFromSearchParams(
-        derivedQueryRequestFromSearchParams.query.sql,
-        searchParams,
-        sqlOperator,
-      )
+    derivedQueryRequestFromSearchParams.query.additionalFilters =
+      generateQueryFilterFromSearchParams(searchParams, sqlOperator)
   }
+
   const synapseContext = useSynapseContext()
   const entityId = parseEntityIdFromSqlStatement(sql)
   const { data: entity } = useGetEntity(entityId)
@@ -129,6 +125,7 @@ const StandaloneQueryWrapper: React.FunctionComponent<
         rgbIndex={rgbIndex}
         unitDescription={unitDescription}
         showLastUpdatedOn={showLastUpdatedOn}
+        noContentPlaceholderType={noContentPlaceholderType}
         {...rest}
       >
         <QueryContextConsumer>

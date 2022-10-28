@@ -310,7 +310,6 @@ export function FacetPlotLegend(props: FacetPlotLegendProps) {
         const labelDisplay = truncate(label, maxLegendLength)
         return (
           <ElementWithTooltip
-            idForToolTip={facetValue.label}
             tooltipText={facetValue.label}
             key={facetValue.label}
           >
@@ -485,7 +484,6 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = (
                   containerAs="Dropdown"
                 />
                 <ElementWithTooltip
-                  idForToolTip="expandGraph"
                   tooltipText="Expand to large graph"
                   key="expandGraph"
                   callbackFn={() => setShowModal(true)}
@@ -494,7 +492,6 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = (
                   icon={'expand'}
                 />
                 <ElementWithTooltip
-                  idForToolTip="hideGraph"
                   tooltipText="Hide graph under Show More"
                   key="hideGraph"
                   callbackFn={() => onHide()}

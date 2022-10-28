@@ -113,18 +113,20 @@ export function DiscussionThread(props: DiscussionThreadProps) {
         <></>
       )}
       <Tooltip title={subscription ? FOLLOWING_TEXT : UNFOLLOWING_TEXT}>
-        <button
-          className="follow-button"
-          aria-label={subscription ? 'follow-button' : 'unfollow-button'}
-          disabled={isLoading}
-          onClick={() => handleFollowBtn()}
-        >
-          {subscription ? (
-            <IconSvg options={{ icon: 'visibility' }} />
-          ) : (
-            <IconSvg options={{ icon: 'visibilityOff' }} />
-          )}
-        </button>
+        <span>
+          <button
+            className="follow-button"
+            aria-label={subscription ? 'Unfollow thread' : 'Follow thread'}
+            disabled={isLoading}
+            onClick={() => handleFollowBtn()}
+          >
+            {subscription ? (
+              <IconSvg options={{ icon: 'visibility' }} />
+            ) : (
+              <IconSvg options={{ icon: 'visibilityOff' }} />
+            )}
+          </button>
+        </span>
       </Tooltip>
       {/* Todo : add markdown editor to add replies */}
       <FormControl type="text" placeholder="Write a reply..." />
