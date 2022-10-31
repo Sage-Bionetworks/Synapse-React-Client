@@ -32,3 +32,31 @@ export function useGetPresignedUrlContent(
     },
   )
 }
+
+export function useGetProfileImage(
+  userId: string,
+  options?: Omit<UseQueryOptions<Blob | null, SynapseClientError>, 'staleTime'>,
+) {
+  const queryFn = async () => {
+    const presignedUrl = await SynapseClient.getProfilePicPreviewPresignedUrl(
+      userId,
+    )
+    if (presignedUrl) {
+      const data = await fetch(presignedUrl, {
+        method: 'GET',
+        mode: 'cors',
+        cache: 'no-cache',
+      })
+      return await data.blob()
+    }
+    return null
+  }
+  return useQuery<Blob | null, SynapseClientError>(
+    ['profileImageData', userId],
+    queryFn,
+    {
+      staleTime: Infinity,
+      ...options,
+    },
+  )
+}

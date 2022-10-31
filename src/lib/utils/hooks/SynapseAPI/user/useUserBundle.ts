@@ -8,14 +8,18 @@ import {
   UserProfile,
 } from '../../../synapseTypes'
 import {
-  USER_BUNDLE_MASK_USER_PROFILE,
-  USER_BUNDLE_MASK_ORCID,
-  USER_BUNDLE_MASK_VERIFICATION_SUBMISSION,
-  USER_BUNDLE_MASK_IS_CERTIFIED,
-  USER_BUNDLE_MASK_IS_VERIFIED,
   USER_BUNDLE_MASK_IS_ACT_MEMBER,
   USER_BUNDLE_MASK_IS_AR_REVIEWER,
+  USER_BUNDLE_MASK_IS_CERTIFIED,
+  USER_BUNDLE_MASK_IS_VERIFIED,
+  USER_BUNDLE_MASK_ORCID,
+  USER_BUNDLE_MASK_USER_PROFILE,
+  USER_BUNDLE_MASK_VERIFICATION_SUBMISSION,
 } from '../../../SynapseConstants'
+import {
+  PrincipalAliasRequest,
+  PrincipalAliasResponse,
+} from '../../../synapseTypes/Principal/PrincipalServices'
 
 export function useGetNotificationEmail(
   options?: UseQueryOptions<NotificationEmail, SynapseClientError>,
@@ -118,5 +122,26 @@ export function useGetUserProfile(
         sessionStorage.setItem(sessionStorageCacheKey, JSON.stringify(profile))
       },
     },
+  )
+}
+
+export function useGetPrincipalIdForAlias(
+  request: PrincipalAliasRequest,
+  options?: UseQueryOptions<
+    PrincipalAliasResponse['principalId'],
+    SynapseClientError
+  >,
+) {
+  const { accessToken } = useSynapseContext()
+  const queryKey = ['principalAliasRequest', request]
+
+  return useQuery<PrincipalAliasResponse['principalId'], SynapseClientError>(
+    queryKey,
+    async () => {
+      return (
+        await SynapseClient.getPrincipalAliasRequest(accessToken, request)
+      ).principalId
+    },
+    options,
   )
 }

@@ -7,6 +7,12 @@ export type AliasCheckRequest = {
   type: AliasType
 }
 
+// https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/principal/PrincipalAliasRequest.html
+export type PrincipalAliasRequest = {
+  alias: string
+  type: AliasType
+}
+
 // http://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/principal/AliasType.html
 export enum AliasType {
   USER_NAME = 'USER_NAME',
@@ -20,6 +26,11 @@ export enum AliasType {
 export type AliasCheckResponse = {
   available: boolean //True is the alias is available.
   valid: boolean //True if the alias is valid for the passed type.
+}
+
+// https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/principal/PrincipalAliasResponse.html
+export type PrincipalAliasResponse = {
+  principalId: number
 }
 
 // http://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/auth/NewUser.html

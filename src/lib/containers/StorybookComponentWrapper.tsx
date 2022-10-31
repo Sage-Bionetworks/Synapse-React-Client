@@ -1,6 +1,9 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useMemo } from 'react'
 import { MemoryRouter } from 'react-router-dom'
-import { SynapseContextProvider } from '../utils/SynapseContext'
+import {
+  SynapseContextProvider,
+  SynapseContextType,
+} from '../utils/SynapseContext'
 import { SynapseClient } from '../utils'
 import { SynapseToastContainer } from './ToastMessage'
 import { ReactQueryDevtools } from 'react-query/devtools'
@@ -22,10 +25,16 @@ export async function sessionChangeHandler() {
     profile = await getUserProfile(accessToken)
   } catch (err) {
     if (err instanceof SynapseClientError && err.status === 401) {
+      console.error(
+        'Encountered error fetching profile: ',
+        err,
+        'Signing out...',
+      )
       await signOut(() => {})
       accessToken = undefined
     }
-    console.error('Encountered error fetching profile: ', err, 'Signing out...')
+    // Otherwise rethrow
+    throw err
   }
   let date
   if (accessToken) {
@@ -41,7 +50,9 @@ export async function sessionChangeHandler() {
  * @param props
  * @returns
  */
-export const StorybookComponentWrapper = props => {
+export function StorybookComponentWrapper(props: {
+  children: React.ReactNode
+}) {
   const [accessToken, setAccessToken] = React.useState<string | undefined>(
     undefined,
   )
@@ -50,16 +61,20 @@ export const StorybookComponentWrapper = props => {
       setAccessToken(data.accessToken)
     })
   })
+
+  const context: SynapseContextType = useMemo(
+    () => ({
+      accessToken: accessToken,
+      isInExperimentalMode: SynapseClient.isInSynapseExperimentalMode(),
+      utcTime: SynapseClient.getUseUtcTimeFromCookie(),
+      withErrorBoundary: true,
+      downloadCartPageUrl: '/?path=/story/download-downloadcartpage--demo',
+    }),
+    [accessToken],
+  )
+
   return (
-    <SynapseContextProvider
-      synapseContext={{
-        accessToken: accessToken,
-        isInExperimentalMode: SynapseClient.isInSynapseExperimentalMode(),
-        utcTime: SynapseClient.getUseUtcTimeFromCookie(),
-        withErrorBoundary: true,
-        downloadCartPageUrl: '/?path=/story/download-downloadcartpage--demo',
-      }}
-    >
+    <SynapseContextProvider key={accessToken} synapseContext={context}>
       <MemoryRouter>
         <ReactQueryDevtools />
         <SynapseToastContainer />

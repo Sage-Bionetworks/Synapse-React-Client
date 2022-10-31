@@ -204,6 +204,8 @@ import {
   AliasCheckResponse,
   EmailValidationSignedToken,
   NewUser,
+  PrincipalAliasRequest,
+  PrincipalAliasResponse,
 } from './synapseTypes/Principal/PrincipalServices'
 import { ResearchProject } from './synapseTypes/ResearchProject'
 import { JsonSchemaObjectBinding } from './synapseTypes/Schema/JsonSchemaObjectBinding'
@@ -1430,16 +1432,10 @@ export const getUseUtcTimeFromCookie = () => {
 
 export const getPrincipalAliasRequest = (
   accessToken: string | undefined,
-  alias: string,
-  type: string,
-): Promise<{ principalId: number }> => {
+  request: PrincipalAliasRequest,
+): Promise<PrincipalAliasResponse> => {
   const url = '/repo/v1/principal/alias'
-  return doPost(
-    url,
-    { alias, type },
-    accessToken,
-    BackendDestinationEnum.REPO_ENDPOINT,
-  )
+  return doPost(url, request, accessToken, BackendDestinationEnum.REPO_ENDPOINT)
 }
 
 /*

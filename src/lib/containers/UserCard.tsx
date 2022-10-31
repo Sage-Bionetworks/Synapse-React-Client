@@ -1,14 +1,19 @@
-import React, { useEffect, useState } from 'react'
-import { SynapseClient, SynapseConstants } from '../utils/'
-import { useGetUserProfile } from '../utils/hooks/SynapseAPI/user/useUserBundle'
-import usePreFetchResource from '../utils/hooks/usePreFetchResource'
-import { getPrincipalAliasRequest } from '../utils/SynapseClient'
-import { useSynapseContext } from '../utils/SynapseContext'
+import React, { useMemo } from 'react'
+import { SynapseConstants } from '../utils/'
+import { useGetProfileImage } from '../utils/hooks/SynapseAPI/file/useFiles'
+import {
+  useGetPrincipalIdForAlias,
+  useGetUserProfile,
+} from '../utils/hooks/SynapseAPI/user/useUserBundle'
+import usePreFetchResource, {
+  useCreateUrlForData,
+} from '../utils/hooks/usePreFetchResource'
 import { UserProfile } from '../utils/synapseTypes/'
-import { Avatar, AvatarProps, AvatarSize } from './Avatar'
+import { Avatar, AvatarSize } from './Avatar'
 import { MenuAction } from './UserCardContextMenu'
-import UserCardMedium, { UserCardMediumProps } from './UserCardMedium'
-import { UserCardSmall, UserCardSmallProps } from './UserCardSmall'
+import UserCardMedium from './UserCardMedium'
+import { UserCardSmall } from './UserCardSmall'
+import { AliasType } from '../utils/synapseTypes/Principal/PrincipalServices'
 
 export type UserCardSize =
   | 'AVATAR'
@@ -23,7 +28,7 @@ export type UserCardProps = {
   alias?: string
   /** The unique ownerId of the UserProfile. You must supply one of `userProfile`, `alias`, `ownerId` */
   ownerId?: string
-  /** Whether or not to hide the user's Synapse email address */
+  /** Whether to hide the user's Synapse email address */
   hideEmail?: boolean
   /** If set, the corresponding image will be shown for the user. */
   preSignedURL?: string
@@ -35,7 +40,7 @@ export type UserCardProps = {
   hideTooltip?: boolean
   /** Specifies the dropdown menu functionality for the ellipsis on medium/large cards. If field === 'SEPERATOR' then a break will occur in the menu. If left undefined, the menu will not render to the screen. */
   menuActions?: MenuAction[]
-  /** The link to point to on the user name, defaults to https://www.synapse.org/#!Profile:${userProfile.ownerId} */
+  /** The link to point to on the username, defaults to https://www.synapse.org/#!Profile:${userProfile.ownerId} */
   link?: string
   openLinkInNewTab?: boolean
   /** Disables the `@username` link for the small user card (if `showCardOnHover` is false). For the medium user card, disables linking the user's name to their profile (or other specified destination) */
@@ -62,95 +67,75 @@ export const UserCard: React.FunctionComponent<UserCardProps> = (
     alias,
     ...rest
   } = props
-  const { accessToken } = useSynapseContext()
-  const [principalId, setPrincipalId] = useState(ownerId)
-  const [isLoading, setIsLoading] = useState(true)
-  // if null, the user has no profile image. if undefined, the profile image is still being fetched
-  const [fetchedPresignedUrl, setFetchedPresignedUrl] = useState<
-    string | null | undefined
-  >(undefined)
+
+  // If we were given an alias, fetch the principal ID
+  const { data: fetchedPrincipalId, isLoading: isLoadingAliasLookup } =
+    useGetPrincipalIdForAlias(
+      {
+        alias: alias!,
+        type: AliasType.USER_NAME,
+      },
+      { enabled: !!alias },
+    )
+
+  const principalId = (
+    ownerId ??
+    initialProfile?.ownerId ??
+    fetchedPrincipalId
+  )?.toString()
 
   // If we weren't provided an initialProfile, fetch from Synapse
-  const { data: fetchedProfile } = useGetUserProfile(principalId!, {
-    enabled: !!principalId && !initialProfile,
-  })
+  const { data: fetchedProfile, isLoading: isLoadingProfile } =
+    useGetUserProfile(principalId!, {
+      enabled: !!principalId && !initialProfile,
+    })
   const userProfile = initialProfile ?? fetchedProfile
 
-  useEffect(() => {
-    let isCanceled = false
-    // If we weren't provided an inital presigned URL for the image, fetch from Synapse.
-    if (!initialPreSignedURL && (ownerId || userProfile?.ownerId)) {
-      SynapseClient.getProfilePicPreviewPresignedUrl(
-        (ownerId ?? userProfile?.ownerId)!,
-      ).then(result => {
-        if (!isCanceled) {
-          setFetchedPresignedUrl(result)
-        }
-      })
-    }
-    return () => {
-      isCanceled = true
-    }
-  }, [initialPreSignedURL, ownerId, userProfile?.ownerId])
-
-  const presignedUrl = initialPreSignedURL ?? fetchedPresignedUrl
-
-  const mayHaveProfileImage = presignedUrl !== null
-  const imageURL = usePreFetchResource(
-    mayHaveProfileImage ? presignedUrl : undefined,
+  const { data: avatarData, isLoading: isLoadingAvatar } = useGetProfileImage(
+    principalId!,
+    {
+      // Don't fetch the avatar if `initialPresignedURL` is provided.
+      // Also, wait until we have a value for `principalId`
+      enabled: !!(!initialPreSignedURL && principalId),
+    },
   )
-  const isLoadingAvatar = mayHaveProfileImage && !imageURL
 
-  useEffect(() => {
-    let isCanceled = false
-    if (userProfile) {
-      setIsLoading(false)
-    } else if (alias) {
-      // Before we can get the profile, we must get the principal ID using the alias
-      getPrincipalAliasRequest(accessToken, alias, 'USER_NAME').then(
-        aliasData => {
-          if (!isCanceled) {
-            setPrincipalId(aliasData.principalId.toString())
-          }
-        },
-      )
-    }
-    return () => {
-      isCanceled = true
-    }
-  }, [userProfile, alias, accessToken])
+  // If a URL was provided, fetch it and create a local data URL
+  const providedAvatarURL = usePreFetchResource(initialPreSignedURL)
+  // If we fetched the avatar from Synapse, we already have the blob. Create a local data URL
+  const fetchedAvatarUrl = useCreateUrlForData(avatarData)
 
-  function Card(props: {
-    cardSize: UserCardSize
-    propsForChild: AvatarProps | UserCardSmallProps | UserCardMediumProps
-  }) {
-    const { cardSize, propsForChild } = props
-    switch (cardSize) {
-      case SynapseConstants.AVATAR:
-        return <Avatar {...propsForChild} />
-      case SynapseConstants.SMALL_USER_CARD:
-        return <UserCardSmall {...propsForChild} />
-      case SynapseConstants.MEDIUM_USER_CARD:
-        return <UserCardMedium {...propsForChild} />
-      case SynapseConstants.LARGE_USER_CARD:
-        return <UserCardMedium isLarge={true} {...propsForChild} />
-      default:
-        return <span />
-    }
+  const imageURL = providedAvatarURL ?? fetchedAvatarUrl
+
+  const isLoading = isLoadingAliasLookup || isLoadingProfile
+
+  const propsForChild = useMemo(
+    () => ({
+      userProfile: userProfile!,
+      imageURL,
+      isLoadingAvatar,
+      ...rest,
+    }),
+    [imageURL, isLoadingAvatar, rest, userProfile],
+  )
+
+  if (isLoading || userProfile == null) {
+    return <></>
   }
 
-  return isLoading || userProfile == null ? (
-    <></>
-  ) : (
-    <Card
-      cardSize={size}
-      propsForChild={{
-        userProfile,
-        imageURL,
-        isLoadingAvatar,
-        ...rest,
-      }}
-    />
-  )
+  switch (size) {
+    case SynapseConstants.AVATAR:
+      return <Avatar {...propsForChild} />
+    case SynapseConstants.SMALL_USER_CARD:
+      return <UserCardSmall {...propsForChild} />
+    case SynapseConstants.MEDIUM_USER_CARD:
+      return <UserCardMedium {...propsForChild} />
+    case SynapseConstants.LARGE_USER_CARD:
+      return <UserCardMedium isLarge={true} {...propsForChild} />
+    default:
+      console.warn('No size specified for UserCard')
+      return <span />
+  }
 }
+
 export default UserCard
