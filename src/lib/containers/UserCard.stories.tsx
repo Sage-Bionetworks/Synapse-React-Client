@@ -3,6 +3,7 @@ import { ComponentStory, ComponentMeta } from '@storybook/react'
 
 import { UserCard } from './UserCard'
 import {
+  ANONYMOUS_PRINCIPAL_ID,
   AVATAR,
   LARGE_USER_CARD,
   MEDIUM_USER_CARD,
@@ -17,11 +18,19 @@ export default {
 
 const Template: ComponentStory<typeof UserCard> = args => {
   const { data: currentUserProfile } = useGetCurrentUserProfile()
+  let currentUserId = currentUserProfile?.ownerId
+  if (currentUserId === ANONYMOUS_PRINCIPAL_ID.toString()) {
+    currentUserId = undefined
+  }
   return (
-    <UserCard
-      {...args}
-      ownerId={args.ownerId ?? currentUserProfile?.ownerId ?? '273960'}
-    />
+    <>
+      <p>
+        If you are logged in, your avatar or card will appear. If you are not
+        logged in, enter an ownerId (e.g. 273960) or alias (e.g. brucehoff)
+        below.
+      </p>
+      <UserCard ownerId={args.ownerId ?? currentUserId} {...args} />
+    </>
   )
 }
 
