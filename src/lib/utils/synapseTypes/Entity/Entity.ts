@@ -1,7 +1,6 @@
-import { AttachmentData } from '../AttachmentData'
-import { TABLE_CONCRETE_TYPE_VALUES } from '../Table/Table'
 import { FILE_ENTITY_CONCRETE_TYPE_VALUE } from './FileEntity'
 import { LINK_CONCRETE_TYPE } from './Link'
+import { TABLE_CONCRETE_TYPE_VALUES } from '../Table/Table'
 
 // https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/Entity.html
 
@@ -26,16 +25,6 @@ export interface Entity {
   parentId?: string
   /** Indicates which implementation of Entity this object represents. */
   readonly concreteType: ENTITY_CONCRETE_TYPE
-  /** @deprecated This field is deprecated and will be removed in future versions of Synapse */
-  attachments?: AttachmentData[]
-  /** @deprecated This field is deprecated and will be removed in future versions of Synapse */
-  annotations?: string
-  /** @deprecated This field is deprecated and will be removed in future versions of Synapse */
-  accessControlList?: string
-  /** @deprecated This field is deprecated and will be removed in future versions of Synapse */
-  entityType?: string
-  /** @deprecated This field is deprecated and will be removed in future versions of Synapse */
-  uri?: string
 }
 
 export const DOCKER_REPOSITORY_CONCRETE_TYPE_VALUE =
@@ -109,40 +98,3 @@ export interface EntityJson extends Record<string, EntityJsonValue> {
   isLatestVersion?: boolean
   dataFileHandleId?: string
 }
-
-/**
- * A string array of all possible keys used by Synapse in Entity objects (objects that inherit this interface: https://docs.synapse.org/rest/org/sagebionetworks/repo/model/Entity.html).
- * This object is used to determine which fields are standard and which are annotations,
- * so it's important that this array contains all keys in the objects that implement the linked interface above.
- *
- * It may make sense to make this a function that accepts the entity type and returns the set of standard keys, since not all entity types have the same keys.
- */
-export const entityJsonKeys = [
-  'name',
-  'description',
-  'id',
-  'etag',
-  'createdOn',
-  'modifiedOn',
-  'createdBy',
-  'modifiedBy',
-  'parentId',
-  'concreteType',
-  'versionNumber',
-  'versionLabel',
-  'versionComment',
-  'isLatestVersion',
-  'dataFileHandleId',
-  'fileNameOverride',
-  'columnIds',
-  'scopeIds',
-  'linksTo',
-  'linksToClassName',
-  'repositoryName',
-  'isManaged',
-  'viewTypeMask',
-  'type',
-  'alias',
-  'items',
-  'definingSQL',
-]
