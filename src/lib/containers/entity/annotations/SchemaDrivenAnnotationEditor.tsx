@@ -15,7 +15,11 @@ import {
   useUpdateViaJson,
 } from '../../../utils/hooks/SynapseAPI'
 import { SynapseClientError } from '../../../utils/SynapseClientError'
-import { EntityJson, entityJsonKeys } from '../../../utils/synapseTypes'
+import {
+  ENTITY_CONCRETE_TYPE,
+  EntityJson,
+  entityJsonKeys,
+} from '../../../utils/synapseTypes'
 import { SynapseSpinner } from '../../LoadingScreen'
 import { AdditionalPropertiesSchemaField } from './AdditionalPropertiesSchemaField'
 import {
@@ -45,6 +49,24 @@ export type SchemaDrivenAnnotationEditorProps = {
   onSuccess?: () => void
   /** If defined and formRef is not supplied, shows a 'Cancel' button and runs this effect on click */
   onCancel?: () => void
+}
+
+/**
+ * patternProperties lets us define how to treat additionalProperties in a JSON schema by property name.
+ * In all cases, let's ban properties that collide with entity properties by making their schema "not: {}"
+ */
+function getPatternPropertiesBannedKeys(
+  concreteType?: ENTITY_CONCRETE_TYPE,
+): JSONSchema7 {
+  if (!concreteType) {
+    return {}
+  }
+  // for each property (e.g. id, name, etag, etc.)
+  //  Add to the JSON Schema `"^id$": { "not": {} }` to ban the property from being added as an additional property.
+  return entityJsonKeys[concreteType].reduce((current, item) => {
+    current[`^${item}$`] = { not: {} }
+    return current
+  }, {})
 }
 
 /**
@@ -93,17 +115,10 @@ export const SchemaDrivenAnnotationEditor = (
    * patternProperties lets us define how to treat additionalProperties in a JSON schema by property name.
    * In all cases, let's ban properties that collide with entity properties by making their schema "not: {}"
    */
-  const patternPropertiesBannedKeys = useMemo(() => {
-    if (!entityJson?.concreteType) {
-      return {}
-    }
-    // for each property (e.g. id, name, etag, etc.)
-    //  Add to the JSON Schema `"^id$": { "not": {} }` to ban the property from being added as an additional property.
-    return entityJsonKeys[entityJson.concreteType].reduce((current, item) => {
-      current[`^${item}$`] = { not: {} }
-      return current
-    }, {})
-  }, [entityJson?.concreteType])
+  const patternPropertiesBannedKeys = useMemo(
+    () => getPatternPropertiesBannedKeys(entityJson?.concreteType),
+    [entityJson?.concreteType],
+  )
 
   const transformErrors = useCallback(
     getTransformErrors(entityJson?.concreteType),
