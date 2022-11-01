@@ -109,7 +109,8 @@ export function getQueryRequestFromLink(
           SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS |
           SynapseConstants.BUNDLE_MASK_QUERY_FACETS |
           SynapseConstants.BUNDLE_MASK_QUERY_SELECT_COLUMNS |
-          SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
+          SynapseConstants.BUNDLE_MASK_QUERY_RESULTS |
+          SynapseConstants.BUNDLE_MASK_QUERY_COUNT,
         entityId: parseEntityIdFromSqlStatement(query.sql),
         query,
       }
