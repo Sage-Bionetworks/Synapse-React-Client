@@ -1,7 +1,7 @@
 import Form, { AjvError } from '@sage-bionetworks/rjsf-core'
 import { JSONSchema7 } from 'json-schema'
 import isEmpty from 'lodash-es/isEmpty'
-import React, { useEffect, useRef } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef } from 'react'
 import { Alert, Button, Modal } from 'react-bootstrap'
 import AddToList from '../../../assets/icons/AddToList'
 import {
@@ -21,7 +21,7 @@ import { AdditionalPropertiesSchemaField } from './AdditionalPropertiesSchemaFie
 import {
   dropNullishArrayValues,
   getFriendlyPropertyName,
-  transformErrors,
+  getTransformErrors,
 } from './AnnotationEditorUtils'
 import { CustomAdditionalPropertiesFieldTemplate } from './CustomAdditionalPropertiesFieldTemplate'
 import { CustomArrayFieldTemplate } from './CustomArrayFieldTemplate'
@@ -46,13 +46,6 @@ export type SchemaDrivenAnnotationEditorProps = {
   /** If defined and formRef is not supplied, shows a 'Cancel' button and runs this effect on click */
   onCancel?: () => void
 }
-
-// patternProperties lets us define how to treat additionalProperties in a JSON schema by property name
-// here we can ban properties that collide with entity properties by making their schema "not: {}"
-const patternPropertiesBannedKeys = entityJsonKeys.reduce((current, item) => {
-  current[`^${item}$`] = { not: {} }
-  return current
-}, {})
 
 /**
  * Renders a form for editing an entity's annotations. The component also supports supplying just a schema ID,
@@ -95,6 +88,27 @@ export const SchemaDrivenAnnotationEditor = (
     enabled: !!entityId && !formData, // once we have data, don't refetch. it would overwrite the user's entries
     useErrorBoundary: true,
   })
+
+  /**
+   * patternProperties lets us define how to treat additionalProperties in a JSON schema by property name.
+   * In all cases, let's ban properties that collide with entity properties by making their schema "not: {}"
+   */
+  const patternPropertiesBannedKeys = useMemo(() => {
+    if (!entityJson?.concreteType) {
+      return {}
+    }
+    // for each property (e.g. id, name, etag, etc.)
+    //  Add to the JSON Schema `"^id$": { "not": {} }` to ban the property from being added as an additional property.
+    return entityJsonKeys[entityJson.concreteType].reduce((current, item) => {
+      current[`^${item}$`] = { not: {} }
+      return current
+    }, {})
+  }, [entityJson?.concreteType])
+
+  const transformErrors = useCallback(
+    getTransformErrors(entityJson?.concreteType),
+    [entityJson?.concreteType],
+  )
 
   useEffect(() => {
     if (annotations) {

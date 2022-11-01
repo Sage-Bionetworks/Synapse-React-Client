@@ -137,7 +137,7 @@ export function useGetVersionsInfinite(
 }
 
 export function getStandardEntityFields(json: EntityJson): EntityJson {
-  return pick(json, entityJsonKeys) as EntityJson
+  return pick(json, entityJsonKeys[json.concreteType]) as EntityJson
 }
 
 export function removeStandardEntityFields(
@@ -146,7 +146,7 @@ export function removeStandardEntityFields(
   string,
   string | number | boolean | string[] | number[] | boolean[] | undefined
 > {
-  return omit(json, entityJsonKeys)
+  return omit(json, entityJsonKeys[json.concreteType])
 }
 
 /**

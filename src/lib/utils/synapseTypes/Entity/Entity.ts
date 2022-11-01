@@ -1,7 +1,14 @@
-import { AttachmentData } from '../AttachmentData'
 import { TABLE_CONCRETE_TYPE_VALUES } from '../Table/Table'
 import { FILE_ENTITY_CONCRETE_TYPE_VALUE } from './FileEntity'
-import { LINK_CONCRETE_TYPE } from './Link'
+import { LINK_CONCRETE_TYPE, LINK_CONCRETE_TYPE_VALUE } from './Link'
+import {
+  DATASET_COLLECTION_CONCRETE_TYPE_VALUE,
+  DATASET_CONCRETE_TYPE_VALUE,
+  ENTITY_VIEW_CONCRETE_TYPE_VALUE,
+  SUBMISSION_VIEW_CONCRETE_TYPE_VALUE,
+  TABLE_ENTITY_CONCRETE_TYPE_VALUE,
+} from '../Table'
+import { MATERIALIZED_VIEW_CONCRETE_TYPE_VALUE } from '../Table/MaterializedView'
 
 // https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/Entity.html
 
@@ -26,16 +33,6 @@ export interface Entity {
   parentId?: string
   /** Indicates which implementation of Entity this object represents. */
   readonly concreteType: ENTITY_CONCRETE_TYPE
-  /** @deprecated This field is deprecated and will be removed in future versions of Synapse */
-  attachments?: AttachmentData[]
-  /** @deprecated This field is deprecated and will be removed in future versions of Synapse */
-  annotations?: string
-  /** @deprecated This field is deprecated and will be removed in future versions of Synapse */
-  accessControlList?: string
-  /** @deprecated This field is deprecated and will be removed in future versions of Synapse */
-  entityType?: string
-  /** @deprecated This field is deprecated and will be removed in future versions of Synapse */
-  uri?: string
 }
 
 export const DOCKER_REPOSITORY_CONCRETE_TYPE_VALUE =
@@ -110,14 +107,8 @@ export interface EntityJson extends Record<string, EntityJsonValue> {
   dataFileHandleId?: string
 }
 
-/**
- * A string array of all possible keys used by Synapse in Entity objects (objects that inherit this interface: https://docs.synapse.org/rest/org/sagebionetworks/repo/model/Entity.html).
- * This object is used to determine which fields are standard and which are annotations,
- * so it's important that this array contains all keys in the objects that implement the linked interface above.
- *
- * It may make sense to make this a function that accepts the entity type and returns the set of standard keys, since not all entity types have the same keys.
- */
-export const entityJsonKeys = [
+// implemented by https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/Entity.html
+const entityKeys: string[] = [
   'name',
   'description',
   'id',
@@ -128,21 +119,57 @@ export const entityJsonKeys = [
   'modifiedBy',
   'parentId',
   'concreteType',
+]
+// https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/VersionableEntity.html
+const versionableKeys: string[] = [
+  ...entityKeys,
   'versionNumber',
   'versionLabel',
   'versionComment',
   'isLatestVersion',
-  'dataFileHandleId',
-  'fileNameOverride',
-  'columnIds',
-  'scopeIds',
-  'linksTo',
-  'linksToClassName',
-  'repositoryName',
-  'isManaged',
-  'viewTypeMask',
-  'type',
-  'alias',
-  'items',
-  'definingSQL',
 ]
+
+// https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/table/Table.html
+const tableKeys: string[] = [...versionableKeys, 'columnIds', 'isSearchEnabled']
+
+// https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/table/View.html
+const viewKeys: string[] = [...tableKeys]
+
+// https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/table/EntityRefCollectionView.html
+const entityRefCollectionViewKeys: string[] = [...viewKeys, 'items']
+
+/**
+ * A string array of all possible keys used by Synapse in Entity objects (objects that inherit this interface: https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/Entity.html).
+ * This object is used to determine which fields are standard and which are annotations,
+ * so it's important that this object contains all keys in the objects that implement the linked interface above.
+ */
+export const entityJsonKeys: Record<ENTITY_CONCRETE_TYPE, string[]> = {
+  [LINK_CONCRETE_TYPE_VALUE]: [...entityKeys, 'linksTo', 'linksToClassName'],
+  [DOCKER_REPOSITORY_CONCRETE_TYPE_VALUE]: [
+    ...entityKeys,
+    'repositoryName',
+    'isManaged',
+  ],
+  [FILE_ENTITY_CONCRETE_TYPE_VALUE]: [
+    ...versionableKeys,
+    'dataFileHandleId',
+    'fileNameOverride',
+  ],
+  [SUBMISSION_VIEW_CONCRETE_TYPE_VALUE]: [...viewKeys, 'scopeIds'],
+  [DATASET_CONCRETE_TYPE_VALUE]: [
+    ...entityRefCollectionViewKeys,
+    'size',
+    'checksum',
+  ],
+  [DATASET_COLLECTION_CONCRETE_TYPE_VALUE]: [...entityRefCollectionViewKeys],
+  [ENTITY_VIEW_CONCRETE_TYPE_VALUE]: [
+    ...viewKeys,
+    'scopeIds',
+    'viewTypeMask',
+    'type',
+  ],
+  [TABLE_ENTITY_CONCRETE_TYPE_VALUE]: [...tableKeys],
+  [MATERIALIZED_VIEW_CONCRETE_TYPE_VALUE]: [...tableKeys, 'definingSQL'],
+  [FOLDER_CONCRETE_TYPE_VALUE]: [...entityKeys],
+  [PROJECT_CONCRETE_TYPE_VALUE]: [...entityKeys, 'alias'],
+}

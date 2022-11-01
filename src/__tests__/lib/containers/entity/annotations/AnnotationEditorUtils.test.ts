@@ -2,8 +2,9 @@ import { AjvError } from '@rjsf/core'
 import {
   dropNullishArrayValues,
   getFriendlyPropertyName,
-  transformErrors,
+  getTransformErrors,
 } from '../../../../../lib/containers/entity/annotations/AnnotationEditorUtils'
+import { FILE_ENTITY_CONCRETE_TYPE_VALUE } from '../../../../../lib/utils/synapseTypes'
 
 describe('AnnotationEditorUtils tests', () => {
   describe('dropNullishArrayValues', () => {
@@ -53,6 +54,7 @@ describe('AnnotationEditorUtils tests', () => {
 
   describe('transformErrors', () => {
     it('combines errors caused by an enumeration defined using anyOf', () => {
+      const transformErrors = getTransformErrors()
       const errors: AjvError[] = [
         {
           name: 'type',
@@ -100,19 +102,23 @@ describe('AnnotationEditorUtils tests', () => {
     })
 
     it('returns a custom message when using a key that collides with a reserved property', () => {
+      const transformErrors = getTransformErrors(
+        FILE_ENTITY_CONCRETE_TYPE_VALUE,
+      )
       const errors: AjvError[] = [
         {
           name: 'not',
-          property: "['name']",
+          property: "['dataFileHandleId']",
           message: 'should NOT be valid',
           params: {},
-          stack: "['name'] should NOT be valid",
+          stack: "['dataFileHandleId'] should NOT be valid",
         },
       ]
 
       const expected = expect.arrayContaining([
         expect.objectContaining({
-          message: '"name" is a reserved internal key and cannot be used.',
+          message:
+            '"dataFileHandleId" is a reserved internal key and cannot be used.',
         }),
       ])
 
