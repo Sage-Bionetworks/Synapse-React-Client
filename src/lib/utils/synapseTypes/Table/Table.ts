@@ -1,5 +1,5 @@
 import { VIEW_CONCRETE_TYPE_VALUES } from '.'
-import { VersionableEntity } from '../Entity/Entity'
+import { VersionableEntity } from '../Entity'
 import { MATERIALIZED_VIEW_CONCRETE_TYPE_VALUE } from './MaterializedView'
 import { TABLE_ENTITY_CONCRETE_TYPE_VALUE } from './TableEntity'
 

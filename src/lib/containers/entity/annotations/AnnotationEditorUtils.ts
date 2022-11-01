@@ -3,7 +3,6 @@ import { flatMap, groupBy, isEmpty } from 'lodash-es'
 import {
   ENTITY_CONCRETE_TYPE,
   entityJsonKeys,
-  FOLDER_CONCRETE_TYPE_VALUE,
 } from '../../../utils/synapseTypes'
 
 /**

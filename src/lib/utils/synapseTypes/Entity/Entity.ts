@@ -1,4 +1,3 @@
-import { TABLE_CONCRETE_TYPE_VALUES } from '../Table'
 import { FILE_ENTITY_CONCRETE_TYPE_VALUE } from './FileEntity'
 import { LINK_CONCRETE_TYPE, LINK_CONCRETE_TYPE_VALUE } from './Link'
 import {
@@ -7,6 +6,7 @@ import {
   ENTITY_VIEW_CONCRETE_TYPE_VALUE,
   SUBMISSION_VIEW_CONCRETE_TYPE_VALUE,
   TABLE_ENTITY_CONCRETE_TYPE_VALUE,
+  TABLE_CONCRETE_TYPE_VALUES,
 } from '../Table'
 import { MATERIALIZED_VIEW_CONCRETE_TYPE_VALUE } from '../Table/MaterializedView'
 
@@ -108,7 +108,7 @@ export interface EntityJson extends Record<string, EntityJsonValue> {
 }
 
 // implemented by https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/Entity.html
-const entityKeys: string[] = [
+const allEntityKeys: string[] = [
   'name',
   'description',
   'id',
@@ -122,7 +122,7 @@ const entityKeys: string[] = [
 ]
 // https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/VersionableEntity.html
 const versionableKeys: string[] = [
-  ...entityKeys,
+  ...allEntityKeys,
   'versionNumber',
   'versionLabel',
   'versionComment',
@@ -144,9 +144,9 @@ const entityRefCollectionViewKeys: string[] = [...viewKeys, 'items']
  * so it's important that this object contains all keys in the objects that implement the linked interface above.
  */
 export const entityJsonKeys: Record<ENTITY_CONCRETE_TYPE, string[]> = {
-  [LINK_CONCRETE_TYPE_VALUE]: [...entityKeys, 'linksTo', 'linksToClassName'],
+  [LINK_CONCRETE_TYPE_VALUE]: [...allEntityKeys, 'linksTo', 'linksToClassName'],
   [DOCKER_REPOSITORY_CONCRETE_TYPE_VALUE]: [
-    ...entityKeys,
+    ...allEntityKeys,
     'repositoryName',
     'isManaged',
   ],
@@ -168,8 +168,8 @@ export const entityJsonKeys: Record<ENTITY_CONCRETE_TYPE, string[]> = {
     'viewTypeMask',
     'type',
   ],
-  [TABLE_ENTITY_CONCRETE_TYPE_VALUE]: [...tableKeys],
+  [TABLE_ENTITY_CONCRETE_TYPE_VALUE]: tableKeys,
   [MATERIALIZED_VIEW_CONCRETE_TYPE_VALUE]: [...tableKeys, 'definingSQL'],
-  [FOLDER_CONCRETE_TYPE_VALUE]: [...entityKeys],
-  [PROJECT_CONCRETE_TYPE_VALUE]: [...entityKeys, 'alias'],
+  [FOLDER_CONCRETE_TYPE_VALUE]: allEntityKeys,
+  [PROJECT_CONCRETE_TYPE_VALUE]: [...allEntityKeys, 'alias'],
 }
