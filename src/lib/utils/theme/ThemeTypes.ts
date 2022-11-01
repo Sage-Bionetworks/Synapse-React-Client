@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-empty-interface */
 
 import React from 'react'
+import '@mui/material/styles'
 
 // If creating a new Typography variant, add it to this list.
 type CustomTypographyVariants =
@@ -22,6 +23,7 @@ type CustomTypographyVariants =
   | 'dataFieldKey'
 
 // We create this type because we have to use interfaces in the module augmentations, which don't allow mapped types.
+// This is also why we override ESLint to allow empty interfaces in this file.
 type RecordWithCustomVariantKeys<Value> = {
   [key in CustomTypographyVariants]: Value
 }
@@ -35,21 +37,12 @@ declare module '@mui/material/styles' {
   // allow configuration using `createTheme`
   interface TypographyVariantsOptions
     extends RecordWithCustomVariantKeys<React.CSSProperties | undefined> {}
+}
 
-  interface Palette {
-    gray: Palette['primary']
-  }
-
-  interface PaletteOptions {
-    gray?: PaletteOptions['primary']
-  }
-
-  interface PaletteColor {
-    1000?: string
-  }
-
-  interface SimplePaletteColorOptions {
-    1000?: string
+declare module '@mui/material' {
+  interface Color {
+    // MUI doesn't go up to 1000 but our palette does
+    [1000]: string
   }
 }
 

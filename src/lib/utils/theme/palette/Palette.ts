@@ -10,7 +10,7 @@ const palette: PaletteOptions = {
   secondary: {
     main: '#469285',
   },
-  gray: {
+  grey: {
     1000: '#22252a',
     900: '#353a3f',
     800: '#4a5056',

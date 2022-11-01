@@ -99,7 +99,7 @@ export const typographyOptions: (
     fontWeight: 400,
     lineHeight: '16px',
     marginTop: '16px',
-    color: '#878e95', // gray-700
+    color: palette.grey[700],
     textTransform: 'uppercase',
   },
 })
