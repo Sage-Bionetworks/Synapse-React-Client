@@ -41,7 +41,7 @@ declare module '@mui/material/styles' {
   }
 
   interface PaletteOptions {
-    gray: PaletteOptions['primary']
+    gray?: PaletteOptions['primary']
   }
 
   interface PaletteColor {
