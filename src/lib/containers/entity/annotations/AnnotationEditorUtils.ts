@@ -46,9 +46,7 @@ export function getFriendlyPropertyName(error: AjvError) {
   }
 }
 
-export function getTransformErrors(
-  concreteType: ENTITY_CONCRETE_TYPE = FOLDER_CONCRETE_TYPE_VALUE,
-) {
+export function getTransformErrors(concreteType?: ENTITY_CONCRETE_TYPE) {
   return (errors: AjvError[]): AjvError[] => {
     // Transform the errors in the following ways:
     // - Simplify the set of errors when failing to select an enumeration defined with an anyOf (SWC-5724)
@@ -91,13 +89,15 @@ export function getTransformErrors(
     errors = flatMap(grouped)
 
     // Custom error message if the custom annotation key collides with an internal entity property
-    errors = errors.map(error => {
-      const propertyName = getFriendlyPropertyName(error)
-      if (entityJsonKeys[concreteType].includes(propertyName)) {
-        error.message = `"${propertyName}" is a reserved internal key and cannot be used.`
-      }
-      return error
-    })
+    if (concreteType) {
+      errors = errors.map(error => {
+        const propertyName = getFriendlyPropertyName(error)
+        if (entityJsonKeys[concreteType].includes(propertyName)) {
+          error.message = `"${propertyName}" is a reserved internal key and cannot be used.`
+        }
+        return error
+      })
+    }
 
     // Return the transformed errors.
     return errors
