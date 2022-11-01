@@ -1,9 +1,7 @@
 import { AjvError } from '@sage-bionetworks/rjsf-core'
 import { flatMap, groupBy, isEmpty } from 'lodash-es'
-import {
-  ENTITY_CONCRETE_TYPE,
-  entityJsonKeys,
-} from '../../../utils/synapseTypes'
+import { ENTITY_CONCRETE_TYPE } from '../../../utils/synapseTypes'
+import { entityJsonKeys } from '../../../utils/functions/EntityTypeUtils'
 
 /**
  * Strips null values from arrays in the provided form data. If the array is empty after

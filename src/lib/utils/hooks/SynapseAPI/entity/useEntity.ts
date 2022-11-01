@@ -16,12 +16,12 @@ import {
   UseQueryOptions,
 } from 'react-query'
 import { SynapseClient } from '../../..'
+import { entityJsonKeys } from '../../../functions/EntityTypeUtils'
 import { SynapseClientError } from '../../../SynapseClientError'
 import { useSynapseContext } from '../../../SynapseContext'
 import {
   Entity,
   EntityJson,
-  entityJsonKeys,
   EntityJsonValue,
   EntityPath,
   PaginatedResults,

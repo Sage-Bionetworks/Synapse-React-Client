@@ -15,11 +15,7 @@ import {
   useUpdateViaJson,
 } from '../../../utils/hooks/SynapseAPI'
 import { SynapseClientError } from '../../../utils/SynapseClientError'
-import {
-  ENTITY_CONCRETE_TYPE,
-  EntityJson,
-  entityJsonKeys,
-} from '../../../utils/synapseTypes'
+import { ENTITY_CONCRETE_TYPE, EntityJson } from '../../../utils/synapseTypes'
 import { SynapseSpinner } from '../../LoadingScreen'
 import { AdditionalPropertiesSchemaField } from './AdditionalPropertiesSchemaField'
 import {
@@ -35,6 +31,7 @@ import { CustomDefaultTemplate } from './CustomDefaultTemplate'
 import { CustomObjectFieldTemplate } from './CustomObjectFieldTemplate'
 import { CustomSelectWidget } from './CustomSelectWidget'
 import CustomTextWidget from './CustomTextWidget'
+import { entityJsonKeys } from '../../../utils/functions/EntityTypeUtils'
 
 export type SchemaDrivenAnnotationEditorProps = {
   /** The entity whose annotations should be edited with the form */

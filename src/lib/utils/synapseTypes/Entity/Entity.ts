@@ -1,14 +1,6 @@
 import { FILE_ENTITY_CONCRETE_TYPE_VALUE } from './FileEntity'
-import { LINK_CONCRETE_TYPE, LINK_CONCRETE_TYPE_VALUE } from './Link'
-import {
-  DATASET_COLLECTION_CONCRETE_TYPE_VALUE,
-  DATASET_CONCRETE_TYPE_VALUE,
-  ENTITY_VIEW_CONCRETE_TYPE_VALUE,
-  SUBMISSION_VIEW_CONCRETE_TYPE_VALUE,
-  TABLE_ENTITY_CONCRETE_TYPE_VALUE,
-  TABLE_CONCRETE_TYPE_VALUES,
-} from '../Table'
-import { MATERIALIZED_VIEW_CONCRETE_TYPE_VALUE } from '../Table/MaterializedView'
+import { LINK_CONCRETE_TYPE } from './Link'
+import { TABLE_CONCRETE_TYPE_VALUES } from '../Table/Table'
 
 // https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/Entity.html
 
@@ -105,71 +97,4 @@ export interface EntityJson extends Record<string, EntityJsonValue> {
   versionLabel?: string
   isLatestVersion?: boolean
   dataFileHandleId?: string
-}
-
-// implemented by https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/Entity.html
-const allEntityKeys: string[] = [
-  'name',
-  'description',
-  'id',
-  'etag',
-  'createdOn',
-  'modifiedOn',
-  'createdBy',
-  'modifiedBy',
-  'parentId',
-  'concreteType',
-]
-// https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/VersionableEntity.html
-const versionableKeys: string[] = [
-  ...allEntityKeys,
-  'versionNumber',
-  'versionLabel',
-  'versionComment',
-  'isLatestVersion',
-]
-
-// https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/table/Table.html
-const tableKeys: string[] = [...versionableKeys, 'columnIds', 'isSearchEnabled']
-
-// https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/table/View.html
-const viewKeys: string[] = [...tableKeys]
-
-// https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/table/EntityRefCollectionView.html
-const entityRefCollectionViewKeys: string[] = [...viewKeys, 'items']
-
-/**
- * A string array of all possible keys used by Synapse in Entity objects (objects that inherit this interface: https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/Entity.html).
- * This object is used to determine which fields are standard and which are annotations,
- * so it's important that this object contains all keys in the objects that implement the linked interface above.
- */
-export const entityJsonKeys: Record<ENTITY_CONCRETE_TYPE, string[]> = {
-  [LINK_CONCRETE_TYPE_VALUE]: [...allEntityKeys, 'linksTo', 'linksToClassName'],
-  [DOCKER_REPOSITORY_CONCRETE_TYPE_VALUE]: [
-    ...allEntityKeys,
-    'repositoryName',
-    'isManaged',
-  ],
-  [FILE_ENTITY_CONCRETE_TYPE_VALUE]: [
-    ...versionableKeys,
-    'dataFileHandleId',
-    'fileNameOverride',
-  ],
-  [SUBMISSION_VIEW_CONCRETE_TYPE_VALUE]: [...viewKeys, 'scopeIds'],
-  [DATASET_CONCRETE_TYPE_VALUE]: [
-    ...entityRefCollectionViewKeys,
-    'size',
-    'checksum',
-  ],
-  [DATASET_COLLECTION_CONCRETE_TYPE_VALUE]: [...entityRefCollectionViewKeys],
-  [ENTITY_VIEW_CONCRETE_TYPE_VALUE]: [
-    ...viewKeys,
-    'scopeIds',
-    'viewTypeMask',
-    'type',
-  ],
-  [TABLE_ENTITY_CONCRETE_TYPE_VALUE]: tableKeys,
-  [MATERIALIZED_VIEW_CONCRETE_TYPE_VALUE]: [...tableKeys, 'definingSQL'],
-  [FOLDER_CONCRETE_TYPE_VALUE]: allEntityKeys,
-  [PROJECT_CONCRETE_TYPE_VALUE]: [...allEntityKeys, 'alias'],
 }
