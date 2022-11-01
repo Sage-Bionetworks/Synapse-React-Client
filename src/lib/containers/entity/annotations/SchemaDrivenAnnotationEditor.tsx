@@ -10,10 +10,10 @@ import {
 } from '../../../utils/functions/getEndpoint'
 import {
   useGetJson,
+  useGetSchema,
+  useGetSchemaBinding,
   useUpdateViaJson,
-} from '../../../utils/hooks/SynapseAPI/entity/useEntity'
-import { useGetSchemaBinding } from '../../../utils/hooks/SynapseAPI/entity/useEntityBoundSchema'
-import { useGetSchema } from '../../../utils/hooks/SynapseAPI/entity/useSchema'
+} from '../../../utils/hooks/SynapseAPI'
 import { SynapseClientError } from '../../../utils/SynapseClientError'
 import { EntityJson, entityJsonKeys } from '../../../utils/synapseTypes'
 import { SynapseSpinner } from '../../LoadingScreen'

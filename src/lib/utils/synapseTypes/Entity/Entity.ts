@@ -1,4 +1,4 @@
-import { TABLE_CONCRETE_TYPE_VALUES } from '../Table/Table'
+import { TABLE_CONCRETE_TYPE_VALUES } from '../Table'
 import { FILE_ENTITY_CONCRETE_TYPE_VALUE } from './FileEntity'
 import { LINK_CONCRETE_TYPE, LINK_CONCRETE_TYPE_VALUE } from './Link'
 import {
