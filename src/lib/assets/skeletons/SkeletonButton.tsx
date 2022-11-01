@@ -1,5 +1,5 @@
 import React from 'react'
-import Skeleton from '@material-ui/lab/Skeleton'
+import Skeleton from '@mui/material/Skeleton'
 import { Button } from 'react-bootstrap'
 
 /**
@@ -9,7 +9,7 @@ export const SkeletonButton: React.FC<{ placeholderText?: string }> = ({
   placeholderText = 'Placeholder',
 }) => {
   return (
-    <Skeleton variant="rect">
+    <Skeleton variant="rectangular">
       <Button>{placeholderText}</Button>
     </Skeleton>
   )

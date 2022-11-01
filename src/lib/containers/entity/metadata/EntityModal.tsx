@@ -1,4 +1,4 @@
-import Skeleton from '@material-ui/lab/Skeleton'
+import Skeleton from '@mui/material/Skeleton'
 import Form from '@rjsf/core'
 import React, { useRef, useState } from 'react'
 import { Modal } from 'react-bootstrap'

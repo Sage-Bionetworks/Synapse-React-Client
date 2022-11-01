@@ -73,7 +73,7 @@ import {
   Title,
   StrikethroughS,
   Image,
-} from '@material-ui/icons'
+} from '@mui/icons-material'
 import React, { useEffect } from 'react'
 import AccessManagement from '../assets/mui_components/AccessManagement'
 import AccountCertified from '../assets/mui_components/AccountCertified'
@@ -99,7 +99,7 @@ import Proteomics from '../assets/mui_components/Proteomics'
 import Rat from '../assets/mui_components/Rat'
 import PushPin from '../assets/mui_components/PushPin'
 import { EntityType } from '../utils/synapseTypes/EntityType'
-import Tooltip from '../utils/tooltip/Tooltip'
+import { Tooltip } from '@mui/material'
 
 export const IconStrings = [
   'accessOpen',

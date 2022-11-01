@@ -16,7 +16,7 @@ import {
 } from '../utils/synapseTypes/AccessSubmission'
 import { SynapseSpinner } from './LoadingScreen'
 import UserCard from './UserCard'
-import Typography from '../utils/typography/Typography'
+import { Typography } from '@mui/material'
 import UserOrTeamBadge from './UserOrTeamBadge'
 
 export type AccessRequestSubmissionTableProps = {

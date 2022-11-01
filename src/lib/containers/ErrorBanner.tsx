@@ -10,7 +10,7 @@ import { useSynapseContext } from '../utils/SynapseContext'
 import { Optional } from '../utils/types/Optional'
 import { useJiraIssueCollector } from './JiraIssueCollector'
 import SignInButton from './SignInButton'
-import { Collapse } from '@material-ui/core'
+import { Collapse } from '@mui/material'
 
 type ErrorBannerProps = {
   error?: string | Error | SynapseClientError | null

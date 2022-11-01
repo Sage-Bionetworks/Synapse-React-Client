@@ -10,7 +10,7 @@ import {
 } from '../../utils/hooks/SynapseAPI/trash/useTrashCan'
 import { SynapseClientError } from '../../utils/SynapseClientError'
 import { TrashedEntity } from '../../utils/synapseTypes'
-import Typography from '../../utils/typography/Typography'
+import { Typography } from '@mui/material'
 import { EntityLink } from '../EntityLink'
 import { BlockingLoader, SynapseSpinner } from '../LoadingScreen'
 import WarningModal from '../synapse_form_wrapper/WarningModal'

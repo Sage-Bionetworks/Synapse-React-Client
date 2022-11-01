@@ -7,7 +7,7 @@ import {
 import { useSynapseContext } from '../utils/SynapseContext'
 import DiscussionReply from './DiscussionSearchResult'
 import { Entity } from '../utils/synapseTypes'
-import Typography from '../utils/typography/Typography'
+import { Typography } from '@mui/material'
 import NoSearchResults from '../assets/icons/NoSearchResults'
 import { Button } from 'react-bootstrap'
 import IconSvg from './IconSvg'

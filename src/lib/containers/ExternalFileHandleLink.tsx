@@ -8,7 +8,7 @@ import {
   isFileEntity,
 } from '../utils/synapseTypes'
 import { SynapseClient } from '../utils/'
-import { OpenInNewTwoTone } from '@material-ui/icons'
+import { OpenInNewTwoTone } from '@mui/icons-material'
 import { useSynapseContext } from '../utils/SynapseContext'
 
 export type ExternalFileHandleLinkProps = {

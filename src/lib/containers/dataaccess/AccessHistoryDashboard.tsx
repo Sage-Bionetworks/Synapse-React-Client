@@ -4,7 +4,7 @@ import { FormLabel } from 'react-bootstrap'
 import { useHistory, useLocation } from 'react-router-dom'
 import { useDebouncedEffect } from '../../utils/hooks/useDebouncedEffect'
 import { TYPE_FILTER } from '../../utils/synapseTypes'
-import Typography from '../../utils/typography/Typography'
+import { Typography } from '@mui/material'
 import {
   AccessApprovalsTable,
   AccessApprovalsTableProps,

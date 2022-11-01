@@ -13,7 +13,7 @@ import { useInView } from 'react-intersection-observer'
 import { useSynapseContext } from '../utils/SynapseContext'
 import { TOOLTIP_DELAY_SHOW } from './table/SynapseTableConstants'
 import { UAParser } from 'ua-parser-js'
-import Tooltip from '../utils/tooltip/Tooltip'
+import { Tooltip } from '@mui/material'
 
 export type DirectFileDownloadProps = {
   associatedObjectId: string

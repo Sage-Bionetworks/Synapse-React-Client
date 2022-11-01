@@ -8,7 +8,7 @@ import IconSvg from '../IconSvg'
 import MarkdownSynapse from './MarkdownSynapse'
 import { UserMentionModal } from './UserMentionModal'
 import { startCase } from 'lodash-es'
-import Tooltip from '../../utils/tooltip/Tooltip'
+import { Tooltip } from '@mui/material'
 
 export enum MarkdownEditorTabs {
   WRITE = 'WRITE',

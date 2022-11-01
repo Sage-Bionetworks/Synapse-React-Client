@@ -1,4 +1,4 @@
-import { Collapse } from '@material-ui/core'
+import { Collapse } from '@mui/material'
 import React, { useRef, useState } from 'react'
 import { TextMatchesQueryFilter } from '../utils/synapseTypes/Table/QueryFilter'
 import {

@@ -1,4 +1,4 @@
-import { Collapse } from '@material-ui/core'
+import { Collapse } from '@mui/material'
 import * as React from 'react'
 import { useState } from 'react'
 import {

@@ -1,13 +1,13 @@
-import { Clear } from '@material-ui/icons'
+import { Clear } from '@mui/icons-material'
 import React, { useEffect, useState } from 'react'
 import useGetEntityBundle from '../../utils/hooks/SynapseAPI/entity/useEntityBundle'
 import { Reference } from '../../utils/synapseTypes'
-import Typography from '../../utils/typography/Typography'
+import { Typography } from '@mui/material'
 import { EntityTypeIcon } from '../EntityIcon'
 import { NO_VERSION_NUMBER } from './EntityFinder'
 import { Map } from 'immutable'
-import { Skeleton } from '@material-ui/lab'
-import Tooltip from '../../utils/tooltip/Tooltip'
+import { Skeleton } from '@mui/material'
+import { Tooltip } from '@mui/material'
 import { TOOLTIP_DELAY_SHOW } from '../table/SynapseTableConstants'
 
 export type SelectionPaneProps = {

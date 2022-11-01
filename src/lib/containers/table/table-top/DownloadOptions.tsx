@@ -7,7 +7,7 @@ import {
   isFileView,
 } from '../../../utils/functions/EntityTypeUtils'
 import { useSynapseContext } from '../../../utils/SynapseContext'
-import Tooltip from '../../../utils/tooltip/Tooltip'
+import { Tooltip } from '@mui/material'
 import { useQueryContext } from '../../QueryContext'
 import { ElementWithTooltip } from '../../widgets/ElementWithTooltip'
 import { DownloadLoginModal } from './DownloadLoginModal'

@@ -2,7 +2,7 @@ import React from 'react'
 import { calculateFriendlyFileSize } from '../../utils/functions/calculateFriendlyFileSize'
 import { TOOLTIP_DELAY_SHOW } from '../table/SynapseTableConstants'
 import IconSvg from '../IconSvg'
-import Tooltip from '../../utils/tooltip/Tooltip'
+import { Tooltip } from '@mui/material'
 
 export type DownloadDetailsProps = {
   numFiles: number

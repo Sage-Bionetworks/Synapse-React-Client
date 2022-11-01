@@ -1,5 +1,5 @@
 import React from 'react'
-import { Skeleton } from '@material-ui/lab'
+import { Skeleton } from '@mui/material'
 import { SubmissionInfo } from '../utils/synapseTypes/SubmissionInfo'
 import { SMALL_USER_CARD } from '../utils/SynapseConstants'
 import UserCard from './UserCard'
@@ -49,7 +49,7 @@ export const LoadingSubmissionInfoCard: React.FunctionComponent = () => {
   return (
     <p className="SubmissionInfoCard">
       <SkeletonTable numCols={1} numRows={4} />
-      <Skeleton variant="rect" width={'100%'} height={80} />
+      <Skeleton variant="rectangular" width={'100%'} height={80} />
     </p>
   )
 }

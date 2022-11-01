@@ -11,7 +11,7 @@ import {
   AccessRequirementSearchRequest,
   AccessRequirementSearchSort,
 } from '../../utils/synapseTypes/AccessRequirement/AccessRequirementSearch'
-import Typography from '../../utils/typography/Typography'
+import { Typography } from '@mui/material'
 import { EntityLink } from '../EntityLink'
 import IconSvg from '../IconSvg'
 import { SynapseSpinner } from '../LoadingScreen'

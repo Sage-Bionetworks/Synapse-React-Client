@@ -6,7 +6,7 @@ import { Icon } from '../row_renderers/utils'
 import { DOWNLOAD_PERMISSION_REQUIRED } from '../../utils/SynapseConstants'
 import { Button } from 'react-bootstrap'
 import { LoadingAccessRequirementCard } from './MeetAccessRequirementCard'
-import Typography from '../../utils/typography/Typography'
+import { Typography } from '@mui/material'
 
 export type RequestDownloadCardProps = {
   entityId: string

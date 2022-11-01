@@ -6,7 +6,7 @@ import {
   LocalOfferTwoTone,
   LockTwoTone,
   PublicTwoTone,
-} from '@material-ui/icons'
+} from '@mui/icons-material'
 import { isEmpty } from 'lodash-es'
 import React, { useEffect, useState } from 'react'
 import { useInView } from 'react-intersection-observer'
@@ -26,7 +26,7 @@ import { useSynapseContext } from '../utils/SynapseContext'
 import { EntityBundle, EntityType } from '../utils/synapseTypes'
 import { EntityModal, EntityModalTabs } from './entity/metadata/EntityModal'
 import WarningModal from './synapse_form_wrapper/WarningModal'
-import Tooltip from '../utils/tooltip/Tooltip'
+import { Tooltip } from '@mui/material'
 
 function isPublic(bundle: EntityBundle): boolean {
   return bundle.benefactorAcl.resourceAccess.some(ra => {

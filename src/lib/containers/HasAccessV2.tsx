@@ -6,7 +6,6 @@ import {
 } from '../utils/functions/getEndpoint'
 import { useGetRestrictionInformation } from '../utils/hooks/SynapseAPI/dataaccess/useGetAccessRequirement'
 import useGetEntityBundle from '../utils/hooks/SynapseAPI/entity/useEntityBundle'
-import { SynapseTheme, ThemeContext } from '../utils/hooks/useTheme'
 import { SRC_SIGN_IN_CLASS } from '../utils/SynapseConstants'
 import { useSynapseContext } from '../utils/SynapseContext'
 import {
@@ -20,6 +19,7 @@ import AccessRequirementList, {
   checkHasUnsportedRequirement,
 } from './access_requirement_list/AccessRequirementList'
 import IconSvg, { Icon } from './IconSvg'
+import { Theme, useTheme } from '@mui/material'
 
 export type HasAccessProps = {
   onHide?: () => void
@@ -40,53 +40,50 @@ export enum FileHandleDownloadTypeEnum {
 
 const iconConfiguration: Record<
   FileHandleDownloadTypeEnum,
-  { icon: Icon; color: (theme: SynapseTheme) => string; tooltipText: string }
+  { icon: Icon; color: (theme: Theme) => string; tooltipText: string }
 > = {
   [FileHandleDownloadTypeEnum.AccessBlockedToAnonymous]: {
     icon: 'accessClosed',
-    color: theme => theme.colors.warning,
+    color: theme => theme.palette.warning.main,
     tooltipText: 'You must sign in to access this file.',
   },
   [FileHandleDownloadTypeEnum.AccessBlockedByRestriction]: {
     icon: 'accessClosed',
-    color: theme => theme.colors.warning,
+    color: theme => theme.palette.warning.main,
     tooltipText: 'You must request access to this restricted file.',
   },
   [FileHandleDownloadTypeEnum.AccessBlockedByACL]: {
     icon: 'accessClosed',
-    color: theme => theme.colors.warning,
+    color: theme => theme.palette.warning.main,
     tooltipText: 'You do not have download access for this item.',
   },
 
   [FileHandleDownloadTypeEnum.Accessible]: {
     icon: 'accessOpen',
-    color: theme => theme.colors.success,
+    color: theme => theme.palette.success.main,
     tooltipText: '',
   },
 
   [FileHandleDownloadTypeEnum.NoFileHandle]: {
     icon: 'accessOpen',
-    color: theme => theme.colors.success,
+    color: theme => theme.palette.success.main,
     tooltipText: '',
   },
 }
 
 function AccessIcon(props: { downloadType: FileHandleDownloadTypeEnum }) {
   const { downloadType } = props
+  const theme = useTheme()
   if (downloadType) {
     const configuration = iconConfiguration[downloadType]
     return (
-      <ThemeContext.Consumer>
-        {theme => (
-          <IconSvg
-            options={{
-              icon: configuration.icon,
-              color: configuration.color(theme),
-              label: configuration.tooltipText,
-            }}
-          />
-        )}
-      </ThemeContext.Consumer>
+      <IconSvg
+        options={{
+          icon: configuration.icon,
+          color: configuration.color(theme),
+          label: configuration.tooltipText,
+        }}
+      />
     )
   }
   // nothing is rendered until downloadType is determined

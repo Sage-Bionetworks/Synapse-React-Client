@@ -1,4 +1,4 @@
-import { Skeleton } from '@material-ui/lab'
+import { Skeleton } from '@mui/material'
 import React, { useMemo, useState } from 'react'
 import Select, {
   components,

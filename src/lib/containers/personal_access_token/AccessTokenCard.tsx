@@ -6,7 +6,7 @@ import { SynapseClient } from '../../utils/'
 import { useSynapseContext } from '../../utils/SynapseContext'
 import { AccessTokenRecord } from '../../utils/synapseTypes/AccessToken/AccessTokenRecord'
 import { scopeDescriptions } from '../../utils/synapseTypes/AccessToken/ScopeDescriptions'
-import Tooltip from '../../utils/tooltip/Tooltip'
+import { Tooltip } from '@mui/material'
 import IconSvg from '../IconSvg'
 import WarningModal from '../synapse_form_wrapper/WarningModal'
 

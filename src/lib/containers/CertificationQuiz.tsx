@@ -13,8 +13,8 @@ import {
 import { displayToast } from './ToastMessage'
 import { Button } from 'react-bootstrap'
 import { MarkdownPopover } from './MarkdownPopover'
-import { HelpOutlineTwoTone } from '@material-ui/icons'
-import Typography from '../utils/typography/Typography'
+import { HelpOutlineTwoTone } from '@mui/icons-material'
+import { Typography } from '@mui/material'
 import { useErrorHandler } from 'react-error-boundary'
 
 const CertificationQuiz: React.FunctionComponent = () => {

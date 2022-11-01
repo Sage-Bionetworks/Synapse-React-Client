@@ -1,4 +1,4 @@
-import { Skeleton } from '@material-ui/lab'
+import { Skeleton, useTheme } from '@mui/material'
 import BaseTable, {
   AutoResizer,
   ColumnShape,
@@ -20,7 +20,6 @@ import {
   useUpdateEntity,
 } from '../../../utils/hooks/SynapseAPI/entity/useEntity'
 import { useSet } from '../../../utils/hooks/useSet'
-import { useTheme } from '../../../utils/hooks/useTheme'
 import {
   EntityRef,
   EntityRefCollectionView,
@@ -28,7 +27,7 @@ import {
   Reference,
 } from '../../../utils/synapseTypes'
 import { RequiredProperties } from '../../../utils/types/RequiredProperties'
-import Typography from '../../../utils/typography/Typography'
+import { Typography } from '@mui/material'
 import {
   BadgeIconsRenderer,
   CellRendererProps,
@@ -605,7 +604,7 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
               {datasetToUpdate.items.length !== 1 && 's'}
             </Typography>
           ) : (
-            <Skeleton variant="rect" width={200} />
+            <Skeleton variant="rectangular" width={200} />
           )}
         </div>
 
@@ -672,7 +671,7 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
             <IconSvg
               options={{
                 icon: 'warning',
-                color: theme.colors.warning,
+                color: theme.palette.warning.main,
                 padding: 'right',
               }}
             />

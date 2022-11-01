@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useSynapseContext } from '../../utils/SynapseContext'
 import { Alert, Button, Col, Form, Modal, Row } from 'react-bootstrap'
 import { displayToast } from '../ToastMessage'
-import Typography from '../../utils/typography/Typography'
+import { Typography } from '@mui/material'
 import { OAuthClient } from '../../utils/synapseTypes/OAuthClient'
 import {
   useCreateOAuthClient,
@@ -11,8 +11,8 @@ import {
 } from '../../utils/hooks/SynapseAPI'
 import IconSvg from '../IconSvg'
 import { WarningModal } from '../synapse_form_wrapper/WarningModal'
-import { HelpOutlineTwoTone } from '@material-ui/icons'
-import Tooltip from '../../utils/tooltip/Tooltip'
+import { HelpOutlineTwoTone } from '@mui/icons-material'
+import { Tooltip } from '@mui/material'
 import { SynapseClientError } from '../../utils/SynapseClientError'
 import { SynapseSpinner } from '../LoadingScreen'
 

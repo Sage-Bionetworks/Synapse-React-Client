@@ -1,4 +1,4 @@
-import { SvgIcon, SvgIconProps } from '@material-ui/core'
+import { SvgIcon, SvgIconProps } from '@mui/material'
 import * as React from 'react'
 
 const Login = (props: SvgIconProps) => {

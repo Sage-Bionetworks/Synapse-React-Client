@@ -1,7 +1,7 @@
 import moment from 'moment'
 import React from 'react'
 import { formatDate } from '../../utils/functions/DateFormatter'
-import Typography from '../../utils/typography/Typography'
+import { Typography } from '@mui/material'
 import { useQueryVisualizationContext } from '../QueryVisualizationWrapper'
 import { useQueryContext } from '../QueryContext'
 

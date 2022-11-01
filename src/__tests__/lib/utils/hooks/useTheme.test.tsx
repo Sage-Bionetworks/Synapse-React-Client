@@ -1,7 +1,7 @@
 import {
   defaultSynapseTheme,
   mergeTheme,
-} from '../../../../lib/utils/hooks/useTheme'
+} from '../../../../lib/utils/theme/useTheme'
 
 describe('Synapse Theme tests', () => {
   it('properly merges a custom theme with the default theme', () => {
@@ -15,10 +15,10 @@ describe('Synapse Theme tests', () => {
 
     expect(mergedTheme.colors.success).toEqual(customColor)
     expect(mergedTheme.colors.warning).toEqual(
-      defaultSynapseTheme.colors.warning,
+      defaultSynapseTheme.palette.warning,
     )
-    expect(mergedTheme.colors.info).toEqual(defaultSynapseTheme.colors.info)
-    expect(mergedTheme.colors.error).toEqual(defaultSynapseTheme.colors.error)
+    expect(mergedTheme.colors.info).toEqual(defaultSynapseTheme.palette.info)
+    expect(mergedTheme.colors.error).toEqual(defaultSynapseTheme.palette.error)
   })
 
   // TODO: Test merging color palettes and validate that an entire palette is generated when providing one color

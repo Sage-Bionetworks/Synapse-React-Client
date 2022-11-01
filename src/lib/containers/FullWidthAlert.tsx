@@ -6,9 +6,9 @@ import {
   CheckCircleTwoTone,
   HighlightOffTwoTone,
   Clear,
-} from '@material-ui/icons'
-import Typography from '../utils/typography/Typography'
-import Tooltip from '../utils/tooltip/Tooltip'
+} from '@mui/icons-material'
+import { Typography } from '@mui/material'
+import { Tooltip } from '@mui/material'
 
 export type AlertButtonConfig = {
   text: string

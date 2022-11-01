@@ -6,7 +6,7 @@ import { TOOLTIP_DELAY_SHOW } from '../table/SynapseTableConstants'
 import { useSynapseContext } from '../../utils/SynapseContext'
 import { SkeletonInlineBlock } from '../../assets/skeletons/SkeletonInlineBlock'
 import IconSvg from '../IconSvg'
-import Tooltip from '../../utils/tooltip/Tooltip'
+import { Tooltip } from '@mui/material'
 
 export type DownloadDetailsProps = {
   numFiles: number

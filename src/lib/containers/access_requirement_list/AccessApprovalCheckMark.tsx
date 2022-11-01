@@ -1,5 +1,5 @@
 import React from 'react'
-import { CheckTwoTone, LockTwoTone } from '@material-ui/icons'
+import { CheckTwoTone, LockTwoTone } from '@mui/icons-material'
 
 export type CheckMarkProps = {
   isCompleted: boolean | undefined
