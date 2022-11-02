@@ -9,6 +9,7 @@ import MarkdownSynapse from './MarkdownSynapse'
 import { UserMentionModal } from './UserMentionModal'
 import { startCase } from 'lodash-es'
 import Tooltip from '../../utils/tooltip/Tooltip'
+import { Button } from 'react-bootstrap'
 
 export enum MarkdownEditorTabs {
   WRITE = 'WRITE',
@@ -17,17 +18,28 @@ export enum MarkdownEditorTabs {
 
 export type MarkdownEditorProps = {
   placeholder?: string
+  forumId?: string
+  editTitle?: string
+  editText?: string
+  onSave: (text: string, title?: string) => void
+  onCancel: () => void
 }
 
 export const MarkdownEditor: React.FunctionComponent<MarkdownEditorProps> = ({
+  onCancel,
   placeholder,
+  forumId,
+  editText,
+  editTitle,
+  onSave,
 }) => {
   const [currentTab, setCurrentTab] = useState<MarkdownEditorTabs>(
     MarkdownEditorTabs.WRITE,
   )
-  const [text, setText] = useState<string>('')
+  const [text, setText] = useState<string>(editText ?? '')
   const [selectionStart, setSelectionStart] = useState<number>(0)
   const [isShowingTagModal, setIsShowingTagModal] = useState<boolean>(false)
+  const [title, setTitle] = useState<string>(editTitle ?? '')
   const textAreaRef = useRef<HTMLTextAreaElement>(null)
 
   /**
@@ -56,6 +68,11 @@ export const MarkdownEditor: React.FunctionComponent<MarkdownEditorProps> = ({
       newText.push(textBeforeTag, `@${user}`, textAfterTag)
     }
     setText(newText.join(''))
+  }
+
+  const handleSave = () => {
+    onSave(text, title)
+    onCancel()
   }
 
   const handleCommands = (command: CommandListType) => {
@@ -107,6 +124,15 @@ export const MarkdownEditor: React.FunctionComponent<MarkdownEditorProps> = ({
 
   return (
     <div className="bootstrap-4-backport MarkdownEditor">
+      {forumId && (
+        <input
+          placeholder="Title"
+          type="text"
+          style={{ width: '100%', padding: '4px' }}
+          value={title}
+          onChange={e => setTitle(e.target.value)}
+        />
+      )}
       <div className="MarkdownEditorControls">
         <div className="Tabs">
           {Object.keys(MarkdownEditorTabs).map((tabName: string) => {
@@ -161,7 +187,16 @@ export const MarkdownEditor: React.FunctionComponent<MarkdownEditorProps> = ({
         ) : (
           'Nothing to preview'
         )}
+        <div style={{ float: 'right' }}>
+          <Button onClick={onCancel} variant="light">
+            Cancel
+          </Button>
+          <Button onClick={() => handleSave()} variant="primary">
+            Save
+          </Button>
+        </div>
       </div>
+
       <UserMentionModal
         show={isShowingTagModal}
         onClose={() => setIsShowingTagModal(false)}

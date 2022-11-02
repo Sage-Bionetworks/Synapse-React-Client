@@ -154,11 +154,14 @@ import {
   ChangePasswordWithToken,
 } from './synapseTypes/ChangePasswordRequests'
 import {
+  CreateDiscussionThread,
   DiscussionFilter,
   DiscussionReplyBundle,
   DiscussionReplyOrder,
   DiscussionThreadBundle,
   DiscussionThreadOrder,
+  UpdateThreadMessageRequest,
+  UpdateThreadTitleRequest,
 } from './synapseTypes/DiscussionBundle'
 import {
   DiscussionSearchRequest,
@@ -3674,6 +3677,63 @@ export const getThreadMessageUrl = (
 ) => {
   return doGet<MessageURL>(
     `/repo/v1/thread/messageUrl?messageKey=${messageKey}`,
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ * This API is used to create a new thread in a forum.
+ * Target users: anyone who has READ permission to the project.
+ * https://rest-docs.synapse.org/rest/POST/thread.html
+ * @param accessToken
+ * @param createDiscussionThread
+ */
+export const postThread = (
+  accessToken: string | undefined,
+  createDiscussionThread: CreateDiscussionThread,
+) => {
+  return doPost<DiscussionThreadBundle>(
+    `/repo/v1/thread`,
+    createDiscussionThread,
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ * This API is used to update the title of a thread.
+ * Target users: only the author of the thread can update its title.
+ * https://rest-docs.synapse.org/rest/PUT/thread/threadId/title.html
+ * @param accessToken
+ * @param request
+ */
+export const putThreadTitle = (
+  accessToken: string | undefined,
+  request: UpdateThreadTitleRequest,
+) => {
+  return doPut<DiscussionThreadBundle>(
+    `/repo/v1/thread/${request.threadId}/title`,
+    { title: request.title },
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ * This API is used to update the message of a thread.
+ * Target users: only the author of the thread can update its message.
+ * https://rest-docs.synapse.org/rest/PUT/thread/threadId/message.html
+ * @param accessToken
+ * @param request
+ */
+export const putThreadMessage = (
+  accessToken: string | undefined,
+  request: UpdateThreadMessageRequest,
+) => {
+  return doPut<DiscussionThreadBundle>(
+    `/repo/v1/thread/${request.threadId}/message`,
+    { messageMarkdown: request.messageMarkdown },
     accessToken,
     BackendDestinationEnum.REPO_ENDPOINT,
   )

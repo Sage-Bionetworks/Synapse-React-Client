@@ -1,18 +1,23 @@
 import moment from 'moment'
 import React, { useState } from 'react'
-import { Button, Table } from 'react-bootstrap'
+import { Button, Modal, Table } from 'react-bootstrap'
 import SortIcon from '../../assets/icons/Sort'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
-import { useGetForumInfinite } from '../../utils/hooks/SynapseAPI/forum/useForum'
+import {
+  useCreateThread,
+  useGetForumInfinite,
+} from '../../utils/hooks/SynapseAPI/forum/useForum'
 import { useSubscription } from '../../utils/hooks/SynapseAPI/subscription/useSubscription'
 import { AVATAR, SMALL_USER_CARD } from '../../utils/SynapseConstants'
 import { Direction } from '../../utils/synapseTypes'
 import {
+  CreateDiscussionThread,
   DiscussionFilter,
   DiscussionThreadOrder,
 } from '../../utils/synapseTypes/DiscussionBundle'
 import { SubscriptionObjectType } from '../../utils/synapseTypes/Subscription'
 import IconSvg from '../IconSvg'
+import { MarkdownEditor } from '../markdown/MarkdownEditor'
 import { displayToast } from '../ToastMessage'
 import UserCard from '../UserCard'
 
@@ -33,6 +38,8 @@ export const ForumTable: React.FC<ForumTableProps> = ({
     DiscussionThreadOrder.PINNED_AND_LAST_ACTIVITY,
   )
   const [isAscending, setIsAscending] = useState(false)
+  const [threadModal, setThreadModal] = useState(false)
+  const { mutate: postThread } = useCreateThread()
 
   const { subscription, isLoading, toggleSubscribed } = useSubscription(
     forumId,
@@ -54,6 +61,15 @@ export const ForumTable: React.FC<ForumTableProps> = ({
     isAscending,
     filter,
   )
+
+  const onSave = (text: string, title?: string) => {
+    const request: CreateDiscussionThread = {
+      forumId: forumId,
+      title: title!,
+      messageMarkdown: text,
+    }
+    postThread(request)
+  }
 
   const threads = data?.pages.flatMap(page => page.results) ?? []
 
@@ -80,6 +96,9 @@ export const ForumTable: React.FC<ForumTableProps> = ({
           disabled={isLoading}
         >
           {subscription ? 'Unfollow' : 'Follow'}
+        </Button>
+        <Button variant="primary" onClick={() => setThreadModal(true)}>
+          New Thread
         </Button>
       </div>
       <Table>
@@ -205,13 +224,34 @@ export const ForumTable: React.FC<ForumTableProps> = ({
           })}
         </tbody>
       </Table>
-      {hasNextPage ? (
-        <Button variant="outline-primary" onClick={() => fetchNextPage()}>
+      {hasNextPage && (
+        <Button
+          variant="outline-primary"
+          onClick={() => {
+            fetchNextPage()
+          }}
+        >
           Show more results
         </Button>
-      ) : (
-        <></>
       )}
+      <Modal
+        size="lg"
+        show={threadModal}
+        onHide={() => setThreadModal(false)}
+        animation={false}
+      >
+        <Modal.Header>
+          <Modal.Title>New Thread</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <MarkdownEditor
+            onSave={onSave}
+            forumId={forumId}
+            onCancel={() => setThreadModal(false)}
+          />
+        </Modal.Body>
+        <Modal.Footer></Modal.Footer>
+      </Modal>
     </div>
   )
 }
