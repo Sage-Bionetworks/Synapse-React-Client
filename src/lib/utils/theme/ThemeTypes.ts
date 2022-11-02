@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-empty-interface */
 
-import React from 'react'
 import '@mui/material/styles'
 
 // If creating a new Typography variant, add it to this list.

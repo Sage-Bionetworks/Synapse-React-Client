@@ -26,6 +26,10 @@ const palette: PaletteOptions = {
   info: { main: '#017fa5' },
   warning: { main: '#cc9f00' },
   error: { main: '#c13415' },
+  text: {
+    primary: '#353a3f', // gray-900
+    secondary: '#4a5056', // gray-800
+  },
 }
 
 export default palette
