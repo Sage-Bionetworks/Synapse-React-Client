@@ -66,6 +66,7 @@ export function useGetThread(threadId: string) {
     useGetThreadBundle(threadId)
   const { data: threadBody, isLoading: isLoadingBody } = useGetThreadBody(
     threadData?.messageKey ?? '',
+    { enabled: !!threadData },
   )
   const isLoading = isLoadingBody || isLoadingBundle
   return { threadData, threadBody, isLoading }

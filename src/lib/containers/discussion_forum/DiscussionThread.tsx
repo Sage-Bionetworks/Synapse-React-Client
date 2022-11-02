@@ -4,8 +4,6 @@ import { formatDate } from '../../utils/functions/DateFormatter'
 import {
   useGetRepliesInfinite,
   useGetThread,
-  useUpdateThreadMessage,
-  useUpdateThreadTitle,
 } from '../../utils/hooks/SynapseAPI/forum/useForum'
 import { SMALL_USER_CARD } from '../../utils/SynapseConstants'
 import { SubscriptionObjectType } from '../../utils/synapseTypes/Subscription'
@@ -19,12 +17,11 @@ import Tooltip from '../../utils/tooltip/Tooltip'
 import MarkdownSynapse from '../markdown/MarkdownSynapse'
 import { ObjectType } from '../../utils/synapseTypes'
 import { useSubscription } from '../../utils/hooks/SynapseAPI/subscription/useSubscription'
-import { MarkdownEditor } from '../markdown/MarkdownEditor'
 import { useGetCurrentUserProfile } from '../../utils/hooks/SynapseAPI'
+import { ForumThreadEditor } from './ForumThreadEditor'
 
 export type DiscussionThreadProps = {
   threadId: string
-  forumId: string
   limit: number
 }
 
@@ -32,15 +29,13 @@ const FOLLOWING_TEXT = 'You are following this topic. Click to stop following.'
 const UNFOLLOWING_TEXT = 'You are not following this topic. Click to follow.'
 
 export function DiscussionThread(props: DiscussionThreadProps) {
-  const { threadId, limit, forumId } = props
+  const { threadId, limit } = props
 
   const [orderByDatePosted, setOrderByDatePosted] = useState(true)
   const [threadModal, setThreadModal] = useState(false)
 
   const { threadData, threadBody } = useGetThread(threadId)
   const { data: currentUserProfile } = useGetCurrentUserProfile()
-  const { mutate: updateTitle } = useUpdateThreadTitle()
-  const { mutate: updateMessage } = useUpdateThreadMessage()
   const { subscription, toggleSubscribed, isLoading } = useSubscription(
     threadId,
     SubscriptionObjectType.THREAD,
@@ -62,17 +57,6 @@ export function DiscussionThread(props: DiscussionThreadProps) {
     fetchNextPage,
   } = useGetRepliesInfinite(threadId, orderByDatePosted, limit)
   const replies = replyData?.pages.flatMap(page => page.results) ?? []
-
-  const onSave = (text: string, title?: string) => {
-    updateTitle({
-      title: title!,
-      threadId: threadId,
-    })
-    updateMessage({
-      messageMarkdown: text,
-      threadId: threadId,
-    })
-  }
 
   return (
     <div className="bootstrap-4-backport DiscussionThread">
@@ -170,12 +154,11 @@ export function DiscussionThread(props: DiscussionThreadProps) {
           <Modal.Title>New Thread</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <MarkdownEditor
-            onSave={onSave}
-            forumId={forumId}
+          <ForumThreadEditor
+            editText={threadBody}
             onCancel={() => setThreadModal(false)}
             editTitle={threadData?.title}
-            editText={threadBody}
+            id={threadId}
           />
         </Modal.Body>
         <Modal.Footer></Modal.Footer>
