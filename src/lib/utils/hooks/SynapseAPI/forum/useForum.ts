@@ -65,7 +65,7 @@ export function useGetThread(threadId: string) {
   const { data: threadData, isLoading: isLoadingBundle } =
     useGetThreadBundle(threadId)
   const { data: threadBody, isLoading: isLoadingBody } = useGetThreadBody(
-    threadData?.messageKey ?? '',
+    threadData,
     { enabled: !!threadData },
   )
   const isLoading = isLoadingBody || isLoadingBundle
@@ -85,13 +85,16 @@ export function useGetThreadBundle(
 }
 
 export function useGetThreadBody(
-  messageKey: string,
+  threadData?: DiscussionThreadBundle,
   options?: UseQueryOptions<string, SynapseClientError>,
 ) {
   const { accessToken } = useSynapseContext()
-  const messageUrl = SynapseClient.getThreadMessageUrl(messageKey, accessToken)
+  const messageUrl = SynapseClient.getThreadMessageUrl(
+    threadData?.messageKey ?? '',
+    accessToken,
+  )
   return useQuery<string, SynapseClientError>(
-    ['thread', messageKey, accessToken],
+    ['thread', threadData?.id, threadData?.messageKey, accessToken],
     async () => getMessage((await messageUrl).messageUrl),
     options,
   )
