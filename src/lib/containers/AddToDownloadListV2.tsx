@@ -4,7 +4,7 @@ import IconSvg from './IconSvg'
 import { useSynapseContext } from '../utils/SynapseContext'
 import { displayToast } from './ToastMessage'
 import { useQueryClient } from 'react-query'
-import Tooltip from '../utils/tooltip/Tooltip'
+import { Tooltip } from '@mui/material'
 
 export type AddToDownloadListV2Props = {
   entityId: string

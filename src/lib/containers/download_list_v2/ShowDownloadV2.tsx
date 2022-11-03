@@ -4,7 +4,7 @@ import { useSynapseContext } from '../../utils/SynapseContext'
 import { useErrorHandler } from 'react-error-boundary'
 import { useGetDownloadListStatistics } from '../../utils/hooks/SynapseAPI/download/useGetDownloadListStatistics'
 import IconSvg from '../IconSvg'
-import Tooltip from '../../utils/tooltip/Tooltip'
+import { Tooltip } from '@mui/material'
 
 export type ShowDownloadV2Props = {
   to: string

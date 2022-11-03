@@ -1,4 +1,4 @@
-import { InfoOutlined } from '@material-ui/icons'
+import { InfoOutlined } from '@mui/icons-material'
 import * as PlotlyTyped from 'plotly.js'
 import Plotly from 'plotly.js-basic-dist'
 import React, { useCallback, useEffect, useState } from 'react'
@@ -24,7 +24,7 @@ import {
   applyChangesToValuesColumn,
   applyMultipleChangesToValuesColumn,
 } from '../query-filter/FacetFilterControls'
-import Tooltip from '../../../utils/tooltip/Tooltip'
+import { Tooltip } from '@mui/material'
 
 const Plot = createPlotlyComponent(Plotly)
 

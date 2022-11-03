@@ -1,4 +1,4 @@
-import svgrPlugin from '@sage-bionetworks/esbuild-plugin-svgr'
+import svgrPlugin from 'esbuild-plugin-svgr'
 import { sassPlugin } from 'esbuild-sass-plugin'
 import ESBuildNodePolyfillsPlugin from 'esbuild-plugin-node-polyfills'
 import esbuild from 'esbuild'
@@ -34,6 +34,7 @@ const globals = {
   'universal-cookie': 'UniversalCookie',
 }
 
+/** @type {import('esbuild').CommonOptions} */
 const esBuildOptions = {
   entryPoints: ['src/lib/umd.index.ts'],
   bundle: true,
@@ -43,7 +44,7 @@ const esBuildOptions = {
   tsconfig: 'tsconfig.build.json',
   plugins: [
     sassPlugin({
-      includePaths: ['node_modules'],
+      loadPaths: ['node_modules'],
     }),
     svgrPlugin({
       ref: true,
@@ -54,7 +55,7 @@ const esBuildOptions = {
     GlobalsPlugin(globals),
   ],
   external: [
-    'react',
+    '^react$', // Use regex ^$ because we do want to bundle 'react/jsx-transform'
     'react-dom',
     'prop-types',
     'react-router',

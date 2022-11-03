@@ -1,7 +1,7 @@
-import { LinearProgress } from '@material-ui/core'
+import { LinearProgress } from '@mui/material'
 import React, { useEffect } from 'react'
 import { Modal, Button } from 'react-bootstrap'
-import Typography from '../utils/typography/Typography'
+import { Typography } from '@mui/material'
 import '../style/components/_spinner.scss'
 
 const loadingScreen = (

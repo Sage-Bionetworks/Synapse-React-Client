@@ -1,24 +1,23 @@
-import {
-  defaultSynapseTheme,
-  mergeTheme,
-} from '../../../../lib/utils/hooks/useTheme'
+import { mergeTheme } from '../../../../lib/utils/theme/useTheme'
+import { ThemeOptions } from '@mui/material'
+import defaultMuiTheme from '../../../../lib/utils/theme/DefaultTheme'
 
 describe('Synapse Theme tests', () => {
   it('properly merges a custom theme with the default theme', () => {
     const customColor = '#000000'
-    const customTheme = {
-      colors: {
-        success: customColor,
+    const customTheme: ThemeOptions = {
+      palette: {
+        success: {
+          main: customColor,
+        },
       },
     }
     const mergedTheme = mergeTheme(customTheme)
 
-    expect(mergedTheme.colors.success).toEqual(customColor)
-    expect(mergedTheme.colors.warning).toEqual(
-      defaultSynapseTheme.colors.warning,
-    )
-    expect(mergedTheme.colors.info).toEqual(defaultSynapseTheme.colors.info)
-    expect(mergedTheme.colors.error).toEqual(defaultSynapseTheme.colors.error)
+    expect(mergedTheme.palette.success.main).toEqual(customColor)
+    expect(mergedTheme.palette.warning).toEqual(defaultMuiTheme.palette.warning)
+    expect(mergedTheme.palette.info).toEqual(defaultMuiTheme.palette.info)
+    expect(mergedTheme.palette.error).toEqual(defaultMuiTheme.palette.error)
   })
 
   // TODO: Test merging color palettes and validate that an entire palette is generated when providing one color

@@ -8,7 +8,7 @@ import { CSSTransition } from 'react-transition-group'
 import MarkdownSynapse, {
   MarkdownSynapseProps,
 } from './markdown/MarkdownSynapse'
-import Typography from '../utils/typography/Typography'
+import { Typography } from '@mui/material'
 
 export type MarkdownPopoverProps = {
   children: JSX.Element

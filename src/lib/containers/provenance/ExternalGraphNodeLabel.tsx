@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react'
 import { UsedURL } from '../../utils/synapseTypes/Provenance/Provenance'
-import Tooltip from '../../utils/tooltip/Tooltip'
+import { Tooltip } from '@mui/material'
 import { ProvenanceExternalIcon } from './ProvenanceExternalIcon'
 
 export const ExternalGraphNodeLabel = (data: UsedURL) => {

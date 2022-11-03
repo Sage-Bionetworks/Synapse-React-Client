@@ -14,7 +14,7 @@ import { useSynapseContext } from '../utils/SynapseContext'
 import MarkdownSynapse from './markdown/MarkdownSynapse'
 import { SkeletonTable } from '../assets/skeletons/SkeletonTable'
 import { ColumnSpecifiedLink } from './CardContainerLogic'
-import Typography from '../utils/typography/Typography'
+import { Typography } from '@mui/material'
 import { useDeepCompareEffectNoCheck } from 'use-deep-compare-effect'
 
 export type FriendlyValuesMap = {

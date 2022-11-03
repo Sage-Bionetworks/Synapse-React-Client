@@ -1,7 +1,7 @@
 import React from 'react'
 import { MarkdownPopover } from './MarkdownPopover'
 import { Placement } from 'react-bootstrap/esm/Overlay'
-import { HelpOutlineTwoTone } from '@material-ui/icons'
+import { HelpOutlineTwoTone } from '@mui/icons-material'
 
 export type HelpPopoverProps = {
   markdownText: string

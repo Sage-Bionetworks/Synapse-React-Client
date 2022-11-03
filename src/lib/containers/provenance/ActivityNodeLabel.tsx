@@ -3,8 +3,8 @@ import React, { useMemo } from 'react'
 import { formatDate } from '../../utils/functions/DateFormatter'
 import { useGetUserProfile } from '../../utils/hooks/SynapseAPI'
 import { Activity } from '../../utils/synapseTypes/Provenance/Provenance'
-import Tooltip from '../../utils/tooltip/Tooltip'
-import Typography from '../../utils/typography/Typography'
+import { Tooltip } from '@mui/material'
+import { Typography } from '@mui/material'
 import { UserCardSmall } from '../UserCardSmall'
 
 export const ActivityNodeLabel = (data: Activity) => {

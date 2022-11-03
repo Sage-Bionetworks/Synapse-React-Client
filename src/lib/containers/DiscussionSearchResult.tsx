@@ -13,12 +13,12 @@ import {
   DiscussionThreadBundle,
 } from '../utils/synapseTypes/DiscussionBundle'
 import moment from 'moment'
-import Typography from '../utils/typography/Typography'
+import { Typography } from '@mui/material'
 import { Col, Row } from 'react-bootstrap'
 import UserCard from './UserCard'
 import { SMALL_USER_CARD } from '../utils/SynapseConstants'
 import IconSvg from './IconSvg'
-import { Skeleton } from '@material-ui/lab'
+import { Skeleton } from '@mui/material'
 import { SkeletonTable } from '../assets/skeletons/SkeletonTable'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../utils/functions/getEndpoint'
 
@@ -83,7 +83,7 @@ const DiscussionSearchResult = (props: DiscussionSearchResultProps) => {
       <Row>
         <Col xs={1}>
           {isLoading ? (
-            <Skeleton variant="circle" width="40px" height="40px" />
+            <Skeleton variant="circular" width="40px" height="40px" />
           ) : replyId ? (
             <IconSvg options={{ icon: 'replyTwoTone' }} />
           ) : (
