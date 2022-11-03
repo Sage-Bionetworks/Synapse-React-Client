@@ -78,7 +78,7 @@ const ForumSearch = (props: ForumSearchProps) => {
       <div className="text-center">
         {NoSearchResults}
         <Typography variant="body1">No results with this query</Typography>
-        <Typography variant="body2">
+        <Typography variant="body1Italic">
           Search the full text of posts, replies, and titles
         </Typography>
       </div>
@@ -135,7 +135,7 @@ const ForumSearch = (props: ForumSearchProps) => {
       {noSearchResult && (
         <>
           {props.projectId && (
-            <Typography variant="body2" className="NoResultsText">
+            <Typography variant="body1Italic" className="NoResultsText">
               No results for '{searchInput}' in {entity?.name}
             </Typography>
           )}
@@ -145,7 +145,7 @@ const ForumSearch = (props: ForumSearchProps) => {
       {matchList && (
         <>
           {props.projectId && !noSearchResult && (
-            <Typography variant="body2" className="ResultsText">
+            <Typography variant="body1Italic" className="ResultsText">
               Results for '{searchInput}' in {entity?.name}
             </Typography>
           )}

@@ -8,6 +8,7 @@ type CustomTypographyVariants =
   | 'headline2'
   | 'headline3'
   | 'body1'
+  | 'body1Italic'
   | 'body2'
   | 'breadcrumb1'
   | 'breadcrumb2'

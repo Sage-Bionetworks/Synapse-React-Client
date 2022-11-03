@@ -103,7 +103,7 @@ export const UserHistoryDashboard = () => {
           alt="Begin searching"
           src="https://s3.amazonaws.com/static.synapse.org/images/search-happy.svg"
         />
-        <Typography variant="body2">
+        <Typography variant="body1Italic">
           Enter a user or team name in the search field above to view their data
           access history
         </Typography>

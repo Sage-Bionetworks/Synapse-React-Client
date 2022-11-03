@@ -16,7 +16,7 @@ export default function LastUpdatedOn() {
         alignItems: 'flex-end',
       }}
     >
-      <Typography variant="body2">
+      <Typography variant="body1Italic">
         Last updated on {formatDate(moment(data.lastUpdatedOn))}
       </Typography>
     </div>
