@@ -33,6 +33,8 @@ export function DiscussionThread(props: DiscussionThreadProps) {
 
   const [orderByDatePosted, setOrderByDatePosted] = useState(true)
   const [showThreadModal, setShowThreadModal] = useState(false)
+  const [showReplyEditor1, setShowReplyEditor1] = useState(false)
+  const [showReplyEditor2, setShowReplyEditor2] = useState(false)
 
   const { threadData, threadBody } = useGetThread(threadId)
   const { data: currentUserProfile } = useGetCurrentUserProfile()
@@ -124,15 +126,41 @@ export function DiscussionThread(props: DiscussionThreadProps) {
           </Tooltip>
         )}
       </div>
-      {/* Todo : add markdown editor to add replies */}
-      <FormControl type="text" placeholder="Write a reply..." />
+      {!showReplyEditor1 ? (
+        <FormControl
+          type="text"
+          placeholder="Write a reply..."
+          onClick={() => setShowReplyEditor1(true)}
+        />
+      ) : (
+        <ForumThreadEditor
+          id={threadId}
+          isReply={true}
+          onClose={() => setShowReplyEditor1(false)}
+        />
+      )}
       <div>
         {replies.map(reply => (
           <DiscussionReply key={reply.id} reply={reply} />
         ))}
       </div>
-      {/* Todo : add markdown editor to add replies */}
-      <FormControl type="text" placeholder="Write a reply..." />
+      {replies.length > 0 && (
+        <>
+          {!showReplyEditor2 ? (
+            <FormControl
+              type="text"
+              placeholder="Write a reply..."
+              onClick={() => setShowReplyEditor2(true)}
+            />
+          ) : (
+            <ForumThreadEditor
+              id={threadId}
+              isReply={true}
+              onClose={() => setShowReplyEditor2(false)}
+            />
+          )}
+        </>
+      )}
 
       {hasNextPage ? (
         <Button
@@ -153,17 +181,17 @@ export function DiscussionThread(props: DiscussionThreadProps) {
         animation={false}
       >
         <Modal.Header>
-          <Modal.Title>New Thread</Modal.Title>
+          <Modal.Title>Edit Thread</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <ForumThreadEditor
+            isReply={false}
             initialText={threadBody}
             onClose={() => setShowThreadModal(false)}
             initialTitle={threadData?.title}
             id={threadId}
           />
         </Modal.Body>
-        <Modal.Footer></Modal.Footer>
       </Modal>
     </div>
   )

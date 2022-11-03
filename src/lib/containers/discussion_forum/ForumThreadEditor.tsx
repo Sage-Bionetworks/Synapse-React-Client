@@ -4,6 +4,8 @@ import {
   useCreateThread,
   useUpdateThreadTitle,
   useUpdateThreadMessage,
+  usePostReply,
+  usePutReply,
 } from '../../utils/hooks/SynapseAPI/forum/useForum'
 import { CreateDiscussionThread } from '../../utils/synapseTypes/DiscussionBundle'
 import { MarkdownEditor } from '../markdown/MarkdownEditor'
@@ -13,58 +15,103 @@ export type ForumThreadEditorProps = {
   initialText?: string
   id: string
   onClose: () => void
+  isReply: boolean
 }
 
 export const ForumThreadEditor: React.FunctionComponent<
   ForumThreadEditorProps
-> = ({ initialText, initialTitle, id, onClose }) => {
+> = ({ initialText, initialTitle, id, onClose, isReply }) => {
   const [title, setTitle] = useState<string>(initialTitle ?? '')
   const [text, setText] = useState<string>(initialText ?? '')
-  const { mutate: updateTitle } = useUpdateThreadTitle()
-  const { mutate: updateMessage } = useUpdateThreadMessage()
-  const { mutate: postThread } = useCreateThread()
+  const { mutate: updateTitle, isLoading: isLoadingTitle } =
+    useUpdateThreadTitle({
+      onSuccess: () => onClose(),
+    })
+  const { mutate: updateMessage, isLoading: isLoadingMessage } =
+    useUpdateThreadMessage({
+      onSuccess: () => onClose(),
+    })
+  const { mutate: postThread, isLoading: isLoadingThread } = useCreateThread({
+    onSuccess: () => onClose(),
+  })
+  const { mutate: postReply, isLoading: isLoadingReply } = usePostReply({
+    onSuccess: () => onClose(),
+  })
+  const { mutate: updateReply, isLoading: isLoadingReplyUpdate } = usePutReply({
+    onSuccess: () => onClose(),
+  })
+
+  const isLoading =
+    isLoadingMessage ||
+    isLoadingReply ||
+    isLoadingThread ||
+    isLoadingTitle ||
+    isLoadingReplyUpdate
 
   const onSave = (text: string, title: string) => {
-    if (initialTitle) {
-      updateTitle({
-        title: title,
-        threadId: id,
-      })
-      updateMessage({
-        messageMarkdown: text,
-        threadId: id,
-      })
-    } else {
-      const request: CreateDiscussionThread = {
-        forumId: id,
-        title: title,
-        messageMarkdown: text,
+    if (isReply) {
+      if (initialText) {
+        // updating reply
+        updateReply({
+          replyId: id,
+          messageMarkdown: text,
+        })
+      } else {
+        // posting reply
+        postReply({
+          threadId: id,
+          messageMarkdown: text,
+        })
       }
-      postThread(request)
+    } else {
+      if (initialTitle) {
+        // updating thread
+        updateTitle({
+          title: title,
+          threadId: id,
+        })
+        updateMessage({
+          messageMarkdown: text,
+          threadId: id,
+        })
+      } else {
+        // posting thread
+        const request: CreateDiscussionThread = {
+          forumId: id,
+          title: title,
+          messageMarkdown: text,
+        }
+        postThread(request)
+      }
     }
   }
 
   const handleSave = () => {
     onSave(text, title)
-    onClose()
   }
 
   return (
     <div className="bootstrap-4-backport">
-      <input
-        placeholder="Title"
-        type="text"
-        style={{ width: '100%', padding: '4px' }}
-        value={title}
-        onChange={e => setTitle(e.target.value)}
-      />
+      {!isReply && (
+        <input
+          placeholder="Title"
+          type="text"
+          style={{ width: '100%', padding: '4px' }}
+          value={title}
+          onChange={e => setTitle(e.target.value)}
+        />
+      )}
       <MarkdownEditor text={text} setText={setText} />
-      <div style={{ float: 'right' }}>
+      <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
         <Button onClick={onClose} variant="light">
           Cancel
         </Button>
-        <Button onClick={() => handleSave()} variant="primary">
-          Save
+        <Button
+          disabled={isLoading}
+          onClick={() => handleSave()}
+          variant="primary"
+        >
+          {isLoading ? 'Saving' : 'Save'}
         </Button>
       </div>
     </div>

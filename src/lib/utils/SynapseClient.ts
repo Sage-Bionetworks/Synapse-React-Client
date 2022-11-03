@@ -50,6 +50,9 @@ import {
   USER_PROFILE,
   USER_PROFILE_ID,
   VERIFICATION_SUBMISSION,
+  FORUM,
+  THREAD,
+  THREAD_ID,
 } from './APIConstants'
 import { dispatchDownloadListChangeEvent } from './functions/dispatchDownloadListChangeEvent'
 import {
@@ -154,12 +157,14 @@ import {
   ChangePasswordWithToken,
 } from './synapseTypes/ChangePasswordRequests'
 import {
+  CreateDiscussionReply,
   CreateDiscussionThread,
   DiscussionFilter,
   DiscussionReplyBundle,
   DiscussionReplyOrder,
   DiscussionThreadBundle,
   DiscussionThreadOrder,
+  UpdateDiscussionReply,
   UpdateThreadMessageRequest,
   UpdateThreadTitleRequest,
 } from './synapseTypes/DiscussionBundle'
@@ -3581,7 +3586,7 @@ export const updateNotificationEmail = (
 
 /**
  * This API is used to get a reply and its statistic given its ID.
-Target users: anyone who has READ permission to the project.
+ * Target users: anyone who has READ permission to the project.
  * http://rest-docs.synapse.org/rest/GET/reply/replyId.html
  * @param replyId
  * @param accessToken
@@ -3589,6 +3594,46 @@ Target users: anyone who has READ permission to the project.
 export const getReply = (replyId: string, accessToken: string | undefined) => {
   return doGet<DiscussionReplyBundle>(
     `/repo/v1/reply/${replyId}`,
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ * This API is used to create a new reply to a thread.
+ * Target users: anyone who has READ permission to the project.
+ * https://rest-docs.synapse.org/rest/POST/reply.html
+ * @param createDiscussionReply
+ * @param accessToken
+ * @returns
+ */
+export const postReply = (
+  createDiscussionReply: CreateDiscussionReply,
+  accessToken: string | undefined,
+) => {
+  return doPost<DiscussionReplyBundle>(
+    `/repo/v1/reply`,
+    createDiscussionReply,
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ * This API is used to update the message of a reply.
+ * Target users: only the author of the reply can update its message.
+ * https://rest-docs.synapse.org/rest/PUT/reply/replyId/message.html
+ * @param updateDiscussionReply
+ * @param accessToken
+ * @returns
+ */
+export const putReply = (
+  updateDiscussionReply: UpdateDiscussionReply,
+  accessToken: string | undefined,
+) => {
+  return doPut<DiscussionReplyBundle>(
+    `/repo/v1/reply/${updateDiscussionReply.replyId}/message`,
+    { messageMarkdown: updateDiscussionReply.messageMarkdown },
     accessToken,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
@@ -3615,7 +3660,7 @@ export const getReplies = (
   params.set('ascending', ascending.toString())
   params.set('filter', filter)
 
-  const url = `/repo/v1/thread/${threadId}/replies?${params.toString()}`
+  const url = `${THREAD}/${threadId}/replies?${params.toString()}`
 
   return doGet<PaginatedResults<DiscussionReplyBundle>>(
     url,
@@ -3656,7 +3701,7 @@ export const getThread = (
   accessToken: string | undefined,
 ) => {
   return doGet<DiscussionThreadBundle>(
-    `/repo/v1/thread/${threadId}`,
+    THREAD_ID(threadId),
     accessToken,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
@@ -3676,7 +3721,7 @@ export const getThreadMessageUrl = (
   accessToken: string | undefined,
 ) => {
   return doGet<MessageURL>(
-    `/repo/v1/thread/messageUrl?messageKey=${messageKey}`,
+    `${THREAD}/messageUrl?messageKey=${messageKey}`,
     accessToken,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
@@ -3694,7 +3739,7 @@ export const postThread = (
   createDiscussionThread: CreateDiscussionThread,
 ) => {
   return doPost<DiscussionThreadBundle>(
-    `/repo/v1/thread`,
+    THREAD,
     createDiscussionThread,
     accessToken,
     BackendDestinationEnum.REPO_ENDPOINT,
@@ -3713,7 +3758,7 @@ export const putThreadTitle = (
   request: UpdateThreadTitleRequest,
 ) => {
   return doPut<DiscussionThreadBundle>(
-    `/repo/v1/thread/${request.threadId}/title`,
+    `${THREAD}/${request.threadId}/title`,
     { title: request.title },
     accessToken,
     BackendDestinationEnum.REPO_ENDPOINT,
@@ -3732,7 +3777,7 @@ export const putThreadMessage = (
   request: UpdateThreadMessageRequest,
 ) => {
   return doPut<DiscussionThreadBundle>(
-    `/repo/v1/thread/${request.threadId}/message`,
+    `${THREAD}/${request.threadId}/message`,
     { messageMarkdown: request.messageMarkdown },
     accessToken,
     BackendDestinationEnum.REPO_ENDPOINT,
@@ -3754,7 +3799,7 @@ export const forumSearch = (
   accessToken: string | undefined,
 ) => {
   return doPost<DiscussionSearchResponse>(
-    `/repo/v1/forum/${forumId}/search`,
+    `${FORUM}/${forumId}/search`,
     discussionSearchRequest,
     accessToken,
     BackendDestinationEnum.REPO_ENDPOINT,
