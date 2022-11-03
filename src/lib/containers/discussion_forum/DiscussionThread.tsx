@@ -32,7 +32,7 @@ export function DiscussionThread(props: DiscussionThreadProps) {
   const { threadId, limit } = props
 
   const [orderByDatePosted, setOrderByDatePosted] = useState(true)
-  const [threadModal, setThreadModal] = useState(false)
+  const [showThreadModal, setShowThreadModal] = useState(false)
 
   const { threadData, threadBody } = useGetThread(threadId)
   const { data: currentUserProfile } = useGetCurrentUserProfile()
@@ -101,22 +101,24 @@ export function DiscussionThread(props: DiscussionThreadProps) {
       )}
       <div className="control-container">
         <Tooltip title={subscription ? FOLLOWING_TEXT : UNFOLLOWING_TEXT}>
-          <button
-            className="follow-button"
-            aria-label={subscription ? 'Unfollow thread' : 'Follow thread'}
-            disabled={isLoading}
-            onClick={() => handleFollowBtn()}
-          >
-            {subscription ? (
-              <IconSvg options={{ icon: 'visibility' }} />
-            ) : (
-              <IconSvg options={{ icon: 'visibilityOff' }} />
-            )}
-          </button>
+          <span>
+            <button
+              className="follow-button"
+              aria-label={subscription ? 'Unfollow thread' : 'Follow thread'}
+              disabled={isLoading}
+              onClick={() => handleFollowBtn()}
+            >
+              {subscription ? (
+                <IconSvg options={{ icon: 'visibility' }} />
+              ) : (
+                <IconSvg options={{ icon: 'visibilityOff' }} />
+              )}
+            </button>
+          </span>
         </Tooltip>
         {isAuthor && (
           <Tooltip title="Edit Thread">
-            <button onClick={() => setThreadModal(true)}>
+            <button onClick={() => setShowThreadModal(true)}>
               <IconSvg options={{ icon: 'edit' }} />
             </button>
           </Tooltip>
@@ -146,8 +148,8 @@ export function DiscussionThread(props: DiscussionThreadProps) {
       )}
       <Modal
         size="lg"
-        show={threadModal}
-        onHide={() => setThreadModal(false)}
+        show={showThreadModal}
+        onHide={() => setShowThreadModal(false)}
         animation={false}
       >
         <Modal.Header>
@@ -155,9 +157,9 @@ export function DiscussionThread(props: DiscussionThreadProps) {
         </Modal.Header>
         <Modal.Body>
           <ForumThreadEditor
-            editText={threadBody}
-            onCancel={() => setThreadModal(false)}
-            editTitle={threadData?.title}
+            initialText={threadBody}
+            onClose={() => setShowThreadModal(false)}
+            initialTitle={threadData?.title}
             id={threadId}
           />
         </Modal.Body>

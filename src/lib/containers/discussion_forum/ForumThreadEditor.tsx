@@ -9,23 +9,23 @@ import { CreateDiscussionThread } from '../../utils/synapseTypes/DiscussionBundl
 import { MarkdownEditor } from '../markdown/MarkdownEditor'
 
 export type ForumThreadEditorProps = {
-  editTitle?: string
-  editText?: string
+  initialTitle?: string
+  initialText?: string
   id: string
-  onCancel: () => void
+  onClose: () => void
 }
 
 export const ForumThreadEditor: React.FunctionComponent<
   ForumThreadEditorProps
-> = ({ editText, editTitle, id, onCancel }) => {
-  const [title, setTitle] = useState<string>(editTitle ?? '')
-  const [text, setText] = useState<string>(editText ?? '')
+> = ({ initialText, initialTitle, id, onClose }) => {
+  const [title, setTitle] = useState<string>(initialTitle ?? '')
+  const [text, setText] = useState<string>(initialText ?? '')
   const { mutate: updateTitle } = useUpdateThreadTitle()
   const { mutate: updateMessage } = useUpdateThreadMessage()
   const { mutate: postThread } = useCreateThread()
 
   const onSave = (text: string, title: string) => {
-    if (editTitle) {
+    if (initialTitle) {
       updateTitle({
         title: title,
         threadId: id,
@@ -46,7 +46,7 @@ export const ForumThreadEditor: React.FunctionComponent<
 
   const handleSave = () => {
     onSave(text, title)
-    onCancel()
+    onClose()
   }
 
   return (
@@ -60,7 +60,7 @@ export const ForumThreadEditor: React.FunctionComponent<
       />
       <MarkdownEditor text={text} setText={setText} />
       <div style={{ float: 'right' }}>
-        <Button onClick={onCancel} variant="light">
+        <Button onClick={onClose} variant="light">
           Cancel
         </Button>
         <Button onClick={() => handleSave()} variant="primary">

@@ -34,7 +34,7 @@ export const ForumTable: React.FC<ForumTableProps> = ({
     DiscussionThreadOrder.PINNED_AND_LAST_ACTIVITY,
   )
   const [isAscending, setIsAscending] = useState(false)
-  const [threadModal, setThreadModal] = useState(false)
+  const [showThreadModal, setShowThreadModal] = useState(false)
   const { subscription, isLoading, toggleSubscribed } = useSubscription(
     forumId,
     SubscriptionObjectType.FORUM,
@@ -82,7 +82,7 @@ export const ForumTable: React.FC<ForumTableProps> = ({
         >
           {subscription ? 'Unfollow' : 'Follow'}
         </Button>
-        <Button variant="primary" onClick={() => setThreadModal(true)}>
+        <Button variant="primary" onClick={() => setShowThreadModal(true)}>
           New Thread
         </Button>
       </div>
@@ -221,8 +221,8 @@ export const ForumTable: React.FC<ForumTableProps> = ({
       )}
       <Modal
         size="lg"
-        show={threadModal}
-        onHide={() => setThreadModal(false)}
+        show={showThreadModal}
+        onHide={() => setShowThreadModal(false)}
         animation={false}
       >
         <Modal.Header>
@@ -231,7 +231,7 @@ export const ForumTable: React.FC<ForumTableProps> = ({
         <Modal.Body>
           <ForumThreadEditor
             id={forumId}
-            onCancel={() => setThreadModal(false)}
+            onClose={() => setShowThreadModal(false)}
           />
         </Modal.Body>
         <Modal.Footer></Modal.Footer>
