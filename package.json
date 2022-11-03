@@ -232,7 +232,6 @@
   },
   "resolutions": {
     "js-yaml": "3.13.1",
-    "minimatch": "3.0.4",
     "@types/react": "18.0.17",
     "@types/webpack": "^5.28.0",
     "trim": "^0.0.3"
