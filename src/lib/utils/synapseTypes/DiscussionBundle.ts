@@ -48,3 +48,19 @@ export enum DiscussionFilter {
   DELETED_ONLY = 'DELETED_ONLY',
   EXCLUDE_DELETED = 'EXCLUDE_DELETED',
 }
+
+export type CreateDiscussionThread = {
+  forumId: string
+  title: string
+  messageMarkdown: string
+}
+
+export type UpdateThreadMessageRequest = {
+  messageMarkdown: string
+  threadId: string
+}
+
+export type UpdateThreadTitleRequest = {
+  title: string
+  threadId: string
+}

@@ -73,6 +73,7 @@ import {
   Title,
   StrikethroughS,
   Image,
+  EditTwoTone,
 } from '@mui/icons-material'
 import React, { useEffect } from 'react'
 import AccessManagement from '../assets/mui_components/AccessManagement'
@@ -204,6 +205,7 @@ export const IconStrings = [
   'superscript',
   'latex',
   'image',
+  'edit',
 ] as const
 
 export type Icon = typeof IconStrings[number]
@@ -472,6 +474,8 @@ const getIcon = (options: IconSvgOptions) => {
       return <span>X&sup2;</span>
     case 'subscript':
       return <span>X&#8322;</span>
+    case 'edit':
+      return <EditTwoTone style={muiSvgStyle} />
     default:
       return <></>
   }

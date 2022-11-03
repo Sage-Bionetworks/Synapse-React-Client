@@ -32,3 +32,35 @@ export function useGetPresignedUrlContent(
     },
   )
 }
+
+/**
+ * Get a blob containing the image data for the avatar of a Synapse user. Returns null if the user does not have a profile image.
+ */
+export function useGetProfileImage(
+  userId: string,
+  options?: Omit<UseQueryOptions<Blob | null, SynapseClientError>, 'staleTime'>,
+) {
+  const queryFn = async () => {
+    const presignedUrl = await SynapseClient.getProfilePicPreviewPresignedUrl(
+      userId,
+    )
+    if (presignedUrl) {
+      // Fetch the presigned URL right away because it will expire
+      const data = await fetch(presignedUrl, {
+        method: 'GET',
+        mode: 'cors',
+        cache: 'no-cache',
+      })
+      return await data.blob()
+    }
+    return null
+  }
+  return useQuery<Blob | null, SynapseClientError>(
+    ['profileImageData', userId],
+    queryFn,
+    {
+      staleTime: Infinity,
+      ...options,
+    },
+  )
+}
