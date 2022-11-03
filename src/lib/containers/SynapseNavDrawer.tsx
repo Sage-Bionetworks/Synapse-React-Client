@@ -115,7 +115,7 @@ const NavDrawerListItem = (props: MenuItemParams) => {
         }
   const item = iconName ? (
     <>
-      <IconSvg options={{ icon: iconName }} /> {additionalChildren}{' '}
+      <IconSvg icon={iconName} /> {additionalChildren}{' '}
     </>
   ) : (
     additionalChildren
@@ -367,11 +367,11 @@ export const SynapseNavDrawer: React.FunctionComponent<
                     handleDrawerClose()
                   }}
                 >
-                  <IconSvg options={{ icon: 'addCircleOutline' }} />
+                  <IconSvg icon="addCircleOutline" />
                 </a>
               </Tooltip>
               <div className="searchInputWithIcon">
-                <IconSvg options={{ icon: 'searchOutlined' }} />
+                <IconSvg icon="searchOutlined" />
                 <Form.Control
                   type="search"
                   placeholder="Search All Projects"
@@ -467,7 +467,7 @@ export const SynapseNavDrawer: React.FunctionComponent<
             <>
               <div className="header">Help</div>
               <div className="searchInputWithIcon">
-                <IconSvg options={{ icon: 'searchOutlined' }} />
+                <IconSvg icon="searchOutlined" />
                 <Form.Control
                   type="search"
                   placeholder="Search Synapse Documentation"

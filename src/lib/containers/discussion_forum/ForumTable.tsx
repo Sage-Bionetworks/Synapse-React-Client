@@ -177,11 +177,7 @@ export const ForumTable: React.FC<ForumTableProps> = ({
               <tr key={item.id}>
                 <td>
                   <a onClick={() => onClickLink()}>
-                    {item.isPinned ? (
-                      <IconSvg options={{ icon: 'pushpin' }} />
-                    ) : (
-                      <></>
-                    )}
+                    {item.isPinned ? <IconSvg icon="pushpin" /> : <></>}
                     {item.title}
                   </a>
                 </td>

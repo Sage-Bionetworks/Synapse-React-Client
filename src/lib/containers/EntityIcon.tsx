@@ -46,13 +46,7 @@ export const EntityTypeIcon: React.FC<
 
   return (
     <span style={style} className={className}>
-      <IconSvg
-        options={{
-          icon: iconType,
-          label,
-          ...props,
-        }}
-      />
+      <IconSvg icon={iconType} label={label} />
     </span>
   )
 }

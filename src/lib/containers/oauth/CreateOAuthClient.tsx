@@ -270,7 +270,8 @@ export const CreateOAuthModal: React.FunctionComponent<
                                 onClick={() => handleRedirectUriRemove(idx)}
                               >
                                 <IconSvg
-                                  options={{ icon: 'delete', color: '#f44336' }}
+                                  icon="delete"
+                                  sx={{ color: 'error.main' }}
                                 />
                               </button>
                             )}
@@ -357,7 +358,8 @@ export const CreateOAuthModal: React.FunctionComponent<
                               onClick={() => handleRedirectUriRemove(idx)}
                             >
                               <IconSvg
-                                options={{ icon: 'delete', color: '#f44336' }}
+                                icon="delete"
+                                sx={{ color: 'error.main' }}
                               />
                             </button>
                           )}
@@ -391,7 +393,7 @@ export const CreateOAuthModal: React.FunctionComponent<
                       setIsShowingConfirmModal(true)
                     }}
                   >
-                    <IconSvg options={{ icon: 'delete', color: '#f44336' }} />
+                    <IconSvg icon="delete" sx={{ color: 'error.main' }} />
                     DELETE CLIENT
                   </button>
                 </div>

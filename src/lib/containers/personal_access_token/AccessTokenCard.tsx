@@ -72,7 +72,7 @@ export const AccessTokenCard: React.FunctionComponent<AccessTokenCardProps> = ({
               enterNextDelay={100}
             >
               <span aria-hidden="true">
-                <IconSvg options={{ icon: 'warning' }} />
+                <IconSvg icon="warning" />
               </span>
             </Tooltip>
           )}
@@ -118,7 +118,7 @@ export const AccessTokenCard: React.FunctionComponent<AccessTokenCardProps> = ({
             }
           }}
         >
-          <IconSvg options={{ icon: 'delete' }} aria-hidden="true" />
+          <IconSvg icon="delete" aria-hidden="true" />
         </Button>
       </div>
     </div>

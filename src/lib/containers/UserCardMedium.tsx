@@ -252,7 +252,7 @@ export const UserCardMedium: React.FC<UserCardMediumProps> = ({
                   : 'SRC-primary-text-color'
               }
             >
-              <IconSvg options={{ icon: 'verticalEllipsis' }} />
+              <IconSvg icon="verticalEllipsis" />
             </span>
           </span>
           {isContextMenuOpen && (

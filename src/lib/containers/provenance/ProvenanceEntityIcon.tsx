@@ -72,13 +72,7 @@ export const ProvenanceEntityIcon = (props: ProvenanceEntityIconProps) => {
       if (lastPeriodIndex > -1) {
         const extension = entityHeader.name.slice(lastPeriodIndex)
         if (codeFileExtensionSet.has(extension.toLowerCase())) {
-          return (
-            <IconSvg
-              options={{
-                icon: 'code',
-              }}
-            />
-          )
+          return <IconSvg icon="code" />
         }
       }
     } else {

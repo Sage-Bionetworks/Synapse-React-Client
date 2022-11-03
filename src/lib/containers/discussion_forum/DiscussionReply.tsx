@@ -52,7 +52,7 @@ export const DiscussionReply: React.FC<DiscussionReplyProps> = ({
               posted {formatDate(moment(reply.createdOn), 'M/D/YYYY')}
             </span>
             <button onClick={() => onClickLink()} style={{ float: 'right' }}>
-              <IconSvg options={{ icon: 'link' }} />
+              <IconSvg icon="link" />
             </button>
           </div>
         </div>

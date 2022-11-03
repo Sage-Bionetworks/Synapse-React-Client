@@ -146,7 +146,7 @@ export default class ModalDownload extends React.Component<
       >
         <Modal.Body>
           <button style={closeBtn} onClick={this.props.onClose}>
-            <IconSvg options={{ icon: 'close' }} />
+            <IconSvg icon="close" />
           </button>
           <Form
             schema={formSchemaArray[this.state.step]}

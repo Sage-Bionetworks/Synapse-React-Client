@@ -12,8 +12,8 @@ const Template: ComponentStory<typeof IconList> = args => <IconList {...args} />
 export const NoColorSet = Template.bind({})
 NoColorSet.args = {
   iconConfigs: {
-    genomicVariants: { icon: 'gene1' },
-    geneExpression: { icon: 'gene2' },
+    genomicVariants: { icon: 'geneVariants' },
+    geneExpression: { icon: 'geneExpression' },
     image: { icon: 'imaging' },
     drugCombinationScreen: { icon: 'rat' },
     reload: { icon: 'reload' },
@@ -27,13 +27,23 @@ NoColorSet.args = {
 export const CustomColors = Template.bind({})
 CustomColors.args = {
   iconConfigs: {
-    genomicVariants: { icon: 'gene1', color: '#ff0000' },
-    geneExpression: { icon: 'gene2', color: 'orange' },
-    image: { icon: 'imaging', color: 'yellow' },
-    drugCombinationScreen: { icon: 'rat', color: '#00FF00' },
-    reload: { icon: 'reload', color: 'blue' },
-    check: { icon: 'check', color: '#2E2B5F' },
-    kinomics: { icon: 'kinomics', color: '#8B00FF' },
+    genomicVariants: {
+      icon: 'geneVariants',
+      sx: {
+        color: '#ff0000',
+      },
+    },
+    geneExpression: {
+      icon: 'geneExpression',
+      sx: {
+        color: 'orange',
+      },
+    },
+    image: { icon: 'imaging', sx: { color: 'yellow' } },
+    drugCombinationScreen: { icon: 'rat', sx: { color: '#00FF00' } },
+    reload: { icon: 'reload', sx: { color: 'blue' } },
+    check: { icon: 'check', sx: { color: '#2E2B5F' } },
+    kinomics: { icon: 'kinomics', sx: { color: '#8B00FF' } },
   },
   iconNames: [
     'image',

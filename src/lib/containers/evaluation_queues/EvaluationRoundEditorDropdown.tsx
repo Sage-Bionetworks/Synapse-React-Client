@@ -37,7 +37,7 @@ export const EvaluationRoundEditorDropdown: React.FunctionComponent<
           variant="link"
           className="dropdown-no-caret evaluation-round-editor-dropdown"
         >
-          <IconSvg options={{ icon: 'verticalEllipsis' }} />
+          <IconSvg icon="verticalEllipsis" />
         </Dropdown.Toggle>
         <Dropdown.Menu alignRight={true}>
           <Dropdown.Item onClick={onSave}>Save</Dropdown.Item>

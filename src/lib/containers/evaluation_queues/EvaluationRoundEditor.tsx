@@ -28,7 +28,7 @@ import { SynapseClientError } from '../../utils/SynapseClientError'
 import { EvaluationRoundEditorDropdown } from './EvaluationRoundEditorDropdown'
 import { ErrorBanner } from '../ErrorBanner'
 import { useSynapseContext } from '../../utils/SynapseContext'
-import IconSvg, { IconSvgOptions } from '../IconSvg'
+import IconSvg, { IconSvgProps } from '../IconSvg'
 
 export type EvaluationRoundEditorProps = {
   evaluationRoundInput: EvaluationRoundInput
@@ -46,7 +46,7 @@ const determineRoundStatus = (
   roundEnd: Moment | string,
 ) => {
   let className: string
-  let icon: IconSvgOptions | undefined
+  let iconProps: IconSvgProps | undefined
   let status: string
   const now = moment()
   // based off of start/end datetime from props so that users making
@@ -54,23 +54,23 @@ const determineRoundStatus = (
   if (now.isSameOrAfter(roundStart)) {
     if (now.isBefore(roundEnd)) {
       className = 'status-in-progress'
-      icon = { icon: 'sync' }
+      iconProps = { icon: 'sync' }
       status = 'IN PROGRESS'
     } else {
       className = 'status-completed'
-      icon = { icon: 'clipboardCheck' }
+      iconProps = { icon: 'clipboardCheck' }
       status = 'COMPLETED'
     }
   } else {
     className = 'status-not-yet-started'
-    icon = undefined
+    iconProps = undefined
     status = 'NOT YET STARTED'
   }
 
   return (
     <div className={className}>
       <div className="status">
-        {icon && <IconSvg options={icon} />}
+        {iconProps && <IconSvg {...iconProps} />}
         <span>{status}</span>
       </div>
     </div>

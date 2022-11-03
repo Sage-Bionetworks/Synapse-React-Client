@@ -9,7 +9,7 @@ import { QueryBundleRequest, SortDirection } from '../utils/synapseTypes/'
 import CardContainer from './CardContainer'
 import { ErrorBanner } from './ErrorBanner'
 import { GenericCardSchema, IconOptions } from './GenericCard'
-import { IconSvgOptions } from './IconSvg'
+import { IconSvgProps } from './IconSvg'
 import {
   QueryVisualizationWrapper,
   QueryVisualizationWrapperProps,
@@ -96,7 +96,7 @@ export type LabelLinkConfig = (MarkdownLink | CardLink | ColumnSpecifiedLink)[]
 export type ColumnIconConfigs = {
   columns: {
     [index: string]: {
-      [index: string]: IconSvgOptions
+      [index: string]: IconSvgProps
     }
   }
 }

@@ -21,7 +21,7 @@ export default function ExpandableContent({
         >
           <span>{title}</span>
           <span className="SRC-primary-action-color">
-            <IconSvg options={{ icon: isExpanded ? 'close' : 'add' }} />
+            <IconSvg icon={isExpanded ? 'close' : 'add'} />
           </span>
         </button>
       </div>

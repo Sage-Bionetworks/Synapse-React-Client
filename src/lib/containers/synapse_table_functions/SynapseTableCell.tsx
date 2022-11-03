@@ -219,7 +219,7 @@ export const SynapseTableCell: React.FC<SynapseTableCellProps> = ({
           if (userName === AUTHENTICATED_USERS) {
             return (
               <span>
-                <IconSvg options={{ icon }} /> All registered Synapse users
+                <IconSvg icon={icon} /> All registered Synapse users
               </span>
             )
           }
@@ -229,7 +229,7 @@ export const SynapseTableCell: React.FC<SynapseTableCellProps> = ({
               rel="noopener noreferrer"
               href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!Team:${ownerId}`}
             >
-              <IconSvg options={{ icon }} /> {userName}
+              <IconSvg icon={icon} /> {userName}
             </a>
           )
         } else {

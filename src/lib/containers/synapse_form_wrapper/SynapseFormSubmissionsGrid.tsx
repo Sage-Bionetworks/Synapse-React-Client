@@ -359,10 +359,7 @@ export default class SynapseFormSubmissionGrid extends React.Component<
                             )
                           }
                         >
-                          <IconSvg
-                            options={{ icon: 'delete' }}
-                            aria-hidden="true"
-                          />
+                          <IconSvg icon="delete" aria-hidden="true" />
                         </button>
                       </td>
                     </tr>
@@ -387,10 +384,7 @@ export default class SynapseFormSubmissionGrid extends React.Component<
                             this.setState({ isShowInfoModal: true })
                           }
                         >
-                          <IconSvg
-                            options={{ icon: 'phone' }}
-                            aria-hidden="true"
-                          />
+                          <IconSvg icon="phone" aria-hidden="true" />
                         </button>
                       </td>
                     </tr>
