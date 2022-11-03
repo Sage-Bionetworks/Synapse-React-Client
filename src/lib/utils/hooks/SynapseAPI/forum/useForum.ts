@@ -205,7 +205,7 @@ export function useGetRepliesInfinite(
     PaginatedResults<DiscussionReplyBundle>,
     SynapseClientError
   >(
-    ['thread', 'infinite', threadId, limit, filter, sort, ascending],
+    ['thread', threadId, 'infinite', limit, filter, sort, ascending],
     async context => {
       return SynapseClient.getReplies(
         accessToken,
@@ -247,7 +247,7 @@ export function usePostReply(
     {
       ...options,
       onSuccess: async (newReply, variables, ctx) => {
-        await queryClient.invalidateQueries(['thread'])
+        await queryClient.invalidateQueries(['thread', newReply.threadId])
         if (options?.onSuccess) {
           await options.onSuccess(newReply, variables, ctx)
         }
@@ -276,7 +276,7 @@ export function usePutReply(
     {
       ...options,
       onSuccess: async (newReply, variables, ctx) => {
-        await queryClient.invalidateQueries(['thread'])
+        await queryClient.invalidateQueries(['thread', newReply.threadId])
         if (options?.onSuccess) {
           await options.onSuccess(newReply, variables, ctx)
         }

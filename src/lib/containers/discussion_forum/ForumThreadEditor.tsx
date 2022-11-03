@@ -31,10 +31,10 @@ export const ForumThreadEditor: React.FunctionComponent<
     useUpdateThreadMessage({
       onSuccess: () => onClose(),
     })
-  const { mutate: postThread, isLoading: isLoadingThread } = useCreateThread({
+  const { mutate: createThread, isLoading: isLoadingThread } = useCreateThread({
     onSuccess: () => onClose(),
   })
-  const { mutate: postReply, isLoading: isLoadingReply } = usePostReply({
+  const { mutate: createReply, isLoading: isLoadingReply } = usePostReply({
     onSuccess: () => onClose(),
   })
   const { mutate: updateReply, isLoading: isLoadingReplyUpdate } = usePutReply({
@@ -58,7 +58,7 @@ export const ForumThreadEditor: React.FunctionComponent<
         })
       } else {
         // posting reply
-        postReply({
+        createReply({
           threadId: id,
           messageMarkdown: text,
         })
@@ -81,7 +81,7 @@ export const ForumThreadEditor: React.FunctionComponent<
           title: title,
           messageMarkdown: text,
         }
-        postThread(request)
+        createThread(request)
       }
     }
   }
