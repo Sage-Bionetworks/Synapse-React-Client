@@ -84,6 +84,8 @@ describe('EntityIDColumnCopyIcon tests', () => {
               sql: `select id from ${synID}.${version} ${whereClause}`,
             }),
           }),
+          'mock-access-token', //access token
+          {}, // abort signal
         ),
       )
 
