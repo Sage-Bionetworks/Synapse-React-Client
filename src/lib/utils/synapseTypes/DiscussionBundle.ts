@@ -49,6 +49,16 @@ export enum DiscussionFilter {
   EXCLUDE_DELETED = 'EXCLUDE_DELETED',
 }
 
+export type CreateDiscussionReply = {
+  threadId: string
+  messageMarkdown: string
+}
+
+export type UpdateDiscussionReply = {
+  replyId: string
+  messageMarkdown: string
+}
+
 export type CreateDiscussionThread = {
   forumId: string
   title: string

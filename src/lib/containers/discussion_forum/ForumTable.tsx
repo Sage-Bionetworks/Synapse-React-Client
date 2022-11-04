@@ -226,11 +226,11 @@ export const ForumTable: React.FC<ForumTableProps> = ({
         </Modal.Header>
         <Modal.Body>
           <ForumThreadEditor
+            isReply={false}
             id={forumId}
             onClose={() => setShowThreadModal(false)}
           />
         </Modal.Body>
-        <Modal.Footer></Modal.Footer>
       </Modal>
     </div>
   )

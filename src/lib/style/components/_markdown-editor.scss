@@ -3,6 +3,7 @@
 .MarkdownEditor {
   .MarkdownEditorControls {
     display: flex;
+    width: 100%;
     .Tabs {
       @include SrcMixins.underline-tabs();
       justify-content: flex-start;
