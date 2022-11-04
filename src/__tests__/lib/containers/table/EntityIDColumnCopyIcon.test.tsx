@@ -16,13 +16,18 @@ import {
 } from '../../../../lib/containers/QueryContext'
 import idsQueryResponse from '../../../../mocks/mockIDListQueryResponseData.json'
 import { SynapseClient, SynapseConstants } from '../../../../lib'
+import { TextMatchesQueryFilter } from '../../../../lib/utils/synapseTypes/Table/QueryFilter'
 
 const synID = 'syn55555'
 const version = '7'
 const whereClause = "where a='2'"
 
 const originalSql = `select a, b from ${synID}.${version} ${whereClause}`
-
+const queryFilter: TextMatchesQueryFilter = {
+  concreteType: 'org.sagebionetworks.repo.model.table.TextMatchesQueryFilter',
+  searchExpression: 'testing full-text search',
+}
+const originalQueryFilters = [queryFilter]
 const mockQueryRequest: QueryBundleRequest = {
   concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
   entityId: synID,
@@ -32,6 +37,7 @@ const mockQueryRequest: QueryBundleRequest = {
     SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS,
   query: {
     sql: originalSql,
+    additionalFilters: originalQueryFilters,
   },
 }
 
@@ -82,6 +88,7 @@ describe('EntityIDColumnCopyIcon tests', () => {
           expect.objectContaining({
             query: expect.objectContaining({
               sql: `select id from ${synID}.${version} ${whereClause}`,
+              additionalFilters: originalQueryFilters,
             }),
           }),
           'mock-access-token', //access token
