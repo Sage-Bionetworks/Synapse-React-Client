@@ -19,8 +19,9 @@ import { SynapseClient, SynapseConstants } from '../../../../lib'
 
 const synID = 'syn55555'
 const version = '7'
+const whereClause = "where a='2'"
 
-const originalSql = `select a, b from ${synID}.${version}`
+const originalSql = `select a, b from ${synID}.${version} ${whereClause}`
 
 const mockQueryRequest: QueryBundleRequest = {
   concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
@@ -77,7 +78,13 @@ describe('EntityIDColumnCopyIcon tests', () => {
       await userEvent.click(await screen.findByRole('button'))
 
       await waitFor(() =>
-        expect(SynapseClient.getFullQueryTableResults).toBeCalled(),
+        expect(SynapseClient.getFullQueryTableResults).toBeCalledWith(
+          expect.objectContaining({
+            query: expect.objectContaining({
+              sql: `select id from ${synID}.${version} ${whereClause}`,
+            }),
+          }),
+        ),
       )
 
       expect(mockWriteText).toHaveBeenCalled()

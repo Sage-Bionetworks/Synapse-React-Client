@@ -42,8 +42,12 @@ const EntityIDColumnCopyIcon = () => {
       parseEntityIdAndVersionFromSqlStatement(oldSql)!
     const versionNumberString = versionNumber ? `.${versionNumber}` : ''
     queryRequestClone.partMask = SynapseConstants.BUNDLE_MASK_QUERY_RESULTS
+    const entityIdString = `${entityId}${versionNumberString}`
+    const indexOfEntityId = oldSql.indexOf(entityIdString)
     queryRequestClone.query = {
-      sql: `select id from ${entityId}${versionNumberString}`,
+      sql: `select id from ${entityIdString}${oldSql.substring(
+        indexOfEntityId + entityIdString.length,
+      )}`,
     }
     getFullQueryTableResults(
       queryRequestClone,
