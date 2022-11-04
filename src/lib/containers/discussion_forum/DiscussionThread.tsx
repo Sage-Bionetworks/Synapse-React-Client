@@ -2,6 +2,8 @@ import moment from 'moment'
 import React, { useState } from 'react'
 import { formatDate } from '../../utils/functions/DateFormatter'
 import {
+  useDeleteThread,
+  useGetModerators,
   useGetRepliesInfinite,
   useGetThread,
 } from '../../utils/hooks/SynapseAPI/forum/useForum'
@@ -13,12 +15,12 @@ import { displayToast } from '../ToastMessage'
 import { DiscussionReply } from './DiscussionReply'
 import { Button, FormControl, Modal } from 'react-bootstrap'
 import IconSvg from '../IconSvg'
-import { Tooltip } from '@mui/material'
 import MarkdownSynapse from '../markdown/MarkdownSynapse'
 import { ObjectType } from '../../utils/synapseTypes'
 import { useSubscription } from '../../utils/hooks/SynapseAPI/subscription/useSubscription'
 import { useGetCurrentUserProfile } from '../../utils/hooks/SynapseAPI'
 import { ForumThreadEditor } from './ForumThreadEditor'
+import WarningModal from '../synapse_form_wrapper/WarningModal'
 
 export type DiscussionThreadProps = {
   threadId: string
@@ -35,15 +37,27 @@ export function DiscussionThread(props: DiscussionThreadProps) {
   const [showThreadModal, setShowThreadModal] = useState(false)
   const [showReplyEditor1, setShowReplyEditor1] = useState(false)
   const [showReplyEditor2, setShowReplyEditor2] = useState(false)
+  const [showDeleteModal, setShowDeleteModal] = useState(false)
 
   const { threadData, threadBody } = useGetThread(threadId)
   const { data: currentUserProfile } = useGetCurrentUserProfile()
+  const { data: moderatorList } = useGetModerators(threadData?.forumId ?? '', {
+    enabled: !!threadData,
+  })
   const { subscription, toggleSubscribed, isLoading } = useSubscription(
     threadId,
     SubscriptionObjectType.THREAD,
   )
-
+  const { mutate: deleteThread } = useDeleteThread({
+    onSuccess: () => {
+      setShowDeleteModal(false)
+      displayToast('A thread has been deleted.', 'info')
+    },
+  })
   const isAuthor = threadData?.createdBy == currentUserProfile?.ownerId
+  const isModerator = moderatorList?.results.includes(
+    currentUserProfile?.ownerId ?? '',
+  )
 
   function handleFollowBtn() {
     try {
@@ -102,29 +116,34 @@ export function DiscussionThread(props: DiscussionThreadProps) {
         <></>
       )}
       <div className="control-container">
-        <Tooltip title={subscription ? FOLLOWING_TEXT : UNFOLLOWING_TEXT}>
-          <span>
-            <button
-              className="follow-button"
-              aria-label={subscription ? 'Unfollow thread' : 'Follow thread'}
-              disabled={isLoading}
-              onClick={() => handleFollowBtn()}
-            >
-              {subscription ? (
-                <IconSvg options={{ icon: 'visibility' }} />
-              ) : (
-                <IconSvg options={{ icon: 'visibilityOff' }} />
-              )}
-            </button>
-          </span>
-        </Tooltip>
-        {isAuthor && (
-          <Tooltip title="Edit Thread">
-            <button onClick={() => setShowThreadModal(true)}>
-              <IconSvg options={{ icon: 'edit' }} />
-            </button>
-          </Tooltip>
+        {isModerator && (
+          <button onClick={() => setShowDeleteModal(true)}>
+            <IconSvg options={{ icon: 'delete', label: 'Delete thread' }} />
+          </button>
         )}
+        {isAuthor && (
+          <button onClick={() => setShowThreadModal(true)}>
+            <IconSvg options={{ icon: 'edit', label: 'Edit thread' }} />
+          </button>
+        )}
+        <span>
+          <button
+            className="follow-button"
+            aria-label={subscription ? 'Unfollow thread' : 'Follow thread'}
+            disabled={isLoading}
+            onClick={() => handleFollowBtn()}
+          >
+            {subscription ? (
+              <IconSvg
+                options={{ icon: 'visibility', label: FOLLOWING_TEXT }}
+              />
+            ) : (
+              <IconSvg
+                options={{ icon: 'visibilityOff', label: UNFOLLOWING_TEXT }}
+              />
+            )}
+          </button>
+        </span>
       </div>
       {!showReplyEditor1 ? (
         <FormControl
@@ -193,6 +212,16 @@ export function DiscussionThread(props: DiscussionThreadProps) {
           />
         </Modal.Body>
       </Modal>
+      <WarningModal
+        show={showDeleteModal}
+        className="bootstrap-4-backport"
+        title="Confirm Deletion"
+        modalBody="Are you sure you want to delete this thread?"
+        onCancel={() => setShowDeleteModal(false)}
+        onConfirm={() => deleteThread(threadId)}
+        confirmButtonVariant="danger"
+        confirmButtonText="Delete"
+      />
     </div>
   )
 }

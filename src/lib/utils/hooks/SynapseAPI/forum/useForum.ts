@@ -24,6 +24,19 @@ import {
   UpdateThreadMessageRequest,
   UpdateThreadTitleRequest,
 } from '../../../synapseTypes/DiscussionBundle'
+import { PaginatedIds } from '../../../synapseTypes/PaginatedIds'
+
+export function useGetModerators(
+  forumId: string,
+  options?: UseQueryOptions<PaginatedIds, SynapseClientError>,
+) {
+  const { accessToken } = useSynapseContext()
+  return useQuery<PaginatedIds, SynapseClientError>(
+    ['moderators', forumId],
+    () => SynapseClient.getModerators(accessToken, forumId),
+    options,
+  )
+}
 
 export function useGetForumInfinite(
   forumId: string,
@@ -183,6 +196,26 @@ export function useCreateThread(
         await queryClient.invalidateQueries(['forumthread', newThread.forumId])
         if (options?.onSuccess) {
           await options.onSuccess(newThread, variables, ctx)
+        }
+      },
+    },
+  )
+}
+
+export function useDeleteThread(
+  options?: UseMutationOptions<void, SynapseClientError, string>,
+) {
+  const queryClient = useQueryClient()
+  const { accessToken } = useSynapseContext()
+
+  return useMutation<void, SynapseClientError, string>(
+    (threadId: string) => SynapseClient.deleteThread(accessToken, threadId),
+    {
+      ...options,
+      onSuccess: async (updatedThread, threadId, ctx) => {
+        await queryClient.invalidateQueries(['thread', threadId])
+        if (options?.onSuccess) {
+          await options.onSuccess(updatedThread, threadId, ctx)
         }
       },
     },

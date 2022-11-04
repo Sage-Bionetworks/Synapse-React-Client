@@ -8,7 +8,6 @@ import IconSvg from '../IconSvg'
 import MarkdownSynapse from './MarkdownSynapse'
 import { UserMentionModal } from './UserMentionModal'
 import { startCase } from 'lodash-es'
-import { Tooltip } from '@mui/material'
 
 export enum MarkdownEditorTabs {
   WRITE = 'WRITE',
@@ -138,14 +137,9 @@ export const MarkdownEditor: React.FunctionComponent<MarkdownEditorProps> = ({
                 </button>
               )
             })}
-            <Tooltip placement="top" title="Mention">
-              <button
-                className="tag"
-                onClick={() => setIsShowingTagModal(true)}
-              >
-                @
-              </button>
-            </Tooltip>
+            <button onClick={() => setIsShowingTagModal(true)}>
+              <IconSvg options={{ icon: 'tag', label: 'Mention' }} />
+            </button>
           </div>
         )}
       </div>

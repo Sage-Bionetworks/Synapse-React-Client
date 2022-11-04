@@ -74,6 +74,9 @@ import {
   StrikethroughS,
   Image,
   EditTwoTone,
+  Superscript,
+  Subscript,
+  AlternateEmail,
 } from '@mui/icons-material'
 import React, { useEffect } from 'react'
 import AccessManagement from '../assets/mui_components/AccessManagement'
@@ -206,6 +209,7 @@ export const IconStrings = [
   'latex',
   'image',
   'edit',
+  'tag',
 ] as const
 
 export type Icon = typeof IconStrings[number]
@@ -471,11 +475,13 @@ const getIcon = (options: IconSvgOptions) => {
     case 'image':
       return <Image style={muiSvgStyle} />
     case 'superscript':
-      return <span>X&sup2;</span>
+      return <Superscript style={muiSvgStyle} />
     case 'subscript':
-      return <span>X&#8322;</span>
+      return <Subscript style={muiSvgStyle} />
     case 'edit':
       return <EditTwoTone style={muiSvgStyle} />
+    case 'tag':
+      return <AlternateEmail style={muiSvgStyle} />
     default:
       return <></>
   }
