@@ -85,7 +85,7 @@ describe('EntityIDColumnCopyIcon tests', () => {
             }),
           }),
           'mock-access-token', //access token
-          {}, // abort signal
+          expect.any(), // abort signal
         ),
       )
 
