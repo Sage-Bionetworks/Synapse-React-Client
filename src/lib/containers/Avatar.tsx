@@ -3,7 +3,7 @@ import { getColor } from '../utils/functions/getUserData'
 import { UserProfile } from '../utils/synapseTypes'
 import UserCardMedium from './UserCardMedium'
 import { useOverlay } from '../utils/hooks/useOverlay'
-import { Skeleton } from '@material-ui/lab'
+import { Skeleton } from '@mui/material'
 
 const TIMER_DELAY_SHOW = 250 // milliseconds
 const TIMER_DELAY_HIDE = 500
@@ -63,7 +63,7 @@ export const Avatar: React.FunctionComponent<AvatarProps> = ({
     : { background: getColor(userProfile.userName) }
 
   if (isLoadingAvatar) {
-    return <Skeleton className={sizeClass} variant="circle" />
+    return <Skeleton className={sizeClass} variant="circular" />
   }
 
   let content: JSX.Element | string = <></>

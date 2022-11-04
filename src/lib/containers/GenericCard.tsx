@@ -18,7 +18,7 @@ import {
   Row,
   SelectColumn,
 } from '../utils/synapseTypes'
-import Tooltip from '../utils/tooltip/Tooltip'
+import { Tooltip } from '@mui/material'
 import {
   CardLink,
   ColumnSpecifiedLink,

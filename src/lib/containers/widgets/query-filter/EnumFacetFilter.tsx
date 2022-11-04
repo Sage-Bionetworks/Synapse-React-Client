@@ -1,4 +1,4 @@
-import { Collapse } from '@material-ui/core'
+import { Collapse } from '@mui/material'
 import React, { useState } from 'react'
 import { Dropdown } from 'react-bootstrap'
 import useDeepCompareEffect from 'use-deep-compare-effect'

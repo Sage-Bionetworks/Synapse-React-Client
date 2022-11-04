@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { FormLabel } from 'react-bootstrap'
 import { FieldTemplateProps } from '@sage-bionetworks/rjsf-core'
-import { HelpOutline } from '@material-ui/icons'
+import { HelpOutline } from '@mui/icons-material'
 import FieldDescriptionTable from './FieldDescriptionTable'
 
 export function CustomDefaultTemplate<T>(

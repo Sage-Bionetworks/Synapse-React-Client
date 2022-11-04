@@ -1,7 +1,7 @@
 import React from 'react'
 import { ComponentStory, ComponentMeta } from '@storybook/react'
 
-import Typography from './Typography'
+import { Typography } from '@mui/material'
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {
@@ -10,6 +10,28 @@ export default {
   // More on argTypes: https://storybook.js.org/docs/react/api/argtypes
   argTypes: {
     children: { control: 'text' },
+    variant: {
+      control: 'select',
+      options: [
+        'headline1',
+        'headline2',
+        'headline3',
+        'body1',
+        'body1Italic',
+        'body2',
+        'breadcrumb1',
+        'breadcrumb2',
+        'smallText1',
+        'smallText2',
+        'smallLink',
+        'label',
+        'buttonLink',
+        'hintText',
+        'sectionTitle',
+        'subsectionHeader',
+        'dataFieldKey',
+      ],
+    },
   },
 } as ComponentMeta<typeof Typography>
 

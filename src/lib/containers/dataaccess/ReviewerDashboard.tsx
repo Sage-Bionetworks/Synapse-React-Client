@@ -10,7 +10,7 @@ import {
   useParams,
 } from 'react-router-dom'
 import { useGetCurrentUserBundle } from '../../utils/hooks/SynapseAPI/user/useUserBundle'
-import Typography from '../../utils/typography/Typography'
+import { Typography } from '@mui/material'
 import { SynapseErrorBoundary } from '../ErrorBanner'
 import IconSvg, { Icon } from '../IconSvg'
 import { SynapseSpinner } from '../LoadingScreen'

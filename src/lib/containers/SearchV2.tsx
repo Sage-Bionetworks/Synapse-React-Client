@@ -1,4 +1,4 @@
-import { Collapse } from '@material-ui/core'
+import { Collapse } from '@mui/material'
 import React from 'react'
 import { CSSTransition } from 'react-transition-group'
 import { ColumnModel, ColumnType } from '../utils/synapseTypes'

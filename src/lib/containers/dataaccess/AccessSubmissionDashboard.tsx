@@ -5,7 +5,7 @@ import { useHistory, useLocation } from 'react-router-dom'
 import { useDebouncedEffect } from '../../utils/hooks/useDebouncedEffect'
 import { SubmissionState } from '../../utils/synapseTypes'
 import { TYPE_FILTER } from '../../utils/synapseTypes'
-import Typography from '../../utils/typography/Typography'
+import { Typography } from '@mui/material'
 import {
   AccessRequestSubmissionTable,
   AccessRequestSubmissionTableProps,

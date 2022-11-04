@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { Reference } from '../../utils/synapseTypes'
-import Typography from '../../utils/typography/Typography'
+import { Typography } from '@mui/material'
 import { FluidModal } from '../FluidModal'
 import { HelpPopoverProps } from '../HelpPopover'
 import WarningModal from '../synapse_form_wrapper/WarningModal'

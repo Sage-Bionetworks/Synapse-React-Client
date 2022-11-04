@@ -1,4 +1,4 @@
-import { Skeleton } from '@material-ui/lab'
+import { Skeleton } from '@mui/material'
 import React from 'react'
 import {
   convertToEntityType,
@@ -77,6 +77,6 @@ export const EntityLink = (props: EntityLinkProps) => {
   } else if (error) {
     return <ErrorBanner error={error} />
   } else {
-    return <Skeleton variant="rect" width="100" />
+    return <Skeleton variant="rectangular" width="100" />
   }
 }

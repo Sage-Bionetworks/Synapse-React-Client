@@ -1,4 +1,4 @@
-import { Skeleton } from '@material-ui/lab'
+import { Skeleton } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 import { useGetUserGroupHeader } from '../utils/hooks/SynapseAPI/user/useUserGroupHeader'
 import { SMALL_USER_CARD } from '../utils/SynapseConstants'

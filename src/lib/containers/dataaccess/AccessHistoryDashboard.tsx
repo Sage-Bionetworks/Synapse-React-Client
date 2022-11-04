@@ -4,7 +4,7 @@ import { FormLabel } from 'react-bootstrap'
 import { useHistory, useLocation } from 'react-router-dom'
 import { useDebouncedEffect } from '../../utils/hooks/useDebouncedEffect'
 import { TYPE_FILTER } from '../../utils/synapseTypes'
-import Typography from '../../utils/typography/Typography'
+import { Typography } from '@mui/material'
 import {
   AccessApprovalsTable,
   AccessApprovalsTableProps,
@@ -103,7 +103,7 @@ export const UserHistoryDashboard = () => {
           alt="Begin searching"
           src="https://s3.amazonaws.com/static.synapse.org/images/search-happy.svg"
         />
-        <Typography variant="body2">
+        <Typography variant="body1Italic">
           Enter a user or team name in the search field above to view their data
           access history
         </Typography>

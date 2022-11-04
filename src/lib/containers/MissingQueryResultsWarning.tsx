@@ -1,10 +1,10 @@
-import { WarningSharp } from '@material-ui/icons'
+import { WarningSharp } from '@mui/icons-material'
 import React from 'react'
 import { SynapseConstants } from '../utils/'
 import { isDataset } from '../utils/functions/EntityTypeUtils'
 import useGetQueryResultBundle from '../utils/hooks/SynapseAPI/entity/useGetQueryResultBundle'
 import { QueryBundleRequest, Table } from '../utils/synapseTypes/'
-import Typography from '../utils/typography/Typography'
+import { Typography } from '@mui/material'
 import { HelpPopover } from './HelpPopover'
 
 const DATASETS_CURRENT_VERSION_HELP =

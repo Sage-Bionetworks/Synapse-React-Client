@@ -5,7 +5,8 @@ import {
   QueryClientProvider,
 } from 'react-query'
 import { SynapseErrorBoundary } from '../containers/ErrorBanner'
-import { SynapseTheme, ThemeProvider } from './hooks/useTheme'
+import { ThemeProvider } from './theme/useTheme'
+import { ThemeOptions } from '@mui/material'
 
 export const defaultQueryClientConfig: QueryClientConfig = {
   defaultOptions: {
@@ -41,7 +42,7 @@ export const SynapseContext = React.createContext<
 export type SynapseContextProviderProps = {
   synapseContext: SynapseContextType
   queryClient?: QueryClient
-  theme?: SynapseTheme
+  theme?: ThemeOptions
   children?: React.ReactNode
 }
 

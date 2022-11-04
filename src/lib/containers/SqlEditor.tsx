@@ -1,6 +1,6 @@
-import { SearchTwoTone } from '@material-ui/icons'
+import { SearchTwoTone } from '@mui/icons-material'
 
-import { Collapse } from '@material-ui/core'
+import { Collapse } from '@mui/material'
 import React, { useEffect, useRef, useState } from 'react'
 import { HelpPopover } from './HelpPopover'
 import { useQueryVisualizationContext } from './QueryVisualizationWrapper'

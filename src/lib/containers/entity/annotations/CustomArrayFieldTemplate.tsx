@@ -1,4 +1,4 @@
-import { Add, Close, HelpOutline } from '@material-ui/icons'
+import { Add, Close, HelpOutline } from '@mui/icons-material'
 import { ArrayFieldTemplateProps, utils } from '@sage-bionetworks/rjsf-core'
 import React, { useEffect, useState } from 'react'
 import { Button, FormGroup, FormLabel } from 'react-bootstrap'

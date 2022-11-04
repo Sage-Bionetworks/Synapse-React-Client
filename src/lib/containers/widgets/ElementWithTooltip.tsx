@@ -3,7 +3,7 @@ import { TOOLTIP_DELAY_SHOW } from '../table/SynapseTableConstants'
 import { Dropdown } from 'react-bootstrap'
 import { Icon } from '../row_renderers/utils'
 import IconSvg, { IconSvgOptions } from '../IconSvg'
-import Tooltip from '../../utils/tooltip/Tooltip'
+import { Tooltip } from '@mui/material'
 
 type CustomImageProps = {
   svgImg: React.ComponentElement<any, any>

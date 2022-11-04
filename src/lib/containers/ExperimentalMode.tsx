@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import UniversalCookies from 'universal-cookie'
 import { isInSynapseExperimentalMode } from '../utils/SynapseClient'
 import { EXPERIMENTAL_MODE_COOKIE } from '../utils/SynapseConstants'
-import { InfoOutlined } from '@material-ui/icons'
+import { InfoOutlined } from '@mui/icons-material'
 
 const ExperimentalMode: React.FC = () => {
   const [isExperimentalModeOn, setIsExperimentalModeOn] =

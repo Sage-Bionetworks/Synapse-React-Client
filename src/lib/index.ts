@@ -58,7 +58,8 @@ import {
   SynapseContextProvider,
   useSynapseContext,
 } from './utils/SynapseContext'
-import Typography from './utils/typography/Typography'
+import { Typography } from '@mui/material'
+import './utils/theme/ThemeTypes'
 
 // we exclude this from main.scss because react doesn't like importing an svg
 // with a relative import.

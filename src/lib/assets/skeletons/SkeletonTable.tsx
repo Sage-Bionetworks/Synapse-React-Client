@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import Skeleton from '@material-ui/lab/Skeleton'
+import Skeleton from '@mui/material/Skeleton'
 import { times } from 'lodash-es'
 
 function getRandomInt(min: number, max: number) {

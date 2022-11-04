@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 import { Button } from 'react-bootstrap'
 import { useDeepCompareEffectNoCheck } from 'use-deep-compare-effect'
 import AddToList from '../../../assets/icons/AddToList'
-import Tooltip from '../../../utils/tooltip/Tooltip'
+import { Tooltip } from '@mui/material'
 import { displayToast } from '../../ToastMessage'
 
 /**
