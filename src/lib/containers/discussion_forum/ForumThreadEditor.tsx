@@ -86,10 +86,6 @@ export const ForumThreadEditor: React.FunctionComponent<
     }
   }
 
-  const handleSave = () => {
-    onSave(text, title)
-  }
-
   return (
     <div className="bootstrap-4-backport">
       {!isReply && (
@@ -108,7 +104,7 @@ export const ForumThreadEditor: React.FunctionComponent<
         </Button>
         <Button
           disabled={isLoading}
-          onClick={() => handleSave()}
+          onClick={() => onSave(text, title)}
           variant="primary"
         >
           {isLoading ? 'Saving' : 'Save'}

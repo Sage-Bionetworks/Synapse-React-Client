@@ -41,7 +41,7 @@ export function useGetForumInfinite(
     PaginatedResults<DiscussionThreadBundle>,
     SynapseClientError
   >(
-    ['forumthread', 'infinite', forumId, limit, filter, sort, ascending],
+    ['forumthread', forumId, 'infinite', limit, filter, sort, ascending],
     async context => {
       return SynapseClient.getForumThread(
         accessToken,
@@ -180,7 +180,7 @@ export function useCreateThread(
     {
       ...options,
       onSuccess: async (newThread, variables, ctx) => {
-        await queryClient.invalidateQueries(['forumthread'])
+        await queryClient.invalidateQueries(['forumthread', newThread.forumId])
         if (options?.onSuccess) {
           await options.onSuccess(newThread, variables, ctx)
         }
