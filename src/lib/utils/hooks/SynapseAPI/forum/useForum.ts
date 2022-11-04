@@ -13,12 +13,14 @@ import { SynapseClientError } from '../../../SynapseClientError'
 import { useSynapseContext } from '../../../SynapseContext'
 import { PaginatedResults } from '../../../synapseTypes'
 import {
+  CreateDiscussionReply,
   CreateDiscussionThread,
   DiscussionFilter,
   DiscussionReplyBundle,
   DiscussionReplyOrder,
   DiscussionThreadBundle,
   DiscussionThreadOrder,
+  UpdateDiscussionReply,
   UpdateThreadMessageRequest,
   UpdateThreadTitleRequest,
 } from '../../../synapseTypes/DiscussionBundle'
@@ -39,7 +41,7 @@ export function useGetForumInfinite(
     PaginatedResults<DiscussionThreadBundle>,
     SynapseClientError
   >(
-    ['forumthread', 'infinite', forumId, limit, filter, sort, ascending],
+    ['forumthread', forumId, 'infinite', limit, filter, sort, ascending],
     async context => {
       return SynapseClient.getForumThread(
         accessToken,
@@ -178,7 +180,7 @@ export function useCreateThread(
     {
       ...options,
       onSuccess: async (newThread, variables, ctx) => {
-        await queryClient.invalidateQueries(['forumthread'])
+        await queryClient.invalidateQueries(['forumthread', newThread.forumId])
         if (options?.onSuccess) {
           await options.onSuccess(newThread, variables, ctx)
         }
@@ -203,7 +205,7 @@ export function useGetRepliesInfinite(
     PaginatedResults<DiscussionReplyBundle>,
     SynapseClientError
   >(
-    ['forumthread', 'infinite', threadId, limit, filter, sort, ascending],
+    ['thread', threadId, 'infinite', limit, filter, sort, ascending],
     async context => {
       return SynapseClient.getReplies(
         accessToken,
@@ -220,6 +222,64 @@ export function useGetRepliesInfinite(
       getNextPageParam: (lastPage, pages) => {
         if (lastPage.results.length > 0) return pages.length * limit
         else return undefined
+      },
+    },
+  )
+}
+
+export function usePostReply(
+  options?: UseMutationOptions<
+    DiscussionReplyBundle,
+    SynapseClientError,
+    CreateDiscussionReply
+  >,
+) {
+  const queryClient = useQueryClient()
+  const { accessToken } = useSynapseContext()
+
+  return useMutation<
+    DiscussionReplyBundle,
+    SynapseClientError,
+    CreateDiscussionReply
+  >(
+    (request: CreateDiscussionReply) =>
+      SynapseClient.postReply(request, accessToken),
+    {
+      ...options,
+      onSuccess: async (newReply, variables, ctx) => {
+        await queryClient.invalidateQueries(['thread', newReply.threadId])
+        if (options?.onSuccess) {
+          await options.onSuccess(newReply, variables, ctx)
+        }
+      },
+    },
+  )
+}
+
+export function usePutReply(
+  options?: UseMutationOptions<
+    DiscussionReplyBundle,
+    SynapseClientError,
+    UpdateDiscussionReply
+  >,
+) {
+  const queryClient = useQueryClient()
+  const { accessToken } = useSynapseContext()
+
+  return useMutation<
+    DiscussionReplyBundle,
+    SynapseClientError,
+    UpdateDiscussionReply
+  >(
+    (request: UpdateDiscussionReply) =>
+      SynapseClient.putReply(request, accessToken),
+    {
+      ...options,
+      onSuccess: async (newReply, variables, ctx) => {
+        await queryClient.invalidateQueries(['thread', newReply.threadId])
+        if (options?.onSuccess) {
+          await options.onSuccess(newReply, variables, ctx)
+        }
       },
     },
   )
