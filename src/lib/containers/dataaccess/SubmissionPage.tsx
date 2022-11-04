@@ -1,4 +1,4 @@
-import { Skeleton } from '@material-ui/lab'
+import { Skeleton } from '@mui/material'
 import { toLower, upperFirst } from 'lodash-es'
 import moment from 'moment'
 import React, { useState } from 'react'
@@ -18,7 +18,7 @@ import {
   ManagedACTAccessRequirement,
   SubmissionState,
 } from '../../utils/synapseTypes'
-import Typography from '../../utils/typography/Typography'
+import { Typography } from '@mui/material'
 import { SynapseErrorBoundary } from '../ErrorBanner'
 import MarkdownSynapse from '../markdown/MarkdownSynapse'
 import WarningModal, {

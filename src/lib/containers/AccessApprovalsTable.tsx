@@ -8,7 +8,7 @@ import {
   AccessApprovalSortField,
   Direction,
 } from '../utils/synapseTypes'
-import Typography from '../utils/typography/Typography'
+import { Typography } from '@mui/material'
 import UserCard from './UserCard'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../utils/functions/getEndpoint'
 import { useSearchAccessApprovalsInfinite } from '../utils/hooks/SynapseAPI/dataaccess/useAccessApprovals'

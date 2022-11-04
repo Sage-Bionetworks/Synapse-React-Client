@@ -1,4 +1,4 @@
-import { Skeleton } from '@material-ui/lab'
+import { Skeleton } from '@mui/material'
 import React, { useEffect, useRef, useState } from 'react'
 import IconCopy from '../assets/icons/IconCopy'
 import ValidatedProfileIcon from '../assets/icons/ValidatedProfile'
@@ -7,7 +7,7 @@ import { SynapseConstants } from '../utils'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../utils/functions/getEndpoint'
 import { useGetUserBundle } from '../utils/hooks/SynapseAPI/user/useUserBundle'
 import { UserProfile } from '../utils/synapseTypes/'
-import Tooltip from '../utils/tooltip/Tooltip'
+import { Tooltip } from '@mui/material'
 import { Avatar } from './Avatar'
 import IconSvg from './IconSvg'
 import { ToastMessage } from './ToastMessage'
@@ -311,7 +311,7 @@ export const LoadingUserCardMedium: React.FunctionComponent = () => {
       className="cardContainer SRC-userCard SRC-userCardMediumUp"
       style={{ width: '380px' }}
     >
-      <Skeleton variant="circle" width="80px" height="80px" />
+      <Skeleton variant="circular" width="80px" height="80px" />
       <div style={{ width: '250px' }}>
         <SkeletonTable numCols={1} numRows={2} />
       </div>

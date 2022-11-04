@@ -1,6 +1,6 @@
 import moment from 'moment'
 import React, { useState } from 'react'
-import { Button, Table } from 'react-bootstrap'
+import { Button, Modal, Table } from 'react-bootstrap'
 import SortIcon from '../../assets/icons/Sort'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
 import { useGetForumInfinite } from '../../utils/hooks/SynapseAPI/forum/useForum'
@@ -15,6 +15,7 @@ import { SubscriptionObjectType } from '../../utils/synapseTypes/Subscription'
 import IconSvg from '../IconSvg'
 import { displayToast } from '../ToastMessage'
 import UserCard from '../UserCard'
+import { ForumThreadEditor } from './ForumThreadEditor'
 
 export type ForumTableProps = {
   forumId: string
@@ -33,7 +34,7 @@ export const ForumTable: React.FC<ForumTableProps> = ({
     DiscussionThreadOrder.PINNED_AND_LAST_ACTIVITY,
   )
   const [isAscending, setIsAscending] = useState(false)
-
+  const [showThreadModal, setShowThreadModal] = useState(false)
   const { subscription, isLoading, toggleSubscribed } = useSubscription(
     forumId,
     SubscriptionObjectType.FORUM,
@@ -80,6 +81,9 @@ export const ForumTable: React.FC<ForumTableProps> = ({
           disabled={isLoading}
         >
           {subscription ? 'Unfollow' : 'Follow'}
+        </Button>
+        <Button variant="primary" onClick={() => setShowThreadModal(true)}>
+          New Thread
         </Button>
       </div>
       <Table>
@@ -205,13 +209,33 @@ export const ForumTable: React.FC<ForumTableProps> = ({
           })}
         </tbody>
       </Table>
-      {hasNextPage ? (
-        <Button variant="outline-primary" onClick={() => fetchNextPage()}>
+      {hasNextPage && (
+        <Button
+          variant="outline-primary"
+          onClick={() => {
+            fetchNextPage()
+          }}
+        >
           Show more results
         </Button>
-      ) : (
-        <></>
       )}
+      <Modal
+        size="lg"
+        show={showThreadModal}
+        onHide={() => setShowThreadModal(false)}
+        animation={false}
+      >
+        <Modal.Header>
+          <Modal.Title>New Thread</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <ForumThreadEditor
+            isReply={false}
+            id={forumId}
+            onClose={() => setShowThreadModal(false)}
+          />
+        </Modal.Body>
+      </Modal>
     </div>
   )
 }

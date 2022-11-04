@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { SortConfiguration } from './CardContainerLogic'
 import { useQueryContext } from './QueryContext'
 import { SortDirection, SortItem } from '../utils/synapseTypes'
-import Typography from '../utils/typography/Typography'
+import { Typography } from '@mui/material'
 import Select from 'react-select'
 import {
   EnumOption,

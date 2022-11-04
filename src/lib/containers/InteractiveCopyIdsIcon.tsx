@@ -1,5 +1,5 @@
 import React from 'react'
-import Tooltip from '../utils/tooltip/Tooltip'
+import { Tooltip } from '@mui/material'
 import { TOOLTIP_DELAY_SHOW } from './table/SynapseTableConstants'
 import IconSvg from './IconSvg'
 

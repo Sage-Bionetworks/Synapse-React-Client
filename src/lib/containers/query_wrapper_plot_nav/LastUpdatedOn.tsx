@@ -1,7 +1,7 @@
 import moment from 'moment'
 import React from 'react'
 import { formatDate } from '../../utils/functions/DateFormatter'
-import Typography from '../../utils/typography/Typography'
+import { Typography } from '@mui/material'
 import { useQueryVisualizationContext } from '../QueryVisualizationWrapper'
 import { useQueryContext } from '../QueryContext'
 
@@ -16,7 +16,7 @@ export default function LastUpdatedOn() {
         alignItems: 'flex-end',
       }}
     >
-      <Typography variant="body2">
+      <Typography variant="body1Italic">
         Last updated on {formatDate(moment(data.lastUpdatedOn))}
       </Typography>
     </div>

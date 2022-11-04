@@ -1,5 +1,5 @@
 import * as React from 'react'
-import SvgIcon, { SvgIconProps } from '@material-ui/core/SvgIcon'
+import SvgIcon, { SvgIconProps } from '@mui/material/SvgIcon'
 
 const Proteomics = (props: SvgIconProps) => {
   const { fill, style } = props

@@ -1,9 +1,8 @@
 import { useEffect, useState } from 'react'
 
-export async function preFetchResource(url: string) {
+export async function fetchBlob(url: string): Promise<Blob> {
   const response = await fetch(url)
-  const blob = await response.blob()
-  return URL.createObjectURL(blob)
+  return await response.blob()
 }
 
 export function releaseResourceUrl(resourceUrl: string) {
@@ -19,15 +18,16 @@ export function releaseResourceUrl(resourceUrl: string) {
 export default function usePreFetchResource(
   preSignedURL?: string,
 ): string | undefined {
-  const [resourceURL, setResourceURL] = useState<string | undefined>(undefined)
+  const [blob, setBlob] = useState<Blob | undefined>(undefined)
+  const url = useCreateUrlForData(blob)
 
   useEffect(() => {
     let isMounted = true
     const getData = async (url: string) => {
       try {
-        const resourceUrl = await preFetchResource(url)
+        const blob = await fetchBlob(url)
         if (isMounted) {
-          setResourceURL(resourceUrl)
+          setBlob(blob)
         }
       } catch (e) {
         console.error(
@@ -44,15 +44,30 @@ export default function usePreFetchResource(
     }
   }, [preSignedURL])
 
+  return url
+}
+
+export function useCreateUrlForData(blob: Blob | null | undefined) {
+  const [resourceUrl, setResourceURL] = useState<string | undefined>(undefined)
+
+  useEffect(() => {
+    if (blob) {
+      const objectUrl = URL.createObjectURL(blob)
+      setResourceURL(objectUrl)
+    } else {
+      setResourceURL(undefined)
+    }
+  }, [blob])
+
   useEffect(() => {
     return () => {
       // When we no longer need the object, we release it.
       // See https://developer.mozilla.org/en-US/docs/Web/API/URL/createObjectURL
-      if (resourceURL) {
-        releaseResourceUrl(resourceURL)
+      if (resourceUrl) {
+        releaseResourceUrl(resourceUrl)
       }
     }
-  }, [resourceURL])
+  }, [resourceUrl])
 
-  return resourceURL
+  return resourceUrl
 }

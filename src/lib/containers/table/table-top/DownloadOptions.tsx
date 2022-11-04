@@ -7,7 +7,7 @@ import {
   isFileView,
 } from '../../../utils/functions/EntityTypeUtils'
 import { useSynapseContext } from '../../../utils/SynapseContext'
-import Tooltip from '../../../utils/tooltip/Tooltip'
+import { Tooltip } from '@mui/material'
 import { useQueryContext } from '../../QueryContext'
 import { ElementWithTooltip } from '../../widgets/ElementWithTooltip'
 import { DownloadLoginModal } from './DownloadLoginModal'
@@ -67,12 +67,17 @@ export const DownloadOptions: React.FunctionComponent<
           </Dropdown.Item>
           {isFileViewOrDataset && (
             <Tooltip
-              title="A draft version of a dataset cannot be added to the Download Cart"
+              title={
+                disableDownload
+                  ? 'A draft version of a dataset cannot be added to the Download Cart'
+                  : null
+              }
               placement="left"
               enterNextDelay={300}
-              disableHoverListener={!disableDownload}
+              describeChild={true}
             >
               <Dropdown.Item
+                role="button"
                 className={disableDownload ? 'ignoreLink' : undefined}
                 disabled={disableDownload}
                 // If disabled, add pointer-events-auto so the tooltip still works
@@ -86,10 +91,14 @@ export const DownloadOptions: React.FunctionComponent<
             </Tooltip>
           )}
           <Tooltip
-            title="A draft version of a dataset cannot be downloaded programmatically"
+            title={
+              disableDownload
+                ? 'A draft version of a dataset cannot be downloaded programmatically'
+                : null
+            }
             placement="left"
             enterNextDelay={300}
-            disableHoverListener={!disableDownload}
+            describeChild={true}
           >
             <Dropdown.Item
               className={disableDownload ? 'ignoreLink' : undefined}

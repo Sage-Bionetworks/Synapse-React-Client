@@ -1,4 +1,4 @@
-import { Skeleton } from '@material-ui/lab'
+import { Skeleton } from '@mui/material'
 import BaseTable, {
   CallOrReturn,
   ColumnShape,
@@ -21,7 +21,7 @@ import {
   EntityType,
   Reference,
 } from '../../../../utils/synapseTypes'
-import Tooltip from '../../../../utils/tooltip/Tooltip'
+import { Tooltip } from '@mui/material'
 import { EntityBadgeIcons } from '../../../EntityBadgeIcons'
 import { EntityTypeIcon } from '../../../EntityIcon'
 import { EntityLink } from '../../../EntityLink'

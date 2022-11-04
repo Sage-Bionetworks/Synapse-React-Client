@@ -5,7 +5,7 @@ import {
 } from '../../utils/functions/EntityTypeUtils'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
 import { EntityHeader } from '../../utils/synapseTypes'
-import Tooltip from '../../utils/tooltip/Tooltip'
+import { Tooltip } from '@mui/material'
 import { ProvenanceEntityIcon } from './ProvenanceEntityIcon'
 
 export const EntityNodeLabel = (data: EntityHeader) => {

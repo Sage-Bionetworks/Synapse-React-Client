@@ -4,7 +4,7 @@ import IconSvg from '../IconSvg'
 import { ShowMore } from './utils'
 import { getFriendlyPreciseDuration } from '../../utils/functions/getFriendlyPreciseDuration'
 import { unitOfTime } from 'moment'
-import { Skeleton } from '@material-ui/lab'
+import { Skeleton } from '@mui/material'
 import { SkeletonTable } from '../../assets/skeletons/SkeletonTable'
 
 type ObservationCardSchema = {

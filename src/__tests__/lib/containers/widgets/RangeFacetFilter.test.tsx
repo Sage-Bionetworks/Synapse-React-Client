@@ -1,4 +1,4 @@
-import { Collapse as MockCollapse } from '@material-ui/core'
+import { Collapse as MockCollapse } from '@mui/material'
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import * as React from 'react'
@@ -33,7 +33,7 @@ jest.mock('../../../../lib/containers/widgets/RangeSlider', () => ({
   }),
 }))
 
-jest.mock('@material-ui/core', () => ({
+jest.mock('@mui/material', () => ({
   Collapse: jest.fn(props => (
     <div data-testid="Collapse">{props.children}</div>
   )),

@@ -12,8 +12,8 @@ import {
 import AccessRequirementList, {
   SUPPORTED_ACCESS_REQUIREMENTS,
 } from '../access_requirement_list/AccessRequirementList'
-import { Skeleton } from '@material-ui/lab'
-import Typography from '../../utils/typography/Typography'
+import { Skeleton } from '@mui/material'
+import { Typography } from '@mui/material'
 
 export type MeetAccessRequirementCardProps = {
   accessRequirementId: number
@@ -127,7 +127,7 @@ export const MeetAccessRequirementCard: React.FunctionComponent<
 export const LoadingAccessRequirementCard: React.FunctionComponent = () => {
   return (
     <div className="MeetAccessRequirementCard actionRequiredCard">
-      <Skeleton variant="rect" width={136} height={74} />
+      <Skeleton variant="rectangular" width={136} height={74} />
       <div className="metadata">
         <div className="title">
           <Skeleton width={320} />
@@ -137,7 +137,7 @@ export const LoadingAccessRequirementCard: React.FunctionComponent = () => {
         </div>
       </div>
       <div className="startButtonContainer">
-        <Skeleton variant="rect" width={160} height={33} />
+        <Skeleton variant="rectangular" width={160} height={33} />
       </div>
     </div>
   )

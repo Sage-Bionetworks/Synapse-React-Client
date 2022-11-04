@@ -73,7 +73,8 @@ import {
   Title,
   StrikethroughS,
   Image,
-} from '@material-ui/icons'
+  EditTwoTone,
+} from '@mui/icons-material'
 import React, { useEffect } from 'react'
 import AccessManagement from '../assets/mui_components/AccessManagement'
 import AccountCertified from '../assets/mui_components/AccountCertified'
@@ -99,7 +100,7 @@ import Proteomics from '../assets/mui_components/Proteomics'
 import Rat from '../assets/mui_components/Rat'
 import PushPin from '../assets/mui_components/PushPin'
 import { EntityType } from '../utils/synapseTypes/EntityType'
-import Tooltip from '../utils/tooltip/Tooltip'
+import { Tooltip } from '@mui/material'
 
 export const IconStrings = [
   'accessOpen',
@@ -204,6 +205,7 @@ export const IconStrings = [
   'superscript',
   'latex',
   'image',
+  'edit',
 ] as const
 
 export type Icon = typeof IconStrings[number]
@@ -472,6 +474,8 @@ const getIcon = (options: IconSvgOptions) => {
       return <span>X&sup2;</span>
     case 'subscript':
       return <span>X&#8322;</span>
+    case 'edit':
+      return <EditTwoTone style={muiSvgStyle} />
     default:
       return <></>
   }
