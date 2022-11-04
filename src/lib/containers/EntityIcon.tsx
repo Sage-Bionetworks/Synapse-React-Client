@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { EntityType } from '../utils/synapseTypes'
 import { entityTypeToFriendlyName } from '../utils/functions/EntityTypeUtils'
-import IconSvg, { Icon, IconSvgOptions, type2SvgIconName } from './IconSvg'
+import IconSvg, { Icon, IconSvgProps, type2SvgIconName } from './IconSvg'
 
 const getIconTypeForEntity = (type: EntityType): Icon | '' => {
   switch (type) {
@@ -30,9 +30,9 @@ type EntityTypeIconProps = {
 }
 
 export const EntityTypeIcon: React.FC<
-  Omit<IconSvgOptions, 'icon'> & EntityTypeIconProps
+  Omit<IconSvgProps, 'icon'> & EntityTypeIconProps
 > = props => {
-  const { type, style, className, includeTooltip = true } = props
+  const { type, style, className, includeTooltip = true, ...rest } = props
   if (!type) {
     return <></>
   }
@@ -46,7 +46,7 @@ export const EntityTypeIcon: React.FC<
 
   return (
     <span style={style} className={className}>
-      <IconSvg icon={iconType} label={label} />
+      <IconSvg icon={iconType} label={label} {...rest} />
     </span>
   )
 }

@@ -210,10 +210,6 @@ export const IconStrings = [
 
 export type Icon = typeof IconStrings[number]
 
-export type IconSvgOptions = {
-  sx?: SxProps
-}
-
 export type IconSvgProps = {
   icon: Icon
   // If provided, will be shown in tooltip
