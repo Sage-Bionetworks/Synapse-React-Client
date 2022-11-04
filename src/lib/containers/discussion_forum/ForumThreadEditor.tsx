@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Button } from 'react-bootstrap'
+import { Button, FormControl } from 'react-bootstrap'
 import {
   useCreateThread,
   useUpdateThreadTitle,
@@ -89,10 +89,9 @@ export const ForumThreadEditor: React.FunctionComponent<
   return (
     <div className="bootstrap-4-backport">
       {!isReply && (
-        <input
-          placeholder="Title"
+        <FormControl
           type="text"
-          style={{ width: '100%', padding: '4px' }}
+          placeholder="Title"
           value={title}
           onChange={e => setTitle(e.target.value)}
         />

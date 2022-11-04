@@ -61,6 +61,11 @@ export const MarkdownEditor: React.FunctionComponent<MarkdownEditorProps> = ({
     setText(newText.join(''))
   }
 
+  const handleTagModal = (e: KeyboardEvent) => {
+    if (e.key == '@') {
+      setIsShowingTagModal(true)
+    }
+  }
   const handleCommands = (command: CommandListType) => {
     const textVal = textAreaRef.current
     if (textVal) {
@@ -158,6 +163,7 @@ export const MarkdownEditor: React.FunctionComponent<MarkdownEditorProps> = ({
             value={text}
             ref={textAreaRef}
             placeholder={placeholder}
+            onKeyDown={handleTagModal}
           />
         ) : text ? (
           <MarkdownSynapse markdown={text} />
