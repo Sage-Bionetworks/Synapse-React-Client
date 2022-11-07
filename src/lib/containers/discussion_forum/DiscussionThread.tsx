@@ -59,8 +59,6 @@ export function DiscussionThread(props: DiscussionThreadProps) {
     currentUserProfile?.ownerId ?? '',
   )
 
-  console.log(currentUserProfile)
-
   function handleFollowBtn() {
     if (currentUserProfile?.userName == 'anonymous') {
       alert('You will need to sign in for access to that resource.')
