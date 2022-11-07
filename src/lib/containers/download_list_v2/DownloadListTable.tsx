@@ -269,11 +269,7 @@ export default function DownloadListTable(props: DownloadListTableProps) {
                             placement="right"
                           >
                             <span className="eligibileIcon">
-                              <IconSvg
-                                options={{
-                                  icon: 'packagableFile',
-                                }}
-                              />
+                              <IconSvg icon="packagableFile" />
                             </span>
                           </Tooltip>
                         )}
@@ -284,11 +280,7 @@ export default function DownloadListTable(props: DownloadListTableProps) {
                             placement="right"
                           >
                             <span className="ineligibileIcon">
-                              <IconSvg
-                                options={{
-                                  icon: 'warningOutlined',
-                                }}
-                              />
+                              <IconSvg icon="warningOutlined" />
                             </span>
                           </Tooltip>
                         )}
@@ -366,11 +358,7 @@ export default function DownloadListTable(props: DownloadListTableProps) {
                                   )
                                 }}
                               >
-                                <IconSvg
-                                  options={{
-                                    icon: 'removeCircle',
-                                  }}
-                                />
+                                <IconSvg icon="removeCircle" />
                               </button>
                             </span>
                           </Tooltip>

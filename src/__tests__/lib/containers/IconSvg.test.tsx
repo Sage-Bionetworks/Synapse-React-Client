@@ -1,26 +1,28 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import * as React from 'react'
-import IconSvg, { IconSvgOptions } from '../../../lib/containers/IconSvg'
+import IconSvg, { IconSvgProps } from '../../../lib/containers/IconSvg'
 
 describe('IconSvg: basic functionality', () => {
-  const iconOptions: IconSvgOptions = {
+  const iconOptions: IconSvgProps = {
     icon: 'data',
-    color: '#000000',
+    sx: {
+      color: '#000000',
+    },
   }
 
   it('should render an image', () => {
-    render(<IconSvg options={iconOptions} />)
+    render(<IconSvg {...iconOptions} />)
     screen.getByRole('img')
   })
 
   it('should render tooltip when label is set', async () => {
-    const iconOptionsWithLabel: IconSvgOptions = {
+    const iconOptionsWithLabel: IconSvgProps = {
       icon: 'data',
-      color: '#000000',
       label: 'abc',
+      sx: { color: '#000000' },
     }
-    render(<IconSvg options={iconOptionsWithLabel} />)
+    render(<IconSvg {...iconOptionsWithLabel} />)
     const iconContainer = screen.getByRole('img')
     await userEvent.hover(iconContainer)
     await screen.findByText(iconOptionsWithLabel.label!)

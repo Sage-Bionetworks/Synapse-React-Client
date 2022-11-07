@@ -232,12 +232,12 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
                   searchInputRef!.current!.focus()
                 }}
               >
-                <IconSvg options={{ icon: 'search' }} />
+                <IconSvg icon="search" />
                 {searchButtonText}
               </Button>
             )}
             <span className="SearchIcon">
-              <IconSvg options={{ icon: 'search' }} />
+              <IconSvg icon="search" />
             </span>
             <FormControl
               role="textbox"
@@ -268,7 +268,7 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
                   setSearchTerms(undefined)
                 }}
               >
-                <IconSvg options={{ icon: 'close', label: 'Clear Search' }} />
+                <IconSvg icon="close" label="Clear Search" />
               </span>
             )}
           </>

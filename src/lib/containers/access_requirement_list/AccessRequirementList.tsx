@@ -282,7 +282,7 @@ export default function AccessRequirementList({
             Access For:
           </h4>
           <span className="AccessRequirementList__file-icon-container">
-            <IconSvg options={{ icon: 'file', size: '30px' }} />
+            <IconSvg icon="file" sx={{ width: '30px' }} />
           </span>
           &nbsp;
           {numberOfFilesAffected && (

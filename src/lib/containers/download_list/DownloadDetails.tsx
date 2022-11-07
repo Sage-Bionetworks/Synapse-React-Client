@@ -64,7 +64,7 @@ export default function DownloadDetails(props: DownloadDetailsProps) {
     <span className="download-details-container">
       <span>
         <span className={fileCountIconClass}>
-          <IconSvg options={{ icon: 'file' }} />
+          <IconSvg icon="file" />
         </span>
         {isZeroFiles ? (
           <SkeletonInlineBlock width={50} />
@@ -80,7 +80,7 @@ export default function DownloadDetails(props: DownloadDetailsProps) {
         >
           <span data-testid="numBytesUI">
             <span className={timeEstimateIconClass}>
-              <IconSvg options={{ icon: 'database' }} />
+              <IconSvg icon="database" />
             </span>
             {isTimeEstimateLoading ? (
               <SkeletonInlineBlock width={50} />
@@ -98,7 +98,7 @@ export default function DownloadDetails(props: DownloadDetailsProps) {
         >
           <span data-testid="downloadTimeEstimateUI">
             <span className={timeEstimateIconClass}>
-              <IconSvg options={{ icon: 'clock' }} />
+              <IconSvg icon="clock" />
             </span>
             {isLoading && numFiles > 0 ? (
               <SkeletonInlineBlock width={50} />

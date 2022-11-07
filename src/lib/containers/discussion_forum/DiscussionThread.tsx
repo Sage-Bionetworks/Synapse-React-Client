@@ -111,9 +111,9 @@ export function DiscussionThread(props: DiscussionThreadProps) {
               onClick={() => handleFollowBtn()}
             >
               {subscription ? (
-                <IconSvg options={{ icon: 'visibility' }} />
+                <IconSvg icon="visibility" />
               ) : (
-                <IconSvg options={{ icon: 'visibilityOff' }} />
+                <IconSvg icon="visibilityOff" />
               )}
             </button>
           </span>
@@ -121,7 +121,7 @@ export function DiscussionThread(props: DiscussionThreadProps) {
         {isAuthor && (
           <Tooltip title="Edit Thread">
             <button onClick={() => setShowThreadModal(true)}>
-              <IconSvg options={{ icon: 'edit' }} />
+              <IconSvg icon="edit" />
             </button>
           </Tooltip>
         )}

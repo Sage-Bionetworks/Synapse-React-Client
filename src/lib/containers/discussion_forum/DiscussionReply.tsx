@@ -60,11 +60,11 @@ export const DiscussionReply: React.FC<DiscussionReplyProps> = ({
             </span>
             <div style={{ float: 'right' }}>
               <button onClick={() => onClickLink()}>
-                <IconSvg options={{ icon: 'link' }} />
+                <IconSvg icon="link" />
               </button>
               {isAuthor && (
                 <button onClick={() => setShowReplyModal(true)}>
-                  <IconSvg options={{ icon: 'edit' }} />
+                  <IconSvg icon="edit" />
                 </button>
               )}
             </div>

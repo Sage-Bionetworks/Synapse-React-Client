@@ -87,7 +87,7 @@ export const FullTextSearch: React.FunctionComponent<FullTextSearchProps> = ({
             onSubmit={search}
           >
             <span className="QueryWrapperSearchInput__searchbar__searchicon">
-              <IconSvg options={{ icon: 'search' }} />
+              <IconSvg icon="search" />
             </span>
             <input
               ref={searchInputRef}
@@ -105,7 +105,7 @@ export const FullTextSearch: React.FunctionComponent<FullTextSearchProps> = ({
                   setSearchText('')
                 }}
               >
-                <IconSvg options={{ icon: 'close' }} />
+                <IconSvg icon="close" />
               </button>
             )}
           </form>

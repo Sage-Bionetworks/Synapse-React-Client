@@ -168,7 +168,7 @@ const EvaluationCardDropdown: React.FunctionComponent<
           variant="link"
           className="dropdown-no-caret"
         >
-          <IconSvg options={{ icon: 'verticalEllipsis' }} />
+          <IconSvg icon="verticalEllipsis" />
         </Dropdown.Toggle>
         <Dropdown.Menu alignRight={true}>
           {permissions.canEdit && (

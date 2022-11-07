@@ -235,7 +235,7 @@ const EvaluationEditorDropdown: React.FunctionComponent<
       )}
       <Dropdown className="float-right">
         <Dropdown.Toggle variant="link" className="dropdown-no-caret">
-          <IconSvg options={{ icon: 'verticalEllipsis' }} />
+          <IconSvg icon="verticalEllipsis" />
         </Dropdown.Toggle>
         <Dropdown.Menu alignRight={true}>
           <Dropdown.Item role="menuitem" onClick={onClick}>

@@ -76,15 +76,15 @@ class CardFooter extends React.Component<CardFooterProps, State> {
       columnIconOptions.columns &&
       Object.keys(columnIconOptions.columns).includes(tableColumnName)
     ) {
-      const options = columnIconOptions.columns[tableColumnName][value]
-      if (!options) {
+      const iconProps = columnIconOptions.columns[tableColumnName][value]
+      if (!iconProps) {
         // if we can't find an icon to match, just return the value
         return <span>{value}</span>
       } else {
-        options.padding = 'right'
+        iconProps.sx = { ...iconProps.sx, paddingRight: '0.2rem' }
         return (
           <>
-            <IconSVG options={options}></IconSVG>
+            <IconSVG {...iconProps}></IconSVG>
             <span style={{ verticalAlign: 'middle' }}>{value}</span>
           </>
         )
@@ -160,10 +160,8 @@ class CardFooter extends React.Component<CardFooterProps, State> {
                   >
                     Show {isShowMoreOn ? 'Less' : 'More'}
                     <IconSVG
-                      options={{
-                        icon: isShowMoreOn ? 'expandLess' : 'expandMore',
-                      }}
-                    ></IconSVG>
+                      icon={isShowMoreOn ? 'expandLess' : 'expandMore'}
+                    />
                   </a>
                 </td>
               </tr>

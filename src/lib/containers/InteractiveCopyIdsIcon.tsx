@@ -18,11 +18,7 @@ export const InteractiveCopyIdsIcon = (props: InteractiveCopyIdsIconProps) => {
       <span>
         <button data-testid="copySynIdsButton" onClick={onCopy}>
           <span style={{ height: 15, marginTop: -1 }}>
-            <IconSvg
-              options={{
-                icon: 'contentCopy',
-              }}
-            />
+            <IconSvg icon="contentCopy" />
           </span>
         </button>
       </span>

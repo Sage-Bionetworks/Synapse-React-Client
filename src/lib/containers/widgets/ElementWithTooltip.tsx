@@ -2,7 +2,7 @@ import React from 'react'
 import { TOOLTIP_DELAY_SHOW } from '../table/SynapseTableConstants'
 import { Dropdown } from 'react-bootstrap'
 import { Icon } from '../row_renderers/utils'
-import IconSvg, { IconSvgOptions } from '../IconSvg'
+import IconSvg, { IconSvgProps } from '../IconSvg'
 import { Tooltip } from '@mui/material'
 
 type CustomImageProps = {
@@ -26,7 +26,7 @@ export type TooltipVisualProps = {
  */
 
 type ElementWithTooltipProps = React.PropsWithChildren<{
-  image?: IconSvgOptions | CustomImageProps
+  image?: IconSvgProps | CustomImageProps
   imageColor?: string
   tooltipText: string
   callbackFn?: () => void
@@ -38,14 +38,14 @@ type ElementWithTooltipProps = React.PropsWithChildren<{
 }>
 
 function getTooltipTriggerContents(
-  image: IconSvgOptions | CustomImageProps,
+  image: IconSvgProps | CustomImageProps,
   imageColor: string | undefined,
-  size: IconSvgOptions['size'] | undefined,
+  size: React.CSSProperties['width'] | undefined,
 ): JSX.Element {
   if ('svgImg' in image) {
     return image.svgImg
   } else {
-    return <IconSvg options={{ size, color: imageColor, ...image }} />
+    return <IconSvg {...image} sx={{ color: imageColor, width: size }} />
   }
 }
 

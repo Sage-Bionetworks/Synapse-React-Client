@@ -1,4 +1,4 @@
-import { Skeleton, useTheme } from '@mui/material'
+import { Skeleton } from '@mui/material'
 import BaseTable, {
   AutoResizer,
   ColumnShape,
@@ -133,7 +133,6 @@ const TABLE_HEIGHT = 350
 
 export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
   const { entityId, onSave, onClose, onUnsavedChangesChange } = props
-  const theme = useTheme()
   const [showEntityFinder, setShowEntityFinder] = useState<boolean>(false)
   const [showWarningModal, setShowWarningModal] = useState<boolean>(false)
   const [hasChangedSinceLastSave, setHasChangedSinceLastSave] = useState(false)
@@ -533,7 +532,7 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
           variant="sds-primary"
           onClick={() => setShowEntityFinder(true)}
         >
-          <IconSvg options={{ icon: 'addCircleTwoTone' }} />
+          <IconSvg icon="addCircleTwoTone" />
           <span>{ADD_ITEMS}</span>
         </Button>
       </div>
@@ -669,10 +668,10 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
             variant="warning"
           >
             <IconSvg
-              options={{
-                icon: 'warning',
-                color: theme.palette.warning.main,
-                padding: 'right',
+              icon="warning"
+              sx={{
+                color: 'warning.main',
+                paddingRight: '0.2rem',
               }}
             />
             <Typography display="inline" component="span" variant="smallText2">
