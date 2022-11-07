@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event'
 import _ from 'lodash-es'
 import React from 'react'
 import Columns from '../../../../lib/assets/icons/columns'
-import { IconSvgOptions } from '../../../../lib/containers/IconSvg'
+import { IconSvgProps } from '../../../../lib/containers/IconSvg'
 import { ElementWithTooltip } from '../../../../lib/containers/widgets/ElementWithTooltip'
 
 const mockCallback = jest.fn()
@@ -52,7 +52,7 @@ describe('ElementWithTooltip', () => {
     expect(
       imageButton.getElementsByClassName('styled-svg-wrapper').item(0)!
         .attributes['data-svg'].value,
-    ).toBe((props.image as IconSvgOptions).icon)
+    ).toBe((props.image as IconSvgProps).icon)
     expect(imageButton.getElementsByTagName('img')).toHaveLength(0)
 
     const props_: ElementWithTooltipProps = {

@@ -76,7 +76,7 @@ export default function StepsSideNav(props: StepsSideNavProps) {
 
     return (
       <div className={itemClass}>
-        <IconSvg options={{ icon: icon.iconDef }} />
+        <IconSvg icon={icon.iconDef} />
         {renderStepName(step, isWizard, props.onStepChange)}
       </div>
     )

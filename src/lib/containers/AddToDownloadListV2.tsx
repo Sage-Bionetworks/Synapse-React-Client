@@ -54,7 +54,7 @@ const AddToDownloadListV2: React.FunctionComponent<
           onClick={addToDownloadListV2}
           className="ignoreLink"
         >
-          <IconSvg options={{ icon: 'addToCart' }} />
+          <IconSvg icon={'addToCart'} />
         </a>
       </Tooltip>
     </>

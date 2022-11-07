@@ -759,9 +759,7 @@ export default class GenericCard extends React.Component<
         )}
         {useTypeColumnForIcon && (
           <div className="SRC-cardThumbnail">
-            <IconSvg
-              options={{ icon: type2SvgIconName[data[schema['type']]] }}
-            />
+            <IconSvg icon={type2SvgIconName[data[schema['type']]]} />
           </div>
         )}
       </>

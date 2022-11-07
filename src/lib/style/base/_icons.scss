@@ -42,14 +42,6 @@
   circle {
     fill: currentColor;
   }
-  .icon-kinomics,
-  .icon-proteomics {
-    // special fixes for these 2 icons
-    path {
-      fill: none;
-      stroke: currentColor;
-    }
-  }
   .icon-svg-tooltip {
     text-align: center;
   }
@@ -59,13 +51,6 @@
     path,
     circle {
       fill: map.get(SRC.$primary-color-palette, 500);
-    }
-    .icon-kinomics,
-    .icon-proteomics {
-      path {
-        stroke: map.get(SRC.$primary-color-palette, 500);
-        fill: none;
-      }
     }
     &.bg-circle {
       .styled-svg-wrapper {

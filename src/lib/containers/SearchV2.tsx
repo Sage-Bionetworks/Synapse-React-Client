@@ -262,7 +262,7 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
             ref={this.searchFormRef}
           >
             <span className="QueryWrapperSearchInput__searchbar__searchicon">
-              <IconSvg options={{ icon: 'search' }} />
+              <IconSvg icon="search" />
             </span>
             <input
               onChange={this.handleChange}
@@ -285,7 +285,7 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
                   })
                 }}
               >
-                <IconSvg options={{ icon: 'close' }} />
+                <IconSvg icon="close" />
               </button>
             )}
           </form>

@@ -21,11 +21,5 @@ export const ProvenanceExternalIcon = (props: ProvenanceExternalIconProps) => {
   // }
 
   // return the default (File icon)
-  return (
-    <IconSvg
-      options={{
-        icon,
-      }}
-    />
-  )
+  return <IconSvg icon={icon} />
 }

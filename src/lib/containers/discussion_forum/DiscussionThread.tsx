@@ -59,11 +59,17 @@ export function DiscussionThread(props: DiscussionThreadProps) {
     currentUserProfile?.ownerId ?? '',
   )
 
+  console.log(currentUserProfile)
+
   function handleFollowBtn() {
-    try {
-      toggleSubscribed()
-    } catch (err: any) {
-      displayToast(err.reason as string, 'danger')
+    if (currentUserProfile?.userName == 'anonymous') {
+      alert('You will need to sign in for access to that resource.')
+    } else {
+      try {
+        toggleSubscribed()
+      } catch (err: any) {
+        displayToast(err.reason as string, 'danger')
+      }
     }
   }
 
@@ -118,12 +124,12 @@ export function DiscussionThread(props: DiscussionThreadProps) {
       <div className="control-container">
         {isModerator && (
           <button onClick={() => setShowDeleteModal(true)}>
-            <IconSvg options={{ icon: 'delete', label: 'Delete thread' }} />
+            <IconSvg icon="delete" label="Delete thread" />
           </button>
         )}
         {isAuthor && (
           <button onClick={() => setShowThreadModal(true)}>
-            <IconSvg options={{ icon: 'edit', label: 'Edit thread' }} />
+            <IconSvg icon="edit" label="Edit thread" />
           </button>
         )}
         <span>
@@ -134,13 +140,9 @@ export function DiscussionThread(props: DiscussionThreadProps) {
             onClick={() => handleFollowBtn()}
           >
             {subscription ? (
-              <IconSvg
-                options={{ icon: 'visibility', label: FOLLOWING_TEXT }}
-              />
+              <IconSvg icon="visibility" label={FOLLOWING_TEXT} />
             ) : (
-              <IconSvg
-                options={{ icon: 'visibilityOff', label: UNFOLLOWING_TEXT }}
-              />
+              <IconSvg icon="visibilityOff" label={UNFOLLOWING_TEXT} />
             )}
           </button>
         </span>
@@ -149,7 +151,11 @@ export function DiscussionThread(props: DiscussionThreadProps) {
         <FormControl
           type="text"
           placeholder="Write a reply..."
-          onClick={() => setShowReplyEditor1(true)}
+          onClick={() => {
+            currentUserProfile?.userName == 'anonymous'
+              ? alert('You will need to sign in for access to that resource.')
+              : setShowReplyEditor1(true)
+          }}
         />
       ) : (
         <ForumThreadEditor
@@ -169,7 +175,13 @@ export function DiscussionThread(props: DiscussionThreadProps) {
             <FormControl
               type="text"
               placeholder="Write a reply..."
-              onClick={() => setShowReplyEditor2(true)}
+              onClick={() => {
+                currentUserProfile?.userName == 'anonymous'
+                  ? alert(
+                      'You will need to sign in for access to that resource.',
+                    )
+                  : setShowReplyEditor2(true)
+              }}
             />
           ) : (
             <ForumThreadEditor

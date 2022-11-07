@@ -188,7 +188,7 @@ const DirectDownload: React.FunctionComponent<
             href={externalURL}
             target="_blank"
           >
-            <IconSvg options={{ icon: 'openInNewWindow' }} />
+            <IconSvg icon="openInNewWindow" />
           </a>
         </button>
       )
@@ -196,7 +196,7 @@ const DirectDownload: React.FunctionComponent<
     if (hasFileAccess) {
       return (
         <button className={'btn-download-icon'} onClick={getDownloadLink}>
-          <IconSvg options={{ icon: 'download' }} />
+          <IconSvg icon="download" />
           {displayFileName && fileName ? fileName : ''}
         </button>
       )

@@ -13,7 +13,7 @@ export default function TeamBadge(props: TeamBadgeProps) {
 
   return (
     <span>
-      <IconSvg options={{ icon: 'team' }} />
+      <IconSvg icon="team" />
       <a
         style={{ marginLeft: '5px' }}
         href={

@@ -133,12 +133,12 @@ export const MarkdownEditor: React.FunctionComponent<MarkdownEditorProps> = ({
             {commandList.map(type => {
               return (
                 <button key={type} onClick={() => handleCommands(type)}>
-                  <IconSvg options={{ icon: type, label: startCase(type) }} />
+                  <IconSvg icon={type} label={startCase(type)} />
                 </button>
               )
             })}
             <button onClick={() => setIsShowingTagModal(true)}>
-              <IconSvg options={{ icon: 'tag', label: 'Mention' }} />
+              <IconSvg icon="tag" label="Mention" />
             </button>
           </div>
         )}

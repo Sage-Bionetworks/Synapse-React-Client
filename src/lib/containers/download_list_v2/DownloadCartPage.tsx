@@ -80,9 +80,9 @@ export const DownloadCartPage: React.FunctionComponent<
               <a className="clearDownloadListLink" onClick={clearDownloadList}>
                 <span>
                   <IconSvg
-                    options={{
-                      icon: 'delete',
-                      padding: 'right',
+                    icon="delete"
+                    sx={{
+                      paddingRight: '0.2rem',
                     }}
                   />
                 </span>
@@ -156,8 +156,8 @@ export const DownloadCartPage: React.FunctionComponent<
                   <div>
                     <div className="headlineWithHelp">
                       <Typography variant={'headline3'}>
-                        <IconSvg options={{ icon: 'packagableFile' }} /> Web
-                        Download (.ZIP Packages)
+                        <IconSvg icon="packagableFile" /> Web Download (.ZIP
+                        Packages)
                       </Typography>
                       <HelpPopover
                         markdownText="This will allow you to create a .zip file that contains eligible files. Files greater that 100 MB, external links, or files which are not stored on Synapse native storage are ineligible. In most cases, ineligible files can be downloaded individually. External links will require navigation to an external site, which may require a seperate login process."
@@ -193,7 +193,7 @@ export const DownloadCartPage: React.FunctionComponent<
                             setIsShowingCreatePackageUI(true)
                           }}
                         >
-                          <IconSvg options={{ icon: 'download' }} />
+                          <IconSvg icon="download" />
                           Download As .Zip Packages
                         </Button>
                       )}
@@ -205,7 +205,7 @@ export const DownloadCartPage: React.FunctionComponent<
                           placement="top"
                         >
                           <Button variant="sds-primary" disabled>
-                            <IconSvg options={{ icon: 'download' }} />
+                            <IconSvg icon="download" />
                             &nbsp;Download As .Zip Packages
                           </Button>
                         </Tooltip>
@@ -215,8 +215,7 @@ export const DownloadCartPage: React.FunctionComponent<
                   <div>
                     <div className="headlineWithHelp">
                       <Typography variant={'headline3'}>
-                        <IconSvg options={{ icon: 'code' }} /> Programmatic
-                        Download
+                        <IconSvg icon="code" /> Programmatic Download
                       </Typography>
                       <HelpPopover
                         markdownText="This will provide syntax which you can enter into your programmatic client. It is suitable for large files (>100 MB), for packages > 1GB, and for files which aren’t stored on Synapse native storage (e.g. in a special AWS S3 or Google Cloud bucket).  External links will require navigation to an external site, which may require a separate login process."
@@ -250,7 +249,7 @@ export const DownloadCartPage: React.FunctionComponent<
                           setIsShowingModal(true)
                         }}
                       >
-                        <IconSvg options={{ icon: 'code' }} />
+                        <IconSvg icon="code" />
                         &nbsp;Create Programmatic Package
                       </Button>
                     </span>

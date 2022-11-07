@@ -224,7 +224,7 @@ describe('GenericCard tests', () => {
     })
     screen.getByTestId('IconSvg')
     expect(mockIconSvg).toHaveBeenCalledWith(
-      { options: { icon: 'folder' } },
+      { icon: 'folder' },
       expect.anything(),
     )
   })

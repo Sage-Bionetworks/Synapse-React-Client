@@ -73,7 +73,7 @@ export const FileHandleLink = (props: FileHandleLinkProps) => {
       style={{ padding: 0 }}
     >
       {displayValue ?? fileName ?? fileHandleAssociation.fileHandleId}
-      {showDownloadIcon && <IconSvg options={{ icon: 'download' }} />}
+      {showDownloadIcon && <IconSvg icon="download" />}
     </button>
   )
 }

@@ -14,9 +14,14 @@ export default {
 // More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
 const Template: ComponentStory<typeof IconSvg> = args => {
   return (
-    <div style={{ display: 'flex', gap: '5px', flexWrap: 'wrap' }}>
-      {IconStrings.map(icon => (
-        <IconSvg key={icon} options={{ icon: icon, label: icon }} />
+    <div style={{ display: 'flex', flexWrap: 'wrap', flexDirection: 'row' }}>
+      {IconStrings.sort().map(icon => (
+        <div style={{ margin: '10px', textAlign: 'center' }} key={icon}>
+          <div>
+            <IconSvg {...args} icon={icon} label={icon} />
+          </div>
+          <div style={{ fontSize: '10px' }}>{icon}</div>
+        </div>
       ))}
     </div>
   )
@@ -24,4 +29,10 @@ const Template: ComponentStory<typeof IconSvg> = args => {
 
 export const Icon = Template.bind({})
 // More on args: https://storybook.js.org/docs/react/writing-stories/args
-Icon.args = {}
+Icon.args = {
+  sx: {
+    color: 'primary.main',
+    width: '40px',
+    height: '40px',
+  },
+}

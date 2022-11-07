@@ -153,7 +153,7 @@ export function AccessRequirementDashboard(
                 setNameContains(e.target.value)
               }}
             />
-            <IconSvg options={{ icon: 'searchOutlined' }} />
+            <IconSvg icon="searchOutlined" />
           </InputGroup>
         </div>
         <div>

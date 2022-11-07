@@ -14,11 +14,7 @@ export const EntityPlaceholderNodeLabel = (data: Reference) => {
     () => (
       <>
         <div>
-          <IconSvg
-            options={{
-              icon: 'fileOutlined',
-            }}
-          />
+          <IconSvg icon="fileOutlined" />
         </div>
         <span>{entityVersionString}</span>
       </>

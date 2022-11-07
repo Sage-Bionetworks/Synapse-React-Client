@@ -51,9 +51,9 @@ export default function ExpandableTableDataCell(
           onClick={() => setIsExpanded(!isExpanded)}
         >
           <IconSvg
-            options={{
-              color: '#aeb5bc', // gray-600
-              icon: isExpanded ? 'minusBoxOutline' : 'addBoxOutline',
+            icon={isExpanded ? 'minusBoxOutline' : 'addBoxOutline'}
+            sx={{
+              color: 'grey.600',
             }}
           ></IconSvg>
         </button>

@@ -1,9 +1,11 @@
 import {
   AccessTimeTwoTone,
+  AddBoxOutlined,
   AddCircleOutline,
   AddCircleTwoTone,
   AddShoppingCart,
   AddTwoTone,
+  AlternateEmail,
   ArrowBackIos,
   ArrowDropDownTwoTone,
   ArrowDropUpTwoTone,
@@ -20,25 +22,34 @@ import {
   Clear,
   CloseTwoTone,
   Code,
+  ContentCopyTwoTone,
   DashboardTwoTone,
-  DeleteTwoTone,
   DeleteSweepTwoTone,
+  DeleteTwoTone,
+  EditTwoTone,
   ErrorOutlined,
   ExpandLess,
   ExpandMore,
   FolderTwoTone,
+  FormatBold,
+  FormatItalic,
   GetAppTwoTone,
+  GitHub,
   Group,
   HelpOutlined,
   HelpOutlineTwoTone,
   HistoryTwoTone,
+  Image,
+  IndeterminateCheckBoxOutlined,
   InfoOutlined,
+  InsertDriveFileOutlined,
   InsertDriveFileTwoTone,
   LanguageTwoTone,
   LayersTwoTone,
   LinkTwoTone,
   ListTwoTone,
   LockOpenTwoTone,
+  Login,
   MoreVertTwoTone,
   OpenInNewTwoTone,
   PeopleTwoTone,
@@ -56,36 +67,26 @@ import {
   Star,
   StarTwoTone,
   StorageTwoTone,
+  StrikethroughS,
+  Subscript,
+  Superscript,
   SyncTwoTone,
   TableChartTwoTone,
+  Title,
   ViewAgendaTwoTone,
-  VisibilityTwoTone,
   VisibilityOffTwoTone,
+  VisibilityTwoTone,
   VpnKeyTwoTone,
   WarningTwoTone,
   WatchLater,
-  GitHub,
-  InsertDriveFileOutlined,
-  AddBoxOutlined,
-  IndeterminateCheckBoxOutlined,
-  FormatItalic,
-  FormatBold,
-  Title,
-  StrikethroughS,
-  Image,
-  EditTwoTone,
-  Superscript,
-  Subscript,
-  AlternateEmail,
 } from '@mui/icons-material'
-import React, { useEffect } from 'react'
+import React from 'react'
 import AccessManagement from '../assets/mui_components/AccessManagement'
 import AccountCertified from '../assets/mui_components/AccountCertified'
 import AccountRegistered from '../assets/mui_components/AccountRegistered'
 import AccountValidated from '../assets/mui_components/AccountValidated'
 import Chromatin from '../assets/mui_components/Chromatin'
 import Clinical from '../assets/mui_components/Clinical'
-import ContentCopy from '../assets/mui_components/ContentCopy'
 import Data from '../assets/mui_components/Data'
 import DataLocked from '../assets/mui_components/DataLocked'
 import Dataset from '../assets/mui_components/Dataset'
@@ -96,14 +97,13 @@ import GeneVariants from '../assets/mui_components/GeneVariants'
 import Imaging from '../assets/mui_components/Imaging'
 import Kinomics from '../assets/mui_components/Kinomics'
 import LineGraph from '../assets/mui_components/LineGraph'
-import Login from '../assets/mui_components/Login'
 import Other from '../assets/mui_components/Other'
 import PackagableFile from '../assets/mui_components/PackagableFile'
 import Proteomics from '../assets/mui_components/Proteomics'
 import Rat from '../assets/mui_components/Rat'
 import PushPin from '../assets/mui_components/PushPin'
-import { EntityType } from '../utils/synapseTypes/EntityType'
-import { Tooltip } from '@mui/material'
+import { EntityType } from '../utils/synapseTypes'
+import { SxProps, Tooltip } from '@mui/material'
 
 export const IconStrings = [
   'accessOpen',
@@ -214,222 +214,179 @@ export const IconStrings = [
 
 export type Icon = typeof IconStrings[number]
 
-export type IconSvgOptions = {
-  icon: Icon
-  color?: string // If no color is provided, it should inherit current color
-  size?: string
-  padding?: 'left' | 'right'
-  label?: string // If provided, will activate tooltip
-}
-
 export type IconSvgProps = {
-  options: IconSvgOptions
+  icon: Icon
+  // If provided, will be shown in tooltip
+  label?: string
+  sx?: SxProps
 }
 
-export type SVGStyleProps = {
-  color?: string
-  verticalAlign?: string
-  fill?: string
-  width?: string
-}
+function IconMapping(props: { icon: string; sx?: SxProps }) {
+  const { icon } = props
+  const color = undefined
 
-const getIcon = (options: IconSvgOptions) => {
-  const { icon, color, size } = options
-
-  // Styles for svg imported from mui
-  const muiSvgStyle: SVGStyleProps = {
-    color: color,
+  const sx: SxProps = {
     verticalAlign: 'middle',
-    width: size,
-  }
-  // Styles for custom svg missing from mui
-  const customSvgStyle: SVGStyleProps = {
-    fill: color,
-    color: color,
-    verticalAlign: 'middle',
+    ...props.sx,
   }
 
   switch (icon) {
     case 'accessOpen':
-      return <LockOpenTwoTone style={customSvgStyle} />
+      return <LockOpenTwoTone sx={sx} />
     case 'accessClosed':
-      return <VpnKeyTwoTone style={customSvgStyle} />
+      return <VpnKeyTwoTone sx={sx} />
     case 'add':
-      return <AddTwoTone style={muiSvgStyle} />
+      return <AddTwoTone sx={sx} />
     case 'arrowBack':
-      return <ArrowBackIos style={muiSvgStyle} />
+      return <ArrowBackIos sx={sx} />
     case 'arrowForward':
-      return <ArrowForwardIos style={muiSvgStyle} />
+      return <ArrowForwardIos sx={sx} />
     case 'arrowDropUp':
-      return <ArrowDropUpTwoTone style={muiSvgStyle} />
+      return <ArrowDropUpTwoTone sx={sx} />
     case 'arrowDropDown':
-      return <ArrowDropDownTwoTone style={muiSvgStyle} />
+      return <ArrowDropDownTwoTone sx={sx} />
     case 'block':
-      return <Block style={muiSvgStyle} />
+      return <Block sx={sx} />
     case 'check':
-      return <Check style={muiSvgStyle}></Check>
+      return <Check sx={sx}></Check>
     case 'clear':
-      return <Clear style={muiSvgStyle}></Clear>
+      return <Clear sx={sx}></Clear>
     case 'cart':
-      return <ShoppingCartOutlined style={muiSvgStyle}></ShoppingCartOutlined>
+      return <ShoppingCartOutlined sx={sx}></ShoppingCartOutlined>
     case 'cards':
-      return <ViewAgendaTwoTone style={muiSvgStyle}></ViewAgendaTwoTone>
+      return <ViewAgendaTwoTone sx={sx}></ViewAgendaTwoTone>
     case 'clock':
-      return <AccessTimeTwoTone style={muiSvgStyle} />
+      return <AccessTimeTwoTone sx={sx} />
     case 'code':
-      return <Code style={muiSvgStyle}></Code>
+      return <Code sx={sx}></Code>
     case 'circle':
-      return <RadioButtonUncheckedTwoTone style={muiSvgStyle} />
+      return <RadioButtonUncheckedTwoTone sx={sx} />
     case 'checkCircle':
-      return <CheckCircleTwoTone style={muiSvgStyle} />
+      return <CheckCircleTwoTone sx={sx} />
     case 'dashboard':
-      return <DashboardTwoTone style={muiSvgStyle}></DashboardTwoTone>
+      return <DashboardTwoTone sx={sx}></DashboardTwoTone>
     case 'delete':
-      return <DeleteTwoTone style={muiSvgStyle} />
+      return <DeleteTwoTone sx={sx} />
     case 'deleteSweep':
-      return <DeleteSweepTwoTone style={muiSvgStyle} />
+      return <DeleteSweepTwoTone sx={sx} />
     case 'openInNewWindow':
-      return <OpenInNewTwoTone style={muiSvgStyle} />
+      return <OpenInNewTwoTone sx={sx} />
     case 'phone':
-      return <PhoneTwoTone style={muiSvgStyle} />
+      return <PhoneTwoTone sx={sx} />
     case 'people':
-      return <PeopleTwoTone style={muiSvgStyle} />
+      return <PeopleTwoTone sx={sx} />
     case 'addToCart':
-      return <AddShoppingCart style={muiSvgStyle}></AddShoppingCart>
+      return <AddShoppingCart sx={sx}></AddShoppingCart>
     case 'addCircleOutline':
-      return <AddCircleOutline style={muiSvgStyle}></AddCircleOutline>
+      return <AddCircleOutline sx={sx}></AddCircleOutline>
     case 'addCircleTwoTone':
-      return <AddCircleTwoTone style={muiSvgStyle}></AddCircleTwoTone>
+      return <AddCircleTwoTone sx={sx}></AddCircleTwoTone>
     case 'reload':
-      return <Cached style={muiSvgStyle}></Cached>
+      return <Cached sx={sx}></Cached>
     case 'team':
-      return <Group style={muiSvgStyle}></Group>
+      return <Group sx={sx}></Group>
     case 'photoCamera':
-      return <PhotoCameraOutlined style={muiSvgStyle}></PhotoCameraOutlined>
+      return <PhotoCameraOutlined sx={sx}></PhotoCameraOutlined>
     case 'verticalEllipsis':
-      return <MoreVertTwoTone style={muiSvgStyle} />
+      return <MoreVertTwoTone sx={sx} />
     case 'sync':
-      return <SyncTwoTone style={muiSvgStyle} />
+      return <SyncTwoTone sx={sx} />
     case 'public':
-      return <PublicTwoTone style={muiSvgStyle} />
+      return <PublicTwoTone sx={sx} />
     case 'clipboardCheck':
-      return <AssignmentTurnedInTwoTone style={muiSvgStyle} />
+      return <AssignmentTurnedInTwoTone sx={sx} />
     case 'info':
-      return (
-        <InfoOutlined fontSize={'small'} style={muiSvgStyle}></InfoOutlined>
-      )
+      return <InfoOutlined sx={sx}></InfoOutlined>
     case 'favTwoTone':
-      return <StarTwoTone style={muiSvgStyle}></StarTwoTone>
+      return <StarTwoTone sx={sx}></StarTwoTone>
     case 'fav':
-      return <Star style={muiSvgStyle}></Star>
+      return <Star sx={sx}></Star>
     case 'github':
-      return <GitHub style={muiSvgStyle} />
+      return <GitHub sx={sx} />
     case 'peopleTwoTone':
-      return <PeopleTwoTone style={muiSvgStyle}></PeopleTwoTone>
+      return <PeopleTwoTone sx={sx}></PeopleTwoTone>
     case 'challengesTwoTone':
-      return <AssessmentTwoTone style={muiSvgStyle}></AssessmentTwoTone>
+      return <AssessmentTwoTone sx={sx}></AssessmentTwoTone>
     case 'download':
-      return <GetAppTwoTone style={muiSvgStyle}></GetAppTwoTone>
+      return <GetAppTwoTone sx={sx}></GetAppTwoTone>
     case 'errorOutlined':
-      return <ErrorOutlined style={muiSvgStyle} />
+      return <ErrorOutlined sx={sx} />
     case 'searchOutlined':
-      return <SearchOutlined style={muiSvgStyle}></SearchOutlined>
+      return <SearchOutlined sx={sx}></SearchOutlined>
     case 'search':
-      return <SearchTwoTone style={muiSvgStyle}></SearchTwoTone>
+      return <SearchTwoTone sx={sx}></SearchTwoTone>
     case 'history':
-      return <HistoryTwoTone style={muiSvgStyle}></HistoryTwoTone>
+      return <HistoryTwoTone sx={sx}></HistoryTwoTone>
     case 'time':
-      return <WatchLater style={muiSvgStyle}></WatchLater>
+      return <WatchLater sx={sx}></WatchLater>
     case 'login':
-      return <Login fill={color} style={customSvgStyle}></Login>
+      return <Login sx={sx}></Login>
     case 'helpOutlineTwoTone':
-      return <HelpOutlineTwoTone style={muiSvgStyle}></HelpOutlineTwoTone>
+      return <HelpOutlineTwoTone sx={sx}></HelpOutlineTwoTone>
     case 'helpOutlined':
-      return <HelpOutlined style={muiSvgStyle}></HelpOutlined>
+      return <HelpOutlined sx={sx}></HelpOutlined>
     case 'close':
-      return <CloseTwoTone style={muiSvgStyle} />
+      return <CloseTwoTone sx={sx} />
     case 'expandLess':
-      return <ExpandLess fontSize={'small'} style={muiSvgStyle}></ExpandLess>
+      return <ExpandLess sx={sx}></ExpandLess>
     case 'expandMore':
-      return <ExpandMore fontSize={'small'} style={muiSvgStyle}></ExpandMore>
+      return <ExpandMore sx={sx}></ExpandMore>
     case 'rat':
-      return <Rat fill={color} style={customSvgStyle}></Rat>
+      return <Rat sx={sx}></Rat>
     case 'chromatin':
-      return <Chromatin fill={color} style={customSvgStyle}></Chromatin>
+      return <Chromatin sx={sx}></Chromatin>
     case 'clinical':
-      return <Clinical fill={color} style={customSvgStyle}></Clinical>
+      return <Clinical sx={sx}></Clinical>
     case 'contentCopy':
-      return <ContentCopy fill={color} style={customSvgStyle} />
+      return <ContentCopyTwoTone sx={sx} />
     case 'data':
-      return <Data fill={color} style={customSvgStyle}></Data>
+      return <Data sx={sx}></Data>
     case 'dataLocked':
-      return <DataLocked fill={color} style={customSvgStyle}></DataLocked>
+      return <DataLocked sx={sx}></DataLocked>
     case 'geneExpression':
-      return (
-        <GeneExpression fill={color} style={customSvgStyle}></GeneExpression>
-      )
+      return <GeneExpression sx={sx}></GeneExpression>
     case 'geneVariants':
-      return <GeneVariants fill={color} style={customSvgStyle}></GeneVariants>
+      return <GeneVariants sx={sx}></GeneVariants>
     case 'imaging':
-      return <Imaging fill={color} style={customSvgStyle}></Imaging>
+      return <Imaging sx={sx}></Imaging>
     case 'lineGraph':
-      return <LineGraph fill={color} style={customSvgStyle}></LineGraph>
+      return <LineGraph sx={sx}></LineGraph>
     case 'kinomics':
-      customSvgStyle.fill = 'none'
-      return (
-        <Kinomics
-          fill={color ? color : 'currentColor'}
-          style={customSvgStyle}
-        ></Kinomics>
-      )
+      return <Kinomics sx={sx}></Kinomics>
     case 'proteomics':
-      customSvgStyle.fill = 'none'
-      return (
-        <Proteomics
-          fill={color ? color : 'currentColor'}
-          style={customSvgStyle}
-        ></Proteomics>
-      )
+      return <Proteomics sx={sx}></Proteomics>
     case 'packagableFile':
-      customSvgStyle.fill = 'none'
-      return (
-        <PackagableFile
-          fill={color ? color : 'currentColor'}
-          style={customSvgStyle}
-        ></PackagableFile>
-      )
+      return <PackagableFile sx={sx}></PackagableFile>
     case 'other':
-      return <Other fill={color} style={customSvgStyle}></Other>
+      return <Other fill={color} sx={sx}></Other>
     case 'wiki':
-      return <LanguageTwoTone style={muiSvgStyle} />
+      return <LanguageTwoTone sx={sx} />
     case 'file':
-      return <InsertDriveFileTwoTone style={muiSvgStyle} />
+      return <InsertDriveFileTwoTone sx={sx} />
     case 'fileOutlined':
-      return <InsertDriveFileOutlined style={muiSvgStyle} />
+      return <InsertDriveFileOutlined sx={sx} />
     case 'folder':
-      return <FolderTwoTone style={muiSvgStyle} />
+      return <FolderTwoTone sx={sx} />
     case 'link':
-      return <LinkTwoTone style={muiSvgStyle} />
+      return <LinkTwoTone sx={sx} />
     case 'table':
-      return <TableChartTwoTone style={muiSvgStyle} />
+      return <TableChartTwoTone sx={sx} />
     case 'entityview':
-      return <ListTwoTone style={muiSvgStyle} />
+      return <ListTwoTone sx={sx} />
     case 'submissionview':
-      return <StorageTwoTone style={muiSvgStyle} />
+      return <StorageTwoTone sx={sx} />
     case 'challenge':
-      return <AssessmentTwoTone style={muiSvgStyle} />
+      return <AssessmentTwoTone sx={sx} />
     case 'discussion':
-      return <QuestionAnswerTwoTone style={muiSvgStyle} />
+      return <QuestionAnswerTwoTone sx={sx} />
     case 'dataset':
-      return <Dataset fill={color} style={customSvgStyle} />
+      return <Dataset sx={sx} />
     case 'datasetcollection':
-      return <DatasetCollection fill={color} style={customSvgStyle} />
+      return <DatasetCollection sx={sx} />
     case 'database':
-      return <LayersTwoTone style={muiSvgStyle} />
+      return <LayersTwoTone sx={sx} />
     case 'docker':
-      return (
-        <Docker fill={color ? color : 'currentColor'} style={customSvgStyle} />
-      )
+      return <Docker sx={sx} />
     case 'accountCertified':
       return <AccountCertified></AccountCertified>
     case 'accountRegistered':
@@ -437,93 +394,68 @@ const getIcon = (options: IconSvgOptions) => {
     case 'accountValidated':
       return <AccountValidated></AccountValidated>
     case 'warningOutlined':
-      return <ReportProblemOutlined style={muiSvgStyle}></ReportProblemOutlined>
+      return <ReportProblemOutlined sx={sx}></ReportProblemOutlined>
     case 'warning':
-      return <WarningTwoTone style={muiSvgStyle} />
+      return <WarningTwoTone sx={sx} />
     case 'removeCircle':
-      return <RemoveCircleTwoTone style={muiSvgStyle}></RemoveCircleTwoTone>
+      return <RemoveCircleTwoTone sx={sx}></RemoveCircleTwoTone>
     case 'replyTwoTone':
-      return <ReplyTwoTone style={muiSvgStyle}></ReplyTwoTone>
+      return <ReplyTwoTone sx={sx}></ReplyTwoTone>
     case 'chatTwoTone':
-      return <ChatTwoTone style={muiSvgStyle}></ChatTwoTone>
+      return <ChatTwoTone sx={sx}></ChatTwoTone>
     case 'accessManagement':
-      return <AccessManagement style={muiSvgStyle}></AccessManagement>
+      return <AccessManagement sx={sx}></AccessManagement>
     case 'chevronRight':
-      return <ChevronRight style={muiSvgStyle} />
+      return <ChevronRight sx={sx} />
     case 'chevronLeft':
-      return <ChevronLeft style={muiSvgStyle} />
+      return <ChevronLeft sx={sx} />
     case 'pushpin':
-      return <PushPin fill={color} style={customSvgStyle}></PushPin>
+      return <PushPin sx={sx}></PushPin>
     case 'addBoxOutline':
-      return <AddBoxOutlined style={muiSvgStyle} />
+      return <AddBoxOutlined sx={sx} />
     case 'minusBoxOutline':
-      return <IndeterminateCheckBoxOutlined style={muiSvgStyle} />
+      return <IndeterminateCheckBoxOutlined sx={sx} />
     case 'italic':
-      return <FormatItalic style={muiSvgStyle} />
+      return <FormatItalic sx={sx} />
     case 'bold':
-      return <FormatBold style={muiSvgStyle} />
+      return <FormatBold sx={sx} />
     case 'title':
-      return <Title style={muiSvgStyle} />
+      return <Title sx={sx} />
     case 'visibility':
-      return <VisibilityTwoTone style={muiSvgStyle} />
+      return <VisibilityTwoTone sx={sx} />
     case 'visibilityOff':
-      return <VisibilityOffTwoTone style={muiSvgStyle} />
+      return <VisibilityOffTwoTone sx={sx} />
     case 'strikethrough':
-      return <StrikethroughS style={muiSvgStyle} />
+      return <StrikethroughS sx={sx} />
     case 'latex':
       return <span>TeX</span>
     case 'image':
-      return <Image style={muiSvgStyle} />
+      return <Image sx={sx} />
     case 'superscript':
-      return <Superscript style={muiSvgStyle} />
+      return <Superscript sx={sx} />
     case 'subscript':
-      return <Subscript style={muiSvgStyle} />
+      return <Subscript sx={sx} />
     case 'edit':
-      return <EditTwoTone style={muiSvgStyle} />
+      return <EditTwoTone sx={sx} />
     case 'tag':
-      return <AlternateEmail style={muiSvgStyle} />
+      return <AlternateEmail sx={sx} />
     default:
       return <></>
   }
 }
 
-const IconSvg: React.FunctionComponent<IconSvgProps> = props => {
-  const { options, ...rest } = props
-  const { icon, color, padding, label } = options
-  let mounted = true
-
-  // Do not set inline style unless it is specified because it's hard to override
-  const getPadding = (padding: any) => {
-    if (padding === 'left') {
-      return { paddingLeft: '0.2rem' }
-    }
-    if (padding === 'right') {
-      return { paddingRight: '0.2rem' }
-    }
-    return {}
-  }
-  const wrapperCss = getPadding(padding)
-
-  useEffect(() => {
-    if (mounted) {
-      //
-    }
-    return () => {
-      mounted = false
-    }
-  }, [icon, color])
+function IconSvg(props: IconSvgProps) {
+  const { icon, label = '', sx } = props
 
   return (
-    <Tooltip placement="top" title={label ?? ''}>
+    <Tooltip placement="top" title={label}>
       <span
         data-svg={icon}
         className="styled-svg-wrapper"
-        style={wrapperCss}
         id={`icon-${icon}`}
         role={'img'}
-        {...rest}
       >
-        {getIcon(options)}
+        <IconMapping icon={icon} sx={sx} />
       </span>
     </Tooltip>
   )
@@ -545,9 +477,5 @@ export const type2SvgIconName: Record<EntityType, Icon> = {
   dataset: 'dataset',
   datasetcollection: 'datasetcollection',
 }
-
-export const IconSvgDemo = (props: IconSvgOptions) => (
-  <IconSvg options={props} />
-)
 
 export default IconSvg

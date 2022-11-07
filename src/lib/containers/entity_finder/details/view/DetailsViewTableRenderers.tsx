@@ -368,11 +368,11 @@ function getLatestVersionText(
         {versionDisplay}
 
         <IconSvg
-          options={{
-            icon: 'helpOutlineTwoTone',
-            size: '12px',
-            padding: 'left',
-            label: `No ${snapshotDisplay} exists. The ${versionDisplay} version will be referenced until a new ${snapshotDisplay} is created.`,
+          icon="helpOutlineTwoTone"
+          label={`No ${snapshotDisplay} exists. The ${versionDisplay} version will be referenced until a new ${snapshotDisplay} is created.`}
+          sx={{
+            width: '12px',
+            paddingLeft: '0.2rem',
           }}
         />
       </>
@@ -523,7 +523,7 @@ export const EntityErrorRenderer = (props: EntityIdAndVersionRendererProps) => {
         className="EntityBadgeTooltip"
       >
         <div className="EntityErrorRenderer">
-          <IconSvg options={{ icon: 'warningOutlined' }} />
+          <IconSvg icon="warningOutlined" />
         </div>
       </Tooltip>
     )

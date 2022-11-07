@@ -84,7 +84,7 @@ export const ColumnSelection: React.FunctionComponent<ColumnSelectionProps> = (
               key={name}
             >
               <span className={maybeShowPrimaryColor} style={iconStyle}>
-                <IconSvg options={{ icon: 'check', size: '14px' }} />
+                <IconSvg icon="check" sx={{ width: '14px' }} />
               </span>
               {getColumnDisplayName(name)}
             </Dropdown.Item>
