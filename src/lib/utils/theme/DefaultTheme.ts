@@ -2,11 +2,13 @@ import { ThemeOptions } from '@mui/material/styles'
 import { typographyOptions } from './typography/Typography'
 import palette from './palette/Palette'
 import { Fade } from '@mui/material'
+import linkTheme from './typography/Link'
 
 const defaultMuiTheme: ThemeOptions = {
   typography: typographyOptions,
   palette: palette,
   components: {
+    MuiLink: linkTheme,
     MuiTooltip: {
       defaultProps: {
         arrow: true,
