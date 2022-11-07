@@ -7,7 +7,10 @@ import {
   useGetRepliesInfinite,
   useGetThread,
 } from '../../utils/hooks/SynapseAPI/forum/useForum'
-import { SMALL_USER_CARD } from '../../utils/SynapseConstants'
+import {
+  SMALL_USER_CARD,
+  SRC_SIGN_IN_CLASS,
+} from '../../utils/SynapseConstants'
 import { SubscriptionObjectType } from '../../utils/synapseTypes/Subscription'
 import { Typography } from '@mui/material'
 import UserCard from '../UserCard'
@@ -29,6 +32,7 @@ export type DiscussionThreadProps = {
 
 const FOLLOWING_TEXT = 'You are following this topic. Click to stop following.'
 const UNFOLLOWING_TEXT = 'You are not following this topic. Click to follow.'
+const SIGN_IN_TEXT = 'You will need to sign in for access to that resource'
 
 export function DiscussionThread(props: DiscussionThreadProps) {
   const { threadId, limit } = props
@@ -38,6 +42,7 @@ export function DiscussionThread(props: DiscussionThreadProps) {
   const [showReplyEditor1, setShowReplyEditor1] = useState(false)
   const [showReplyEditor2, setShowReplyEditor2] = useState(false)
   const [showDeleteModal, setShowDeleteModal] = useState(false)
+  const [showSignInModal, setShowSignInModal] = useState(false)
 
   const { threadData, threadBody } = useGetThread(threadId)
   const { data: currentUserProfile } = useGetCurrentUserProfile()
@@ -61,7 +66,7 @@ export function DiscussionThread(props: DiscussionThreadProps) {
 
   function handleFollowBtn() {
     if (currentUserProfile?.userName == 'anonymous') {
-      alert('You will need to sign in for access to that resource.')
+      setShowSignInModal(true)
     } else {
       try {
         toggleSubscribed()
@@ -151,7 +156,7 @@ export function DiscussionThread(props: DiscussionThreadProps) {
           placeholder="Write a reply..."
           onClick={() => {
             currentUserProfile?.userName == 'anonymous'
-              ? alert('You will need to sign in for access to that resource.')
+              ? setShowSignInModal(true)
               : setShowReplyEditor1(true)
           }}
         />
@@ -175,9 +180,7 @@ export function DiscussionThread(props: DiscussionThreadProps) {
               placeholder="Write a reply..."
               onClick={() => {
                 currentUserProfile?.userName == 'anonymous'
-                  ? alert(
-                      'You will need to sign in for access to that resource.',
-                    )
+                  ? setShowSignInModal(true)
                   : setShowReplyEditor2(true)
               }}
             />
@@ -232,6 +235,23 @@ export function DiscussionThread(props: DiscussionThreadProps) {
         confirmButtonVariant="danger"
         confirmButtonText="Delete"
       />
+      <Modal
+        className="bootstrap-4-backport"
+        show={showSignInModal}
+        onHide={() => setShowSignInModal(false)}
+        animation={false}
+      >
+        <Modal.Header closeButton />
+        <Modal.Body>{SIGN_IN_TEXT}</Modal.Body>
+        <Modal.Footer>
+          <Button
+            onClick={() => setShowSignInModal(false)}
+            className={SRC_SIGN_IN_CLASS}
+          >
+            Sign In
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </div>
   )
 }
