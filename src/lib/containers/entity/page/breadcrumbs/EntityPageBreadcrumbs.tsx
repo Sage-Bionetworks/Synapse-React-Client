@@ -1,5 +1,5 @@
 import React from 'react'
-import { Breadcrumbs, Link, SxProps, Typography } from '@mui/material'
+import { Breadcrumbs, Link, SxProps, Tooltip, Typography } from '@mui/material'
 import IconSvg from '../../../IconSvg'
 import { truncateString } from '../../../../utils/functions/StringUtils'
 
@@ -49,25 +49,25 @@ export default function EntityPageBreadcrumbs(
     >
       {items.map((data, index) => {
         const displayedText = truncateString(data.text, MAX_BREADCRUMB_LENGTH)
-        if (data.current) {
-          return (
-            <Typography key={index} variant={'breadcrumb1'}>
-              {displayedText}
-            </Typography>
-          )
-        }
+        const tooltipText = displayedText !== data.text ? data.text : null
         return (
-          <Typography key={index} variant={'breadcrumb1'}>
-            <Link
-              key={index}
-              href={data.href}
-              onClick={data.onClick}
-              underline="hover"
-              sx={linkStyle}
-            >
-              {displayedText}
-            </Link>
-          </Typography>
+          <Tooltip key={index} title={tooltipText} placement="top">
+            <Typography variant={'breadcrumb1'}>
+              {data.current ? (
+                displayedText
+              ) : (
+                <Link
+                  key={index}
+                  href={data.href}
+                  onClick={data.onClick}
+                  underline="hover"
+                  sx={linkStyle}
+                >
+                  {displayedText}
+                </Link>
+              )}
+            </Typography>
+          </Tooltip>
         )
       })}
     </Breadcrumbs>

@@ -13,7 +13,12 @@ export default {
 
 // More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
 const Template: ComponentStory<typeof EntityPageBreadcrumbs> = args => (
-  <EntityPageBreadcrumbs {...args} />
+  <>
+    {/* Add some space above the component so the tooltip positioning is more accurate */}
+    <br />
+    <br />
+    <EntityPageBreadcrumbs {...args} />
+  </>
 )
 
 const preventDefaultHandler = (e: React.SyntheticEvent) => {
