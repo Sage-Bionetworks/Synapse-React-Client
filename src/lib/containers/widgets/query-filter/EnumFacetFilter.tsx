@@ -194,7 +194,7 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
             }}
           >
             <span className="EnumFacetFilter__previous">
-              <IconSvg options={{ icon: 'arrowBack' }} />
+              <IconSvg icon="arrowBack" />
             </span>
           </button>
           {searchTerm.length > 0 && (
@@ -206,7 +206,7 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
               }}
             >
               <span className="EnumFacetFilter__reset">
-                <IconSvg options={{ icon: 'close' }} />
+                <IconSvg icon="close" />
               </span>
             </button>
           )}
@@ -241,7 +241,7 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
               }}
             >
               <span className="EnumFacetFilter__searchicon">
-                <IconSvg options={{ icon: 'search' }} />
+                <IconSvg icon="search" />
               </span>
             </button>
           </div>

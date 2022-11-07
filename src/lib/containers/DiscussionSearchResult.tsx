@@ -85,9 +85,9 @@ const DiscussionSearchResult = (props: DiscussionSearchResultProps) => {
           {isLoading ? (
             <Skeleton variant="circular" width="40px" height="40px" />
           ) : replyId ? (
-            <IconSvg options={{ icon: 'replyTwoTone' }} />
+            <IconSvg icon="replyTwoTone" />
           ) : (
-            <IconSvg options={{ icon: 'chatTwoTone' }} />
+            <IconSvg icon="chatTwoTone" />
           )}
         </Col>
         <Col xs={11}>

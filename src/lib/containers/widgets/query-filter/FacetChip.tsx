@@ -19,10 +19,10 @@ export const FacetChip: React.FC<FacetChipProps> = ({
     <button className={`Chip ${isChecked ? 'Checked' : ''}`} onClick={onClick}>
       {getColumnDisplayName(facet.columnName)}
       <IconSvg
-        options={{
-          icon: isChecked ? 'check' : 'add',
-          size: '14px',
-          padding: 'left',
+        icon={isChecked ? 'check' : 'add'}
+        sx={{
+          width: '14px',
+          paddingLeft: '0.2rem',
         }}
       ></IconSvg>
     </button>

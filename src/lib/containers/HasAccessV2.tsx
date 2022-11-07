@@ -78,10 +78,10 @@ function AccessIcon(props: { downloadType: FileHandleDownloadTypeEnum }) {
     const configuration = iconConfiguration[downloadType]
     return (
       <IconSvg
-        options={{
-          icon: configuration.icon,
+        icon={configuration.icon}
+        label={configuration.tooltipText}
+        sx={{
           color: configuration.color(theme),
-          label: configuration.tooltipText,
         }}
       />
     )

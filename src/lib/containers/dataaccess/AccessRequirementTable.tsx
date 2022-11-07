@@ -74,7 +74,7 @@ export function AccessRequirementTable(props: AccessRequirementTableProps) {
             variant={'outline'}
             onClick={onCreateNewAccessRequirementClicked}
           >
-            <IconSvg options={{ icon: 'favTwoTone', padding: 'right' }} />
+            <IconSvg icon="favTwoTone" sx={{ paddingRight: '0.2rem' }} />
             New Access Requirement
           </Button>
         )}

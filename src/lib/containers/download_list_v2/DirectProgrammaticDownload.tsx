@@ -52,7 +52,7 @@ filepath = ${entityId}.path`
             className={'btn-download-icon'}
             onClick={() => setIsShowingModal(true)}
           >
-            <IconSvg options={{ icon: 'code' }} />
+            <IconSvg icon="code" />
           </button>
         </span>
       </Tooltip>

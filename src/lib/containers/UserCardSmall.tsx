@@ -46,7 +46,7 @@ export const UserCardSmall = (props: UserCardSmallProps) => {
   let { link } = props
 
   const [accountLevelIcon, setAccountLevelIcon] = useState<JSX.Element>(
-    <IconSvg options={{ icon: 'accountRegistered' }} />,
+    <IconSvg icon="accountRegistered" />,
   )
   const target = useRef(null)
   const certificationOrVerification =
@@ -60,10 +60,10 @@ export const UserCardSmall = (props: UserCardSmallProps) => {
 
   useEffect(() => {
     if (userBundle?.isCertified) {
-      setAccountLevelIcon(<IconSvg options={{ icon: 'accountCertified' }} />)
+      setAccountLevelIcon(<IconSvg icon="accountCertified" />)
     }
     if (userBundle?.isVerified) {
-      setAccountLevelIcon(<IconSvg options={{ icon: 'accountValidated' }} />)
+      setAccountLevelIcon(<IconSvg icon="accountValidated" />)
     }
   }, [showAccountLevelIcon, userBundle?.isCertified, userBundle?.isVerified])
 

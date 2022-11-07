@@ -89,7 +89,7 @@ type IconProps = {
 }
 
 const iconSvgMapping = {
-  [DATASET]: <IconSvg options={{ icon: 'dataset' }} />,
+  [DATASET]: <IconSvg icon="dataset" />,
 }
 
 const defaultIcons = {

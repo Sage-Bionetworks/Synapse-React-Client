@@ -58,7 +58,7 @@ function TotalQueryResults(props: TotalQueryResultsProps) {
                   onClick={resetQuery}
                   className="TotalQueryResults__topbar__clearall"
                 >
-                  <IconSvg options={{ icon: 'deleteSweep' }} />
+                  <IconSvg icon="deleteSweep" />
                   Clear all filters
                 </a>
               )}

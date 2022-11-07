@@ -20,7 +20,7 @@ export default function DownloadDetails(props: DownloadDetailsProps) {
       <span className="item">{!isInactive && <> {numFiles} Files </>}</span>
       <span className="item">
         <span className={iconClassName}>
-          <IconSvg options={{ icon: 'packagableFile' }} />
+          <IconSvg icon="packagableFile" />
         </span>
         {!isInactive && (
           <> {numPackagableFiles} Files eligible for packaging </>
@@ -38,7 +38,7 @@ export default function DownloadDetails(props: DownloadDetailsProps) {
       {numIneligibleFiles > 0 && (
         <span className="item">
           <span className={`SRC-warning-color`}>
-            <IconSvg options={{ icon: 'warningOutlined' }} />
+            <IconSvg icon="warningOutlined" />
           </span>
           {!isInactive && (
             <> {numIneligibleFiles} Files ineligible for packaging </>

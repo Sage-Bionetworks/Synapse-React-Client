@@ -28,9 +28,9 @@ function LinkTab(props: {
   return (
     <NavLink className="Tab" role="tab" to={href}>
       <IconSvg
-        options={{
-          icon: icon,
-          padding: 'right',
+        icon={icon}
+        sx={{
+          paddingRight: '0.2rem',
         }}
       />
       <Typography variant="buttonLink">{children}</Typography>

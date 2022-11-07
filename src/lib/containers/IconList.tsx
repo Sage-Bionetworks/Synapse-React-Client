@@ -1,9 +1,9 @@
 import React from 'react'
-import IconSvg, { IconSvgOptions } from './IconSvg'
+import IconSvg, { IconSvgProps } from './IconSvg'
 
 export type IconListProps = {
   iconConfigs: {
-    [index: string]: IconSvgOptions // if the icon option has the "label" set, it will show tooltip in IconSvg
+    [index: string]: IconSvgProps // if the icon option has the "label" set, it will show tooltip in IconSvg
   }
   iconNames: string[]
   useTheme?: boolean
@@ -25,7 +25,7 @@ const IconList: React.FunctionComponent<IconListProps> = props => {
         noMatch = true
         return
       } else {
-        return <IconSvg key={el} options={iconConfig} />
+        return <IconSvg key={el} {...iconConfig} />
       }
     })
   }
@@ -34,7 +34,7 @@ const IconList: React.FunctionComponent<IconListProps> = props => {
     <span className={componentCss}>
       {buildIconList()}
       {noMatch && iconConfigs['other'] ? (
-        <IconSvg options={iconConfigs['other']} />
+        <IconSvg {...iconConfigs['other']} />
       ) : (
         <></>
       )}

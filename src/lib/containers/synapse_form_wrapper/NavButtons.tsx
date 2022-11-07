@@ -33,7 +33,7 @@ export function NavButtons(props: NavButtonsProps): JSX.Element {
       onClick={e => props.onNavAction(NavActionEnum.PREVIOUS)}
       className="btn btn-link nav-link prev"
     >
-      <IconSvg options={{ icon: 'chevronLeft' }} />
+      <IconSvg icon="chevronLeft" />
     </button>
   ) : (
     <></>
@@ -45,7 +45,7 @@ export function NavButtons(props: NavButtonsProps): JSX.Element {
       onClick={e => props.onNavAction(NavActionEnum.NEXT)}
       className="btn btn-link nav-link next"
     >
-      <IconSvg options={{ icon: 'chevronRight' }} />
+      <IconSvg icon="chevronRight" />
     </button>
   ) : (
     <></>
@@ -80,7 +80,7 @@ export function NextStepLink(props: NextStepLinkProps): JSX.Element {
   return (
     <span className="nav-link">
       <a onClick={e => props.onNavAction(nextStep)}>{nextStep.title}</a>
-      <IconSvg options={{ icon: 'chevronRight' }} />
+      <IconSvg icon="chevronRight" />
     </span>
   )
 }
