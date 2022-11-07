@@ -3,6 +3,7 @@ import 'raf/polyfill' // polyfill for requestAnimationFrame
 import '@testing-library/jest-dom/extend-expect'
 import crypto from 'crypto'
 import { ResizeObserver } from '@juggle/resize-observer'
+import { setupIntersectionMocking } from 'react-intersection-observer/test-utils'
 
 // MarkdownSynapse dependencies below --
 // When using the component in production it relies on these imports being globals,
@@ -22,6 +23,8 @@ global.markdownitInlineComments = require('markdown-it-inline-comments')
 global.markdownitBr = require('markdown-it-br')
 global.markdownitMath = require('markdown-it-synapse-math')
 global.ResizeObserver = ResizeObserver
+
+setupIntersectionMocking(jest.fn)
 
 // Synapse API calls may take longer than 5s (typically if a dependent call is taking much longer than normal)
 jest.setTimeout(30000)

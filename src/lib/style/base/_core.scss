@@ -1244,6 +1244,7 @@ hr ~ .SRC-wrapper {
 // Other links should have the normal secondary link style.
 // You can force normal link style by adding the "secondary-links" css class a container of your anchor.
 // Or force the highlighted primary link by adding "highlight-link" css class name to an anchor.
+// Links created with MUI get their styling from the MUI theme.
 main,
 .modal,
 #rootPanel {
@@ -1254,7 +1255,7 @@ main,
   .secondary-links a,
   .markdown .secondary-links a,
   .modal-body .dropdown-menu a {
-    &:not(.btn) {
+    &:not(.btn, .MuiLink-root) {
       @include SRC_Mixins.normalLink;
       &:visited,
       &:active,
@@ -1265,7 +1266,7 @@ main,
   }
 
   .modal-body .dropdown-menu a {
-    &:not(.btn) {
+    &:not(.btn, .MuiLink-root) {
       color: unset;
       &:visited,
       &:active,
@@ -1283,7 +1284,7 @@ main,
   a.highlight-link,
   details > summary,
   .modal-body a {
-    &:not(.btn) {
+    &:not(.btn, .MuiLink-root) {
       @include SRC_Mixins.highlightLink;
       &:visited,
       &:active,
@@ -1298,13 +1299,13 @@ main,
   .nav-tabs,
   .dropdown-menu,
   .MuiDrawer-root {
-    a:not(.btn) {
+    a:not(.btn, .MuiLink-root) {
       @include SRC_Mixins.ignoreLink;
     }
   }
   *,
   .bootstrap-4-backport {
-    a.ignoreLink:not(.btn) {
+    a.ignoreLink:not(.btn, .MuiLink-root) {
       @include SRC_Mixins.ignoreLink;
       &:visited,
       &:active,
