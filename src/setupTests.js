@@ -37,6 +37,8 @@ window.URL.createObjectURL = jest
 window.URL.revokeObjectURL = jest.fn()
 window.scrollTo = jest.fn()
 
+Element.prototype.scrollTo = jest.fn()
+
 // crypto.getRandomValues polyfill for JSDOM
 Object.defineProperty(global.self, 'crypto', {
   value: {

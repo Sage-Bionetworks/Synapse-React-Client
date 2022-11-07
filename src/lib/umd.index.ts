@@ -45,6 +45,8 @@ import UserProfileLinks from './containers/user_profile_links/UserProfileLinks'
 import CertificationQuiz from './containers/CertificationQuiz'
 import ProvenanceGraph from './containers/provenance/ProvenanceGraph'
 import IDUReport from './containers/IDUReport'
+import HtmlPreview from './containers/FilePreview/HtmlPreview/HtmlPreview'
+import EntityPageBreadcrumbs from './containers/entity/page/breadcrumbs/EntityPageBreadcrumbs'
 import { SynapseClient, SynapseConstants } from './utils'
 import {
   SynapseContextConsumer,
@@ -54,7 +56,6 @@ import {
 
 // Also include scss in the bundle
 import './style/main.scss'
-import HtmlPreview from './containers/FilePreview/HtmlPreview/HtmlPreview'
 
 const SynapseContext = {
   SynapseContextProvider,
@@ -111,6 +112,7 @@ const SynapseComponents = {
   CertificationQuiz,
   HtmlPreview,
   IDUReport,
+  EntityPageBreadcrumbs,
 }
 
 // Include the version in the build
