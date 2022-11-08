@@ -1,0 +1,62 @@
+import{G as o,P as r,O as n}from"./SynapseConstants.b6aa8bf5.js";import{C as i}from"./CardContainerLogic.07f08fbb.js";import{j as s}from"./jsx-runtime.02fcd003.js";import"./index.91a9706e.js";import"./index.0864d1cf.js";import"./iframe.25b1a9fc.js";import"./Button.bd4bae0e.js";import"./styled.094a3a2c.js";import"./utils.62f6c1ea.js";import"./Alert.92a838df.js";import"./createWithBsPrefix.9fcf4917.js";import"./index.35ce73ec.js";import"./isArray.404de5ac.js";import"./getEndpoint.bb7ded34.js";import"./SvgIcon.66ad72a0.js";import"./sqlFunctions.6c29bc93.js";import"./RegularExpressions.3cd69849.js";import"./QueryFilter.fe898980.js";import"./useGetInfoFromIds.32f9a8a6.js";import"./use-deep-compare-effect.esm.087251af.js";import"./uniq.62ba73ed.js";import"./_baseSlice.50189bc5.js";import"./toInteger.3466557e.js";import"./isSymbol.b2b689d7.js";import"./_cacheHas.2a8fdb0c.js";import"./without.1a07f841.js";import"./uniqueId.446adc13.js";import"./_Set.46f8fc5c.js";import"./_setToArray.a82100c8.js";import"./ColumnType.744125d2.js";import"./FacetNav.a28a2e52.js";import"./queryUtils.a101fcf0.js";import"./useInfiniteQuery.fc6fd964.js";import"./queryKeys.e0d3085f.js";import"./cloneDeep.c98c28c0.js";import"./_baseClone.c0aa1259.js";import"./_getTag.58b2ff67.js";import"./NoSearchResults.617c97fc.js";import"./NoData.aa431ffe.js";import"./unCamelCase.07e38083.js";import"./useEntity.c0242e46.js";import"./useMutation.9d704823.js";import"./pick.b08b8dd2.js";import"./isEqual.cb9e6104.js";import"./ElementWithTooltip.c72d69a4.js";import"./SynapseTableConstants.07ecdebd.js";import"./IconSvg.c783b477.js";import"./Tooltip.977ea0b9.js";import"./createSvgIcon.37b7d2f8.js";import"./InfoOutlined.9adbadde.js";import"./Dropdown.aec0cc51.js";import"./usePrevious.a424157a.js";import"./contains.593a857e.js";import"./usePopperMarginModifiers.417da628.js";import"./hasClass.56fd144a.js";import"./isRequiredForA11y.20ed4857.js";import"./Checkbox.8e723a9b.js";import"./RadioGroup.f6595d68.js";import"./moment.a565bb48.js";import"./RangeSlider.23e4f90d.js";import"./factory.7cc0356e.js";import"./react-sizeme.070dc527.js";import"./Skeleton.1c99f826.js";import"./emotion-react.browser.esm.a24af408.js";import"./hoist-non-react-statics.cjs.a7086e34.js";import"./ColorGradient.16f0e0f2.js";import"./colorPalette.8145e2e2.js";import"./LoadingScreen.aa9f1a18.js";import"./Modal.eec014aa.js";import"./inheritsLoose.737c1083.js";import"./removeClass.27874bcb.js";import"./useWaitForDOMRef.abb80557.js";import"./Typography.79e944f5.js";import"./SelectionCriteriaPill.ca707430.js";import"./Close.f8c8f41e.js";import"./react-select.esm.710ced48.js";import"./Select-54ac8379.esm.865b8397.js";import"./CustomSelectWidget.2129a911.js";import"./index.browser.d22832b1.js";import"./UserCard.f776b74e.js";import"./IconCopy.5b716459.js";import"./SkeletonTable.8183c23e.js";import"./times.36513370.js";import"./ToastMessage.5f109185.js";import"./FullWidthAlert.b9addea3.js";import"./Overlay.712e50d1.js";import"./WarningModal.e7a646eb.js";import"./react-intersection-observer.esm.f439000b.js";import"./DateFormatter.a8d87905.js";import"./EntityIcon.e25991b1.js";import"./core.esm.955a0884.js";import"./isEmpty.40959c6d.js";import"./union.7d6a8421.js";import"./isString.f3f53b54.js";import"./useGetDownloadListStatistics.49a5e31c.js";import"./QueryCount.af68c71d.js";import"./useGetAccessRequirement.6942e412.js";import"./ManagedACTAccessRequirementStatus.be369a71.js";import"./FileUpload.9309f685.js";import"./UserSearchBox.9b9ba1e5.js";import"./UserOrTeamBadge.4c627245.js";import"./EntityLink.76481bb6.js";import"./ButtonBase.fb9c46ac.js";import"./SynapseVideo.6b43f73e.js";import"./IconList.f71b529d.js";import"./UserCardList.edd5ba6e.js";const po={parameters:{storySource:{source:`import { ComponentMeta, ComponentStory } from '@storybook/react'
+import React from 'react'
+import {
+  GENERIC_CARD,
+  OBSERVATION_CARD,
+  PUBLICATION,
+} from '../utils/SynapseConstants'
+import CardContainerLogic from './CardContainerLogic'
+
+// More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
+export default {
+  title: 'Explore/CardContainerLogic',
+  component: CardContainerLogic,
+  // More on argTypes: https://storybook.js.org/docs/react/api/argtypes
+  argTypes: {},
+} as ComponentMeta<typeof CardContainerLogic>
+
+// More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
+const Template: ComponentStory<typeof CardContainerLogic> = args => (
+  <CardContainerLogic {...args} />
+)
+
+export const GenericCard = Template.bind({})
+// More on args: https://storybook.js.org/docs/react/writing-stories/args
+GenericCard.args = {
+  sql: 'SELECT * FROM syn22095937.4 order by authors asc',
+  limit: 2,
+  type: GENERIC_CARD,
+  genericCardSchema: {
+    type: PUBLICATION,
+    title: 'title',
+    description: 'abstract',
+    subTitle: 'authors',
+    secondaryLabels: ['year', 'journal', 'study', 'grants', 'DOI'],
+  },
+  sortConfig: {
+    defaultColumn: 'authors',
+    defaultDirection: 'ASC',
+    sortableColumns: ['authors', 'title', 'createdOn', 'journal'],
+  },
+}
+
+export const EmptyResults = Template.bind({})
+EmptyResults.args = {
+  sql: "SELECT * FROM syn22095937.4 WHERE study='not a study value'",
+  type: GENERIC_CARD,
+  genericCardSchema: {
+    type: PUBLICATION,
+    title: 'title',
+    description: 'abstract',
+    subTitle: 'authors',
+    secondaryLabels: ['year', 'journal', 'study', 'grants', 'DOI'],
+  },
+}
+
+export const ObservationCard = Template.bind({})
+ObservationCard.args = {
+  sql: \`SELECT "Observation Submitter Name" as "submitterName", Synapse_id as "submitterUserId", "Observation Time" as "time", "Observation Time Units" as "timeUnits", "Observation Text" as "text", "Observation Type" as "tag" FROM syn26344832 WHERE "Observation Time" IS NOT NULL\`,
+  type: OBSERVATION_CARD,
+  limit: 3,
+}
+`,locationsMap:{"generic-card":{startLoc:{col:60,line:19},endLoc:{col:1,line:21},startBody:{col:60,line:19},endBody:{col:1,line:21}},"empty-results":{startLoc:{col:60,line:19},endLoc:{col:1,line:21},startBody:{col:60,line:19},endBody:{col:1,line:21}},"observation-card":{startLoc:{col:60,line:19},endLoc:{col:1,line:21},startBody:{col:60,line:19},endBody:{col:1,line:21}}}}},title:"Explore/CardContainerLogic",component:i,argTypes:{}},t=e=>s(i,{...e}),a=t.bind({});a.args={sql:"SELECT * FROM syn22095937.4 order by authors asc",limit:2,type:o,genericCardSchema:{type:r,title:"title",description:"abstract",subTitle:"authors",secondaryLabels:["year","journal","study","grants","DOI"]},sortConfig:{defaultColumn:"authors",defaultDirection:"ASC",sortableColumns:["authors","title","createdOn","journal"]}};const p=t.bind({});p.args={sql:"SELECT * FROM syn22095937.4 WHERE study='not a study value'",type:o,genericCardSchema:{type:r,title:"title",description:"abstract",subTitle:"authors",secondaryLabels:["year","journal","study","grants","DOI"]}};const m=t.bind({});m.args={sql:'SELECT "Observation Submitter Name" as "submitterName", Synapse_id as "submitterUserId", "Observation Time" as "time", "Observation Time Units" as "timeUnits", "Observation Text" as "text", "Observation Type" as "tag" FROM syn26344832 WHERE "Observation Time" IS NOT NULL',type:n,limit:3};const mo=["GenericCard","EmptyResults","ObservationCard"];export{p as EmptyResults,a as GenericCard,m as ObservationCard,mo as __namedExportsOrder,po as default};
