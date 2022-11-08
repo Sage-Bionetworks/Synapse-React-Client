@@ -265,6 +265,7 @@ import {
   Topic,
 } from './synapseTypes/Subscription'
 import { calculateFriendlyFileSize } from './functions/calculateFriendlyFileSize'
+import { PaginatedIds } from './synapseTypes/PaginatedIds'
 
 const cookies = new UniversalCookies()
 
@@ -3779,6 +3780,50 @@ export const putThreadMessage = (
   return doPut<DiscussionThreadBundle>(
     `${THREAD}/${request.threadId}/message`,
     { messageMarkdown: request.messageMarkdown },
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ * This API is used to mark a thread as deleted.
+ * Target users: only forum's moderator can mark a thread as deleted.
+ * https://rest-docs.synapse.org/rest/DELETE/thread/threadId.html
+ * @param accessToken
+ * @param threadId
+ * @returns
+ */
+export const deleteThread = (
+  accessToken: string | undefined,
+  threadId: string,
+) => {
+  return doDelete(
+    THREAD_ID(threadId),
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ * Returns a page of moderators for a given forum ID.
+ * Target users: anyone who has READ permission to the project.
+ * https://rest-docs.synapse.org/rest/GET/forum/forumId/moderators.html
+ * @param accessToken
+ * @param forumId
+ * @returns
+ */
+export const getModerators = (
+  accessToken: string | undefined,
+  forumId: string,
+  limit: number = 20,
+  offset: number = 0,
+) => {
+  const params = new URLSearchParams()
+  params.set('offset', offset.toString())
+  params.set('limit', limit.toString())
+
+  return doGet<PaginatedIds>(
+    `/repo/v1/forum/${forumId}/moderators?${params.toString()}`,
     accessToken,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
