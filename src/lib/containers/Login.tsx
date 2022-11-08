@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { Button, Form } from 'react-bootstrap'
+import { Form } from 'react-bootstrap'
 import ButtonWithIcon from '../assets/ButtonWithIcon'
 import { SynapseClient } from '../utils'
 import {
@@ -7,6 +7,7 @@ import {
   BackendDestinationEnum,
 } from '../utils/functions/getEndpoint'
 import { GoogleIcon24 } from '../assets/GoogleIcon24'
+import { Button, Link } from '@mui/material'
 
 export const PROVIDERS = {
   GOOGLE: 'GOOGLE_OAUTH_2_0',
@@ -28,8 +29,6 @@ type Props = {
   sessionCallback: () => void // Callback is invoked after login
   registerAccountUrl?: string
   resetPasswordUrl?: string
-  loginButtonStyle?: React.CSSProperties
-  registerLinkStyle?: React.CSSProperties
 }
 
 /**
@@ -203,24 +202,20 @@ class Login extends React.Component<Props, State> {
             onChange={this.handleChange}
           />
           {this.getLoginFailureView()}
-          <a href={resetPasswordUrl}>Forgot password?</a>
+          <Link href={resetPasswordUrl}>Forgot password?</Link>
           <Button
-            variant="primary-500"
             onClick={this.handleLogin}
             type="submit"
+            variant="contained"
             className="SRC-login-button SRC-marginBottomTen"
-            style={this.props.loginButtonStyle ?? {}}
           >
             Log in
           </Button>
         </Form>
         <div className={'SRC-center-text'}>
-          <a
-            href={registerAccountUrl}
-            style={this.props.registerLinkStyle ?? {}}
-          >
+          <Link href={registerAccountUrl}>
             Don&apos;t have an account? Register now
-          </a>
+          </Link>
         </div>
       </div>
     )

@@ -9,6 +9,18 @@ const defaultMuiTheme: ThemeOptions = {
   palette: palette,
   components: {
     MuiLink: linkTheme,
+    MuiButton: {
+      styleOverrides: {
+        root: ({ ownerState, theme }) => ({
+          backgroundColor: ownerState.color
+            ? theme.palette[ownerState.color].main
+            : '',
+          '&:hover': {
+            transition: '0.2s',
+          },
+        }),
+      },
+    },
     MuiTooltip: {
       defaultProps: {
         arrow: true,
