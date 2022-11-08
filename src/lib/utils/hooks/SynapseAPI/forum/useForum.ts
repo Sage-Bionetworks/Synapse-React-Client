@@ -24,6 +24,20 @@ import {
   UpdateThreadMessageRequest,
   UpdateThreadTitleRequest,
 } from '../../../synapseTypes/DiscussionBundle'
+import { Match } from '../../../synapseTypes/DiscussionSearch'
+import { PaginatedIds } from '../../../synapseTypes/PaginatedIds'
+
+export function useGetModerators(
+  forumId: string,
+  options?: UseQueryOptions<PaginatedIds, SynapseClientError>,
+) {
+  const { accessToken } = useSynapseContext()
+  return useQuery<PaginatedIds, SynapseClientError>(
+    ['moderators', forumId],
+    () => SynapseClient.getModerators(accessToken, forumId),
+    options,
+  )
+}
 
 export function useGetForumInfinite(
   forumId: string,
@@ -189,6 +203,26 @@ export function useCreateThread(
   )
 }
 
+export function useDeleteThread(
+  options?: UseMutationOptions<void, SynapseClientError, string>,
+) {
+  const queryClient = useQueryClient()
+  const { accessToken } = useSynapseContext()
+
+  return useMutation<void, SynapseClientError, string>(
+    (threadId: string) => SynapseClient.deleteThread(accessToken, threadId),
+    {
+      ...options,
+      onSuccess: async (updatedThread, threadId, ctx) => {
+        await queryClient.invalidateQueries(['thread', threadId])
+        if (options?.onSuccess) {
+          await options.onSuccess(updatedThread, threadId, ctx)
+        }
+      },
+    },
+  )
+}
+
 export function useGetRepliesInfinite(
   threadId: string,
   ascending: boolean,
@@ -279,6 +313,26 @@ export function usePutReply(
         await queryClient.invalidateQueries(['thread', newReply.threadId])
         if (options?.onSuccess) {
           await options.onSuccess(newReply, variables, ctx)
+        }
+      },
+    },
+  )
+}
+
+export function useDeleteReply(
+  options?: UseMutationOptions<void, SynapseClientError, Match>,
+) {
+  const queryClient = useQueryClient()
+  const { accessToken } = useSynapseContext()
+
+  return useMutation<void, SynapseClientError, Match>(
+    (match: Match) => SynapseClient.deleteReply(accessToken, match.replyId),
+    {
+      ...options,
+      onSuccess: async (updatedReply, variables, ctx) => {
+        await queryClient.invalidateQueries(['thread', variables.threadId])
+        if (options?.onSuccess) {
+          await options.onSuccess(updatedReply, variables, ctx)
         }
       },
     },
