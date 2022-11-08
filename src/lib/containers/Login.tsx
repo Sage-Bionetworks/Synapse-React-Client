@@ -206,15 +206,16 @@ class Login extends React.Component<Props, State> {
           <Button
             onClick={this.handleLogin}
             type="submit"
+            color="primary"
             variant="contained"
             className="SRC-login-button SRC-marginBottomTen"
           >
-            Log in
+            Sign in
           </Button>
         </Form>
         <div className={'SRC-center-text'}>
           <Link href={registerAccountUrl}>
-            Don&apos;t have an account? Register now
+            Don&apos;t have an account? Create one now
           </Link>
         </div>
       </div>

@@ -11,14 +11,14 @@ const defaultMuiTheme: ThemeOptions = {
     MuiLink: linkTheme,
     MuiButton: {
       styleOverrides: {
-        root: ({ ownerState, theme }) => ({
-          backgroundColor: ownerState.color
-            ? theme.palette[ownerState.color].main
-            : '',
+        root: {
+          disableRipple: true,
+          borderRadius: '0px',
+          textTransform: 'none',
           '&:hover': {
             transition: '0.2s',
           },
-        }),
+        },
       },
     },
     MuiTooltip: {
