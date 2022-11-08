@@ -87,7 +87,6 @@ $signatureLine-width: 420px;
 
   .view-terms a,
   .view-terms a:active:focus {
-    @extend %button-reset;
     background-color: $terms-accent-gray;
     padding: 10px 30px;
     color: #1a1c29;

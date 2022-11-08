@@ -1255,7 +1255,7 @@ main,
   .secondary-links a,
   .markdown .secondary-links a,
   .modal-body .dropdown-menu a {
-    &:not(.btn, .MuiLink-root) {
+    &:not(.btn, .MuiLink-root, .MuiButton-root) {
       @include SRC_Mixins.normalLink;
       &:visited,
       &:active,
@@ -1266,7 +1266,7 @@ main,
   }
 
   .modal-body .dropdown-menu a {
-    &:not(.btn, .MuiLink-root) {
+    &:not(.btn, .MuiLink-root, .MuiButton-root) {
       color: unset;
       &:visited,
       &:active,
@@ -1284,7 +1284,7 @@ main,
   a.highlight-link,
   details > summary,
   .modal-body a {
-    &:not(.btn, .MuiLink-root) {
+    &:not(.btn, .MuiLink-root, .MuiButton-root) {
       @include SRC_Mixins.highlightLink;
       &:visited,
       &:active,
@@ -1299,13 +1299,13 @@ main,
   .nav-tabs,
   .dropdown-menu,
   .MuiDrawer-root {
-    a:not(.btn, .MuiLink-root) {
+    a:not(.btn, .MuiLink-root, .MuiButton-root) {
       @include SRC_Mixins.ignoreLink;
     }
   }
   *,
   .bootstrap-4-backport {
-    a.ignoreLink:not(.btn, .MuiLink-root) {
+    a.ignoreLink:not(.btn, .MuiLink-root, .MuiButton-root) {
       @include SRC_Mixins.ignoreLink;
       &:visited,
       &:active,

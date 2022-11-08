@@ -1,6 +1,6 @@
 import { PositioningStrategy } from '@popperjs/core'
 import React, { useState } from 'react'
-import { Button } from 'react-bootstrap'
+import { Button } from '@mui/material'
 import { Placement } from 'react-bootstrap/esm/Overlay'
 import { ButtonVariant } from 'react-bootstrap/esm/types'
 import { usePopper } from 'react-popper'
@@ -80,8 +80,8 @@ export const MarkdownPopover: React.FunctionComponent<MarkdownPopoverProps> = ({
         <div className="TooltipButtonContainer">
           {actionButton && (
             <Button
-              variant={actionButton.variant ?? 'primary-500'}
-              className="pill"
+              color="primary"
+              variant="contained"
               onClick={() => {
                 actionButton.onClick()
                 if (actionButton.closePopoverOnClick) {
@@ -93,11 +93,7 @@ export const MarkdownPopover: React.FunctionComponent<MarkdownPopoverProps> = ({
             </Button>
           )}
           {showCloseButton && (
-            <Button
-              variant="light"
-              className="pill"
-              onClick={() => setShow(false)}
-            >
+            <Button variant="outlined" onClick={() => setShow(false)}>
               Close
             </Button>
           )}
