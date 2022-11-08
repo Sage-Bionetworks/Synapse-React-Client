@@ -3641,6 +3641,25 @@ export const putReply = (
 }
 
 /**
+ * This API is used to mark a reply as deleted.
+ * Target users: only forum's moderator can mark a reply as deleted.
+ * https://rest-docs.synapse.org/rest/DELETE/reply/replyId.html
+ * @param accessToken
+ * @param replyId
+ * @returns
+ */
+export const deleteReply = (
+  accessToken: string | undefined,
+  replyId: string,
+) => {
+  return doDelete(
+    `/repo/v1/reply/${replyId}`,
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
  * This API is used to get N number of replies for a given thread ID.
  * Target users: anyone who has READ permission to the project.
  * https://rest-docs.synapse.org/rest/GET/thread/threadId/replies.html

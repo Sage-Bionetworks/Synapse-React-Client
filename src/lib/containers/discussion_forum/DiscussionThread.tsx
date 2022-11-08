@@ -8,6 +8,7 @@ import {
   useGetThread,
 } from '../../utils/hooks/SynapseAPI/forum/useForum'
 import {
+  ALL_ENTITY_BUNDLE_FIELDS,
   SMALL_USER_CARD,
   SRC_SIGN_IN_CLASS,
 } from '../../utils/SynapseConstants'
@@ -21,7 +22,10 @@ import IconSvg from '../IconSvg'
 import MarkdownSynapse from '../markdown/MarkdownSynapse'
 import { ObjectType } from '../../utils/synapseTypes'
 import { useSubscription } from '../../utils/hooks/SynapseAPI/subscription/useSubscription'
-import { useGetCurrentUserProfile } from '../../utils/hooks/SynapseAPI'
+import {
+  useGetCurrentUserProfile,
+  useGetEntityBundle,
+} from '../../utils/hooks/SynapseAPI'
 import { ForumThreadEditor } from './ForumThreadEditor'
 import WarningModal from '../synapse_form_wrapper/WarningModal'
 
@@ -46,6 +50,14 @@ export function DiscussionThread(props: DiscussionThreadProps) {
 
   const { threadData, threadBody } = useGetThread(threadId)
   const { data: currentUserProfile } = useGetCurrentUserProfile()
+  const { data: entityBundle } = useGetEntityBundle(
+    threadData?.projectId ?? '',
+    undefined,
+    ALL_ENTITY_BUNDLE_FIELDS,
+    {
+      enabled: !!threadData,
+    },
+  )
   const { data: moderatorList } = useGetModerators(threadData?.forumId ?? '', {
     enabled: !!threadData,
   })
@@ -59,8 +71,9 @@ export function DiscussionThread(props: DiscussionThreadProps) {
       displayToast('A thread has been deleted.', 'info')
     },
   })
-  const isAuthor = threadData?.createdBy == currentUserProfile?.ownerId
-  const isModerator = moderatorList?.results.includes(
+  const isCurrentUserAuthor =
+    threadData?.createdBy == currentUserProfile?.ownerId
+  const isCurrentUserModerator = moderatorList?.results.includes(
     currentUserProfile?.ownerId ?? '',
   )
 
@@ -125,16 +138,6 @@ export function DiscussionThread(props: DiscussionThreadProps) {
         <></>
       )}
       <div className="control-container">
-        {isModerator && (
-          <button onClick={() => setShowDeleteModal(true)}>
-            <IconSvg icon="delete" label="Delete thread" />
-          </button>
-        )}
-        {isAuthor && (
-          <button onClick={() => setShowThreadModal(true)}>
-            <IconSvg icon="edit" label="Edit thread" />
-          </button>
-        )}
         <span>
           <button
             className="follow-button"
@@ -149,6 +152,17 @@ export function DiscussionThread(props: DiscussionThreadProps) {
             )}
           </button>
         </span>
+        {isCurrentUserAuthor && (
+          <button onClick={() => setShowThreadModal(true)}>
+            <IconSvg icon="edit" label="Edit thread" />
+          </button>
+        )}
+
+        {entityBundle?.permissions.canModerate ? (
+          <button onClick={() => setShowDeleteModal(true)}>
+            <IconSvg icon="delete" label="Delete thread" />
+          </button>
+        ) : null}
       </div>
       {!showReplyEditor1 ? (
         <FormControl
