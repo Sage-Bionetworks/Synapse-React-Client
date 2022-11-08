@@ -28,6 +28,8 @@ type Props = {
   sessionCallback: () => void // Callback is invoked after login
   registerAccountUrl?: string
   resetPasswordUrl?: string
+  loginButtonStyle?: React.CSSProperties
+  registerLinkStyle?: React.CSSProperties
 }
 
 /**
@@ -207,12 +209,16 @@ class Login extends React.Component<Props, State> {
             onClick={this.handleLogin}
             type="submit"
             className="SRC-login-button SRC-marginBottomTen"
+            style={this.props.loginButtonStyle ?? {}}
           >
             Log in
           </Button>
         </Form>
         <div className={'SRC-center-text'}>
-          <a href={registerAccountUrl}>
+          <a
+            href={registerAccountUrl}
+            style={this.props.registerLinkStyle ?? {}}
+          >
             Don&apos;t have an account? Register now
           </a>
         </div>

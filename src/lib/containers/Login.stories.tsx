@@ -18,6 +18,8 @@ const Template: ComponentStory<typeof Login> = args => <Login {...args} />
 export const LoginDemo = Template.bind({})
 // More on args: https://storybook.js.org/docs/react/writing-stories/args
 LoginDemo.args = {
+  loginButtonStyle: { backgroundColor: 'purple' },
+  registerLinkStyle: { color: 'purple' },
   sessionCallback: () => {
     sessionChangeHandler().then(({ profile }) => {
       displayToast(
