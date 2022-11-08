@@ -11,7 +11,7 @@ import { ThemeOptions } from '@mui/material'
 export const defaultQueryClientConfig: QueryClientConfig = {
   defaultOptions: {
     queries: {
-      staleTime: 60 * 1000, // 60s
+      staleTime: 1000 * 60 * 5, // 5 min
       retry: false, // SynapseClient knows which queries to retry
     },
   },
