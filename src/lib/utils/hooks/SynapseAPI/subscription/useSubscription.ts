@@ -98,7 +98,7 @@ export const useSubscription = (
   const { mutate: deleteSubscription, isLoading: isLoadingDelete } =
     useDeleteSubscription()
 
-  const isLoading = isLoadingGet || isLoadingPost || isLoadingDelete
+  const isLoading: boolean = isLoadingGet || isLoadingPost || isLoadingDelete
   const toggleSubscribed = useCallback(() => {
     if (subscription) {
       deleteSubscription(subscription.subscriptionId)

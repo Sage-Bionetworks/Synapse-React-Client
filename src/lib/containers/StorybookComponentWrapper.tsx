@@ -1,9 +1,11 @@
 import React, { useEffect, useMemo } from 'react'
 import { MemoryRouter } from 'react-router-dom'
 import {
+  defaultQueryClientConfig,
   SynapseContextProvider,
   SynapseContextType,
 } from '../utils/SynapseContext'
+import { QueryClient } from 'react-query'
 import { SynapseClient } from '../utils'
 import { SynapseToastContainer } from './ToastMessage'
 import { ReactQueryDevtools } from 'react-query/devtools'
@@ -44,7 +46,7 @@ export async function sessionChangeHandler() {
   }
   return { accessToken, profile, authenticatedOn: date }
 }
-
+const storybookQueryClient = new QueryClient(defaultQueryClientConfig)
 /**
  * Wraps storybook story components to ensure that all components receive required context.
  * @param props
@@ -62,6 +64,14 @@ export function StorybookComponentWrapper(props: {
     })
   })
 
+  useEffect(() => {
+    async function resetCache() {
+      await storybookQueryClient.cancelQueries()
+      await storybookQueryClient.invalidateQueries()
+    }
+    resetCache()
+  }, [accessToken])
+
   const context: SynapseContextType = useMemo(
     () => ({
       accessToken: accessToken,
@@ -74,7 +84,11 @@ export function StorybookComponentWrapper(props: {
   )
 
   return (
-    <SynapseContextProvider key={accessToken} synapseContext={context}>
+    <SynapseContextProvider
+      queryClient={storybookQueryClient}
+      key={accessToken}
+      synapseContext={context}
+    >
       <MemoryRouter>
         <ReactQueryDevtools />
         <SynapseToastContainer />

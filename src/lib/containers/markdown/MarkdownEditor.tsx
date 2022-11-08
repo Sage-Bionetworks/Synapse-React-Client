@@ -8,7 +8,6 @@ import IconSvg from '../IconSvg'
 import MarkdownSynapse from './MarkdownSynapse'
 import { UserMentionModal } from './UserMentionModal'
 import { startCase } from 'lodash-es'
-import { Tooltip } from '@mui/material'
 
 export enum MarkdownEditorTabs {
   WRITE = 'WRITE',
@@ -61,6 +60,11 @@ export const MarkdownEditor: React.FunctionComponent<MarkdownEditorProps> = ({
     setText(newText.join(''))
   }
 
+  const handleTagModal = (e: KeyboardEvent) => {
+    if (e.key == '@') {
+      setIsShowingTagModal(true)
+    }
+  }
   const handleCommands = (command: CommandListType) => {
     const textVal = textAreaRef.current
     if (textVal) {
@@ -134,18 +138,13 @@ export const MarkdownEditor: React.FunctionComponent<MarkdownEditorProps> = ({
             {commandList.map(type => {
               return (
                 <button key={type} onClick={() => handleCommands(type)}>
-                  <IconSvg options={{ icon: type, label: startCase(type) }} />
+                  <IconSvg icon={type} label={startCase(type)} />
                 </button>
               )
             })}
-            <Tooltip placement="top" title="Mention">
-              <button
-                className="tag"
-                onClick={() => setIsShowingTagModal(true)}
-              >
-                @
-              </button>
-            </Tooltip>
+            <button onClick={() => setIsShowingTagModal(true)}>
+              <IconSvg icon="tag" label="Mention" />
+            </button>
           </div>
         )}
       </div>
@@ -158,6 +157,7 @@ export const MarkdownEditor: React.FunctionComponent<MarkdownEditorProps> = ({
             value={text}
             ref={textAreaRef}
             placeholder={placeholder}
+            onKeyDown={handleTagModal}
           />
         ) : text ? (
           <MarkdownSynapse markdown={text} />

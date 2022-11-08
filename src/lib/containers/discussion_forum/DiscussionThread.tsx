@@ -2,10 +2,16 @@ import moment from 'moment'
 import React, { useState } from 'react'
 import { formatDate } from '../../utils/functions/DateFormatter'
 import {
+  useDeleteThread,
+  useGetModerators,
   useGetRepliesInfinite,
   useGetThread,
 } from '../../utils/hooks/SynapseAPI/forum/useForum'
-import { SMALL_USER_CARD } from '../../utils/SynapseConstants'
+import {
+  ALL_ENTITY_BUNDLE_FIELDS,
+  SMALL_USER_CARD,
+  SRC_SIGN_IN_CLASS,
+} from '../../utils/SynapseConstants'
 import { SubscriptionObjectType } from '../../utils/synapseTypes/Subscription'
 import { Typography } from '@mui/material'
 import UserCard from '../UserCard'
@@ -13,12 +19,15 @@ import { displayToast } from '../ToastMessage'
 import { DiscussionReply } from './DiscussionReply'
 import { Button, FormControl, Modal } from 'react-bootstrap'
 import IconSvg from '../IconSvg'
-import { Tooltip } from '@mui/material'
 import MarkdownSynapse from '../markdown/MarkdownSynapse'
 import { ObjectType } from '../../utils/synapseTypes'
 import { useSubscription } from '../../utils/hooks/SynapseAPI/subscription/useSubscription'
-import { useGetCurrentUserProfile } from '../../utils/hooks/SynapseAPI'
+import {
+  useGetCurrentUserProfile,
+  useGetEntityBundle,
+} from '../../utils/hooks/SynapseAPI'
 import { ForumThreadEditor } from './ForumThreadEditor'
+import WarningModal from '../synapse_form_wrapper/WarningModal'
 
 export type DiscussionThreadProps = {
   threadId: string
@@ -27,6 +36,7 @@ export type DiscussionThreadProps = {
 
 const FOLLOWING_TEXT = 'You are following this topic. Click to stop following.'
 const UNFOLLOWING_TEXT = 'You are not following this topic. Click to follow.'
+const SIGN_IN_TEXT = 'You will need to sign in for access to that resource'
 
 export function DiscussionThread(props: DiscussionThreadProps) {
   const { threadId, limit } = props
@@ -35,21 +45,47 @@ export function DiscussionThread(props: DiscussionThreadProps) {
   const [showThreadModal, setShowThreadModal] = useState(false)
   const [showReplyEditor1, setShowReplyEditor1] = useState(false)
   const [showReplyEditor2, setShowReplyEditor2] = useState(false)
+  const [showDeleteModal, setShowDeleteModal] = useState(false)
+  const [showSignInModal, setShowSignInModal] = useState(false)
 
   const { threadData, threadBody } = useGetThread(threadId)
   const { data: currentUserProfile } = useGetCurrentUserProfile()
+  const { data: entityBundle } = useGetEntityBundle(
+    threadData?.projectId ?? '',
+    undefined,
+    ALL_ENTITY_BUNDLE_FIELDS,
+    {
+      enabled: !!threadData,
+    },
+  )
+  const { data: moderatorList } = useGetModerators(threadData?.forumId ?? '', {
+    enabled: !!threadData,
+  })
   const { subscription, toggleSubscribed, isLoading } = useSubscription(
     threadId,
     SubscriptionObjectType.THREAD,
   )
-
-  const isAuthor = threadData?.createdBy == currentUserProfile?.ownerId
+  const { mutate: deleteThread } = useDeleteThread({
+    onSuccess: () => {
+      setShowDeleteModal(false)
+      displayToast('A thread has been deleted.', 'info')
+    },
+  })
+  const isCurrentUserAuthor =
+    threadData?.createdBy == currentUserProfile?.ownerId
+  const isCurrentUserModerator = moderatorList?.results.includes(
+    currentUserProfile?.ownerId ?? '',
+  )
 
   function handleFollowBtn() {
-    try {
-      toggleSubscribed()
-    } catch (err: any) {
-      displayToast(err.reason as string, 'danger')
+    if (currentUserProfile?.userName == 'anonymous') {
+      setShowSignInModal(true)
+    } else {
+      try {
+        toggleSubscribed()
+      } catch (err: any) {
+        displayToast(err.reason as string, 'danger')
+      }
     }
   }
 
@@ -102,35 +138,41 @@ export function DiscussionThread(props: DiscussionThreadProps) {
         <></>
       )}
       <div className="control-container">
-        <Tooltip title={subscription ? FOLLOWING_TEXT : UNFOLLOWING_TEXT}>
-          <span>
-            <button
-              className="follow-button"
-              aria-label={subscription ? 'Unfollow thread' : 'Follow thread'}
-              disabled={isLoading}
-              onClick={() => handleFollowBtn()}
-            >
-              {subscription ? (
-                <IconSvg icon="visibility" />
-              ) : (
-                <IconSvg icon="visibilityOff" />
-              )}
-            </button>
-          </span>
-        </Tooltip>
-        {isAuthor && (
-          <Tooltip title="Edit Thread">
-            <button onClick={() => setShowThreadModal(true)}>
-              <IconSvg icon="edit" />
-            </button>
-          </Tooltip>
+        <span>
+          <button
+            className="follow-button"
+            aria-label={subscription ? 'Unfollow thread' : 'Follow thread'}
+            disabled={isLoading}
+            onClick={() => handleFollowBtn()}
+          >
+            {subscription ? (
+              <IconSvg icon="visibility" label={FOLLOWING_TEXT} />
+            ) : (
+              <IconSvg icon="visibilityOff" label={UNFOLLOWING_TEXT} />
+            )}
+          </button>
+        </span>
+        {isCurrentUserAuthor && (
+          <button onClick={() => setShowThreadModal(true)}>
+            <IconSvg icon="edit" label="Edit thread" />
+          </button>
         )}
+
+        {entityBundle?.permissions.canModerate ? (
+          <button onClick={() => setShowDeleteModal(true)}>
+            <IconSvg icon="delete" label="Delete thread" />
+          </button>
+        ) : null}
       </div>
       {!showReplyEditor1 ? (
         <FormControl
           type="text"
           placeholder="Write a reply..."
-          onClick={() => setShowReplyEditor1(true)}
+          onClick={() => {
+            currentUserProfile?.userName == 'anonymous'
+              ? setShowSignInModal(true)
+              : setShowReplyEditor1(true)
+          }}
         />
       ) : (
         <ForumThreadEditor
@@ -150,7 +192,11 @@ export function DiscussionThread(props: DiscussionThreadProps) {
             <FormControl
               type="text"
               placeholder="Write a reply..."
-              onClick={() => setShowReplyEditor2(true)}
+              onClick={() => {
+                currentUserProfile?.userName == 'anonymous'
+                  ? setShowSignInModal(true)
+                  : setShowReplyEditor2(true)
+              }}
             />
           ) : (
             <ForumThreadEditor
@@ -192,6 +238,33 @@ export function DiscussionThread(props: DiscussionThreadProps) {
             id={threadId}
           />
         </Modal.Body>
+      </Modal>
+      <WarningModal
+        show={showDeleteModal}
+        className="bootstrap-4-backport"
+        title="Confirm Deletion"
+        modalBody="Are you sure you want to delete this thread?"
+        onCancel={() => setShowDeleteModal(false)}
+        onConfirm={() => deleteThread(threadId)}
+        confirmButtonVariant="danger"
+        confirmButtonText="Delete"
+      />
+      <Modal
+        className="bootstrap-4-backport"
+        show={showSignInModal}
+        onHide={() => setShowSignInModal(false)}
+        animation={false}
+      >
+        <Modal.Header closeButton />
+        <Modal.Body>{SIGN_IN_TEXT}</Modal.Body>
+        <Modal.Footer>
+          <Button
+            onClick={() => setShowSignInModal(false)}
+            className={SRC_SIGN_IN_CLASS}
+          >
+            Sign In
+          </Button>
+        </Modal.Footer>
       </Modal>
     </div>
   )

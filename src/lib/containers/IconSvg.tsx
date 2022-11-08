@@ -5,6 +5,7 @@ import {
   AddCircleTwoTone,
   AddShoppingCart,
   AddTwoTone,
+  AlternateEmail,
   ArrowBackIos,
   ArrowDropDownTwoTone,
   ArrowDropUpTwoTone,
@@ -67,6 +68,8 @@ import {
   StarTwoTone,
   StorageTwoTone,
   StrikethroughS,
+  Subscript,
+  Superscript,
   SyncTwoTone,
   TableChartTwoTone,
   Title,
@@ -206,6 +209,7 @@ export const IconStrings = [
   'latex',
   'image',
   'edit',
+  'tag',
 ] as const
 
 export type Icon = typeof IconStrings[number]
@@ -428,11 +432,13 @@ function IconMapping(props: { icon: string; sx?: SxProps }) {
     case 'image':
       return <Image sx={sx} />
     case 'superscript':
-      return <span>X&sup2;</span>
+      return <Superscript sx={sx} />
     case 'subscript':
-      return <span>X&#8322;</span>
+      return <Subscript sx={sx} />
     case 'edit':
       return <EditTwoTone sx={sx} />
+    case 'tag':
+      return <AlternateEmail sx={sx} />
     default:
       return <></>
   }
