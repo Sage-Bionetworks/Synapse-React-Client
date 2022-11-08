@@ -13,6 +13,12 @@ import IconSvg from '../IconSvg'
 import { Modal } from 'react-bootstrap'
 import { ForumThreadEditor } from './ForumThreadEditor'
 import { useGetCurrentUserProfile } from '../../utils/hooks/SynapseAPI'
+import {
+  useDeleteReply,
+  useGetModerators,
+} from '../../utils/hooks/SynapseAPI/forum/useForum'
+import { displayToast } from '../ToastMessage'
+import WarningModal from '../synapse_form_wrapper/WarningModal'
 
 export type DiscussionReplyProps = {
   reply: DiscussionReplyBundle
@@ -26,9 +32,20 @@ export const DiscussionReply: React.FC<DiscussionReplyProps> = ({
   const { accessToken } = useSynapseContext()
   const [message, setMessage] = useState<string>()
   const [showReplyModal, setShowReplyModal] = useState(false)
+  const [showDeleteModal, setShowDeleteModal] = useState(false)
   const { data: currentUserProfile } = useGetCurrentUserProfile()
+  const { data: moderatorList } = useGetModerators(reply.forumId)
+  const { mutate: deleteReply } = useDeleteReply({
+    onSuccess: () => {
+      setShowDeleteModal(false)
+      displayToast('A reply has been deleted.', 'info')
+    },
+  })
 
   const isAuthor = reply.createdBy == currentUserProfile?.ownerId
+  const isModerator = moderatorList?.results.includes(
+    currentUserProfile?.ownerId ?? '',
+  )
 
   useEffect(() => {
     const getReplyMessage = async () => {
@@ -67,6 +84,11 @@ export const DiscussionReply: React.FC<DiscussionReplyProps> = ({
                   <IconSvg icon="edit" />
                 </button>
               )}
+              {isModerator && (
+                <button onClick={() => setShowDeleteModal(true)}>
+                  <IconSvg icon="delete" />
+                </button>
+              )}
             </div>
           </div>
         </div>
@@ -89,6 +111,16 @@ export const DiscussionReply: React.FC<DiscussionReplyProps> = ({
           />
         </Modal.Body>
       </Modal>
+      <WarningModal
+        show={showDeleteModal}
+        className="bootstrap-4-backport"
+        title="Confirm Deletion"
+        modalBody="Are you sure you want to delete this reply?"
+        onCancel={() => setShowDeleteModal(false)}
+        onConfirm={() => deleteReply(reply.id)}
+        confirmButtonVariant="danger"
+        confirmButtonText="Delete"
+      />
     </div>
   )
 }

@@ -125,16 +125,6 @@ export function DiscussionThread(props: DiscussionThreadProps) {
         <></>
       )}
       <div className="control-container">
-        {isModerator && (
-          <button onClick={() => setShowDeleteModal(true)}>
-            <IconSvg icon="delete" label="Delete thread" />
-          </button>
-        )}
-        {isAuthor && (
-          <button onClick={() => setShowThreadModal(true)}>
-            <IconSvg icon="edit" label="Edit thread" />
-          </button>
-        )}
         <span>
           <button
             className="follow-button"
@@ -149,6 +139,17 @@ export function DiscussionThread(props: DiscussionThreadProps) {
             )}
           </button>
         </span>
+        {isAuthor && (
+          <button onClick={() => setShowThreadModal(true)}>
+            <IconSvg icon="edit" label="Edit thread" />
+          </button>
+        )}
+
+        {isModerator && (
+          <button onClick={() => setShowDeleteModal(true)}>
+            <IconSvg icon="delete" label="Delete thread" />
+          </button>
+        )}
       </div>
       {!showReplyEditor1 ? (
         <FormControl

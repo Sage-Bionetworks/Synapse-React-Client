@@ -317,3 +317,23 @@ export function usePutReply(
     },
   )
 }
+
+export function useDeleteReply(
+  options?: UseMutationOptions<void, SynapseClientError, string>,
+) {
+  const queryClient = useQueryClient()
+  const { accessToken } = useSynapseContext()
+
+  return useMutation<void, SynapseClientError, string>(
+    (replyId: string) => SynapseClient.deleteReply(accessToken, replyId),
+    {
+      ...options,
+      onSuccess: async (updatedReply, replyId, ctx) => {
+        await queryClient.invalidateQueries(['thread'])
+        if (options?.onSuccess) {
+          await options.onSuccess(updatedReply, replyId, ctx)
+        }
+      },
+    },
+  )
+}
