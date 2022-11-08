@@ -12,7 +12,10 @@ import { ObjectType } from '../../utils/synapseTypes'
 import IconSvg from '../IconSvg'
 import { Modal } from 'react-bootstrap'
 import { ForumThreadEditor } from './ForumThreadEditor'
-import { useGetCurrentUserProfile } from '../../utils/hooks/SynapseAPI'
+import {
+  useGetCurrentUserProfile,
+  useGetEntityBundle,
+} from '../../utils/hooks/SynapseAPI'
 import {
   useDeleteReply,
   useGetModerators,
@@ -35,6 +38,8 @@ export const DiscussionReply: React.FC<DiscussionReplyProps> = ({
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const { data: currentUserProfile } = useGetCurrentUserProfile()
   const { data: moderatorList } = useGetModerators(reply.forumId)
+  const { data: entityBundle } = useGetEntityBundle(reply.projectId)
+
   const { mutate: deleteReply } = useDeleteReply({
     onSuccess: () => {
       setShowDeleteModal(false)
@@ -42,8 +47,8 @@ export const DiscussionReply: React.FC<DiscussionReplyProps> = ({
     },
   })
 
-  const isAuthor = reply.createdBy == currentUserProfile?.ownerId
-  const isModerator = moderatorList?.results.includes(
+  const isCurrentUserAuthor = reply.createdBy == currentUserProfile?.ownerId
+  const isCurrentUserModerator = moderatorList?.results.includes(
     currentUserProfile?.ownerId ?? '',
   )
 
@@ -79,12 +84,12 @@ export const DiscussionReply: React.FC<DiscussionReplyProps> = ({
               <button onClick={() => onClickLink()}>
                 <IconSvg icon="link" />
               </button>
-              {isAuthor && (
+              {isCurrentUserAuthor && (
                 <button onClick={() => setShowReplyModal(true)}>
                   <IconSvg icon="edit" />
                 </button>
               )}
-              {isModerator && (
+              {entityBundle?.permissions.canModerate && (
                 <button onClick={() => setShowDeleteModal(true)}>
                   <IconSvg icon="delete" />
                 </button>
@@ -117,7 +122,13 @@ export const DiscussionReply: React.FC<DiscussionReplyProps> = ({
         title="Confirm Deletion"
         modalBody="Are you sure you want to delete this reply?"
         onCancel={() => setShowDeleteModal(false)}
-        onConfirm={() => deleteReply(reply.id)}
+        onConfirm={() =>
+          deleteReply({
+            forumId: reply.forumId,
+            threadId: reply.threadId,
+            replyId: reply.id,
+          })
+        }
         confirmButtonVariant="danger"
         confirmButtonText="Delete"
       />

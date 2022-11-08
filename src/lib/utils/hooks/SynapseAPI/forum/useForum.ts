@@ -24,6 +24,7 @@ import {
   UpdateThreadMessageRequest,
   UpdateThreadTitleRequest,
 } from '../../../synapseTypes/DiscussionBundle'
+import { Match } from '../../../synapseTypes/DiscussionSearch'
 import { PaginatedIds } from '../../../synapseTypes/PaginatedIds'
 
 export function useGetModerators(
@@ -319,19 +320,19 @@ export function usePutReply(
 }
 
 export function useDeleteReply(
-  options?: UseMutationOptions<void, SynapseClientError, string>,
+  options?: UseMutationOptions<void, SynapseClientError, Match>,
 ) {
   const queryClient = useQueryClient()
   const { accessToken } = useSynapseContext()
 
-  return useMutation<void, SynapseClientError, string>(
-    (replyId: string) => SynapseClient.deleteReply(accessToken, replyId),
+  return useMutation<void, SynapseClientError, Match>(
+    (match: Match) => SynapseClient.deleteReply(accessToken, match.replyId),
     {
       ...options,
-      onSuccess: async (updatedReply, replyId, ctx) => {
-        await queryClient.invalidateQueries(['thread'])
+      onSuccess: async (updatedReply, variables, ctx) => {
+        await queryClient.invalidateQueries(['thread', variables.threadId])
         if (options?.onSuccess) {
-          await options.onSuccess(updatedReply, replyId, ctx)
+          await options.onSuccess(updatedReply, variables, ctx)
         }
       },
     },
