@@ -48,7 +48,7 @@ export function DiscussionThread(props: DiscussionThreadProps) {
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [showSignInModal, setShowSignInModal] = useState(false)
 
-  const { threadData, threadBody } = useGetThread(threadId)
+  const { threadData, threadBody, togglePin } = useGetThread(threadId)
   const { data: currentUserProfile } = useGetCurrentUserProfile()
   const { data: entityBundle } = useGetEntityBundle(
     threadData?.projectId ?? '',
@@ -159,9 +159,18 @@ export function DiscussionThread(props: DiscussionThreadProps) {
         )}
 
         {entityBundle?.permissions.canModerate ? (
-          <button onClick={() => setShowDeleteModal(true)}>
-            <IconSvg icon="delete" label="Delete thread" />
-          </button>
+          <>
+            <button onClick={() => setShowDeleteModal(true)}>
+              <IconSvg icon="delete" label="Delete thread" />
+            </button>
+            <button onClick={() => togglePin()}>
+              {threadData?.isPinned ? (
+                <IconSvg icon="block" label="Unpin thread" />
+              ) : (
+                <IconSvg icon="pushpin" label="Pin thread" />
+              )}
+            </button>
+          </>
         ) : null}
       </div>
       {!showReplyEditor1 ? (

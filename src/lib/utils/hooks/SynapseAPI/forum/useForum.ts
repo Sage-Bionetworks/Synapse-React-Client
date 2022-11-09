@@ -1,3 +1,4 @@
+import { useCallback } from 'react'
 import {
   UseInfiniteQueryOptions,
   useInfiniteQuery,
@@ -84,8 +85,19 @@ export function useGetThread(threadId: string) {
     threadData,
     { enabled: !!threadData },
   )
+  const { mutate: pinThread } = usePinThread()
+  const { mutate: unPinThread } = useUnPinThread()
+
+  const togglePin = useCallback(() => {
+    if (threadData?.isPinned) {
+      unPinThread(threadId)
+    } else {
+      pinThread(threadId)
+    }
+  }, [threadId, unPinThread, pinThread, threadData?.isPinned])
+
   const isLoading = isLoadingBody || isLoadingBundle
-  return { threadData, threadBody, isLoading }
+  return { threadData, threadBody, togglePin, isLoading }
 }
 
 export function useGetThreadBundle(
@@ -333,6 +345,46 @@ export function useDeleteReply(
         await queryClient.invalidateQueries(['thread', variables.threadId])
         if (options?.onSuccess) {
           await options.onSuccess(updatedReply, variables, ctx)
+        }
+      },
+    },
+  )
+}
+
+export function usePinThread(
+  options?: UseMutationOptions<void, SynapseClientError, string>,
+) {
+  const queryClient = useQueryClient()
+  const { accessToken } = useSynapseContext()
+
+  return useMutation<void, SynapseClientError, string>(
+    (threadId: string) => SynapseClient.pinThread(accessToken, threadId),
+    {
+      ...options,
+      onSuccess: async (updatedThread, variables, ctx) => {
+        await queryClient.invalidateQueries(['thread', variables])
+        if (options?.onSuccess) {
+          await options.onSuccess(updatedThread, variables, ctx)
+        }
+      },
+    },
+  )
+}
+
+export function useUnPinThread(
+  options?: UseMutationOptions<void, SynapseClientError, string>,
+) {
+  const queryClient = useQueryClient()
+  const { accessToken } = useSynapseContext()
+
+  return useMutation<void, SynapseClientError, string>(
+    (threadId: string) => SynapseClient.unPinThread(accessToken, threadId),
+    {
+      ...options,
+      onSuccess: async (updatedThread, variables, ctx) => {
+        await queryClient.invalidateQueries(['thread', variables])
+        if (options?.onSuccess) {
+          await options.onSuccess(updatedThread, variables, ctx)
         }
       },
     },
