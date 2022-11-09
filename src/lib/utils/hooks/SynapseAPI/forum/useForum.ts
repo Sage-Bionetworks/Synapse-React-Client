@@ -150,6 +150,7 @@ export function useUpdateThreadTitle(
     {
       ...options,
       onSuccess: async (newThread, variables, ctx) => {
+        await queryClient.invalidateQueries(['forumthread', newThread.forumId])
         await queryClient.invalidateQueries(['thread', variables.threadId])
         if (options?.onSuccess) {
           await options.onSuccess(newThread, variables, ctx)
@@ -212,7 +213,6 @@ export function useCreateThread(
           'forumthread',
           threadBundle.forumId,
         ])
-        await queryClient.invalidateQueries(['thread', threadBundle.id])
         if (options?.onSuccess) {
           await options.onSuccess(threadBundle, newThreadRequest, ctx)
         }
