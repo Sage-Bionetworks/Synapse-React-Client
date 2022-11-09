@@ -165,7 +165,11 @@ export function DiscussionThread(props: DiscussionThreadProps) {
             </button>
             <button onClick={() => togglePin()}>
               {threadData?.isPinned ? (
-                <IconSvg icon="block" label="Unpin thread" />
+                <IconSvg
+                  icon="pushpin"
+                  sx={{ color: 'error.main' }}
+                  label="Unpin thread"
+                />
               ) : (
                 <IconSvg icon="pushpin" label="Pin thread" />
               )}
@@ -254,7 +258,7 @@ export function DiscussionThread(props: DiscussionThreadProps) {
         title="Confirm Deletion"
         modalBody="Are you sure you want to delete this thread?"
         onCancel={() => setShowDeleteModal(false)}
-        onConfirm={() => deleteThread(threadId)}
+        onConfirm={() => threadData && deleteThread(threadData)}
         confirmButtonVariant="danger"
         confirmButtonText="Delete"
       />

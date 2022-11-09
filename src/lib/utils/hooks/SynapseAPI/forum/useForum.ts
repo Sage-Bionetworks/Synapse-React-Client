@@ -89,12 +89,14 @@ export function useGetThread(threadId: string) {
   const { mutate: unPinThread } = useUnPinThread()
 
   const togglePin = useCallback(() => {
-    if (threadData?.isPinned) {
-      unPinThread(threadId)
-    } else {
-      pinThread(threadId)
+    if (threadData) {
+      if (threadData?.isPinned) {
+        unPinThread(threadData)
+      } else {
+        pinThread(threadData)
+      }
     }
-  }, [threadId, unPinThread, pinThread, threadData?.isPinned])
+  }, [unPinThread, pinThread, threadData])
 
   const isLoading = isLoadingBody || isLoadingBundle
   return { threadData, threadBody, togglePin, isLoading }
@@ -205,10 +207,14 @@ export function useCreateThread(
       SynapseClient.postThread(accessToken, newThread),
     {
       ...options,
-      onSuccess: async (newThread, variables, ctx) => {
-        await queryClient.invalidateQueries(['forumthread', newThread.forumId])
+      onSuccess: async (threadBundle, newThreadRequest, ctx) => {
+        await queryClient.invalidateQueries([
+          'forumthread',
+          threadBundle.forumId,
+        ])
+        await queryClient.invalidateQueries(['thread', threadBundle.id])
         if (options?.onSuccess) {
-          await options.onSuccess(newThread, variables, ctx)
+          await options.onSuccess(threadBundle, newThreadRequest, ctx)
         }
       },
     },
@@ -216,19 +222,28 @@ export function useCreateThread(
 }
 
 export function useDeleteThread(
-  options?: UseMutationOptions<void, SynapseClientError, string>,
+  options?: UseMutationOptions<
+    void,
+    SynapseClientError,
+    DiscussionThreadBundle
+  >,
 ) {
   const queryClient = useQueryClient()
   const { accessToken } = useSynapseContext()
 
-  return useMutation<void, SynapseClientError, string>(
-    (threadId: string) => SynapseClient.deleteThread(accessToken, threadId),
+  return useMutation<void, SynapseClientError, DiscussionThreadBundle>(
+    (threadBundle: DiscussionThreadBundle) =>
+      SynapseClient.deleteThread(accessToken, threadBundle.id),
     {
       ...options,
-      onSuccess: async (updatedThread, threadId, ctx) => {
-        await queryClient.invalidateQueries(['thread', threadId])
+      onSuccess: async (updatedThread, threadBundle, ctx) => {
+        await queryClient.invalidateQueries([
+          'forumthread',
+          threadBundle.forumId,
+        ])
+        await queryClient.invalidateQueries(['thread', threadBundle.id])
         if (options?.onSuccess) {
-          await options.onSuccess(updatedThread, threadId, ctx)
+          await options.onSuccess(updatedThread, threadBundle, ctx)
         }
       },
     },
@@ -352,19 +367,28 @@ export function useDeleteReply(
 }
 
 export function usePinThread(
-  options?: UseMutationOptions<void, SynapseClientError, string>,
+  options?: UseMutationOptions<
+    void,
+    SynapseClientError,
+    DiscussionThreadBundle
+  >,
 ) {
   const queryClient = useQueryClient()
   const { accessToken } = useSynapseContext()
 
-  return useMutation<void, SynapseClientError, string>(
-    (threadId: string) => SynapseClient.pinThread(accessToken, threadId),
+  return useMutation<void, SynapseClientError, DiscussionThreadBundle>(
+    (threadBundle: DiscussionThreadBundle) =>
+      SynapseClient.pinThread(accessToken, threadBundle.id),
     {
       ...options,
-      onSuccess: async (updatedThread, variables, ctx) => {
-        await queryClient.invalidateQueries(['thread', variables])
+      onSuccess: async (updatedThread, threadBundle, ctx) => {
+        await queryClient.invalidateQueries(['thread', threadBundle.id])
+        await queryClient.invalidateQueries([
+          'forumthread',
+          threadBundle.forumId,
+        ])
         if (options?.onSuccess) {
-          await options.onSuccess(updatedThread, variables, ctx)
+          await options.onSuccess(updatedThread, threadBundle, ctx)
         }
       },
     },
@@ -372,19 +396,28 @@ export function usePinThread(
 }
 
 export function useUnPinThread(
-  options?: UseMutationOptions<void, SynapseClientError, string>,
+  options?: UseMutationOptions<
+    void,
+    SynapseClientError,
+    DiscussionThreadBundle
+  >,
 ) {
   const queryClient = useQueryClient()
   const { accessToken } = useSynapseContext()
 
-  return useMutation<void, SynapseClientError, string>(
-    (threadId: string) => SynapseClient.unPinThread(accessToken, threadId),
+  return useMutation<void, SynapseClientError, DiscussionThreadBundle>(
+    (threadBundle: DiscussionThreadBundle) =>
+      SynapseClient.unPinThread(accessToken, threadBundle.id),
     {
       ...options,
-      onSuccess: async (updatedThread, variables, ctx) => {
-        await queryClient.invalidateQueries(['thread', variables])
+      onSuccess: async (updatedThread, threadBundle, ctx) => {
+        await queryClient.invalidateQueries(['thread', threadBundle.id])
+        await queryClient.invalidateQueries([
+          'forumthread',
+          threadBundle.forumId,
+        ])
         if (options?.onSuccess) {
-          await options.onSuccess(updatedThread, variables, ctx)
+          await options.onSuccess(updatedThread, threadBundle, ctx)
         }
       },
     },
