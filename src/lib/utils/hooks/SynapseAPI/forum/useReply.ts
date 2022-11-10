@@ -4,6 +4,8 @@ import {
   UseMutationOptions,
   useQueryClient,
   useMutation,
+  UseQueryOptions,
+  useQuery,
 } from 'react-query'
 import { SynapseClient } from '../../..'
 import { SynapseClientError } from '../../../SynapseClientError'
@@ -34,7 +36,7 @@ export function useGetRepliesInfinite(
     PaginatedResults<DiscussionReplyBundle>,
     SynapseClientError
   >(
-    ['thread', threadId, 'infinite', limit, filter, sort, ascending],
+    ['reply', threadId, limit, filter, sort, ascending],
     async context => {
       return SynapseClient.getReplies(
         accessToken,
@@ -53,6 +55,33 @@ export function useGetRepliesInfinite(
         else return undefined
       },
     },
+  )
+}
+
+export function useGetReply(
+  reply: DiscussionReplyBundle,
+  options?: UseQueryOptions<string, SynapseClientError>,
+) {
+  const { accessToken } = useSynapseContext()
+  const queryFn = async () => {
+    const messageUrl = await SynapseClient.getReplyMessageUrl(
+      reply.messageKey,
+      accessToken,
+    )
+    const data = await fetch(messageUrl.messageUrl, {
+      method: 'GET',
+      headers: {
+        Accept: '*/*',
+        'Access-Control-Request-Headers': 'authorization',
+        'Content-Type': 'text/plain; charset=utf-8',
+      },
+    })
+    return data.text()
+  }
+  return useQuery<string, SynapseClientError>(
+    ['reply', reply.threadId, reply.id, reply.messageKey],
+    queryFn,
+    options,
   )
 }
 
@@ -76,7 +105,7 @@ export function usePostReply(
     {
       ...options,
       onSuccess: async (newReply, variables, ctx) => {
-        await queryClient.invalidateQueries(['thread', newReply.threadId])
+        await queryClient.invalidateQueries(['reply', newReply.threadId])
         if (options?.onSuccess) {
           await options.onSuccess(newReply, variables, ctx)
         }
@@ -105,7 +134,8 @@ export function usePutReply(
     {
       ...options,
       onSuccess: async (newReply, variables, ctx) => {
-        await queryClient.invalidateQueries(['thread', newReply.threadId])
+        queryClient.invalidateQueries(['reply', newReply.threadId])
+
         if (options?.onSuccess) {
           await options.onSuccess(newReply, variables, ctx)
         }
@@ -125,7 +155,8 @@ export function useDeleteReply(
     {
       ...options,
       onSuccess: async (updatedReply, variables, ctx) => {
-        await queryClient.invalidateQueries(['thread', variables.threadId])
+        await queryClient.invalidateQueries(['reply', variables.threadId])
+
         if (options?.onSuccess) {
           await options.onSuccess(updatedReply, variables, ctx)
         }

@@ -13,7 +13,6 @@ import {
   UpdateThreadTitleRequest,
 } from '../../../synapseTypes/DiscussionBundle'
 import { SynapseClient } from '../../..'
-import { getMessage } from '../../../../containers/DiscussionSearchResult'
 import { SynapseClientError } from '../../../SynapseClientError'
 import { useSynapseContext } from '../../../SynapseContext'
 
@@ -21,7 +20,7 @@ export function useGetThread(threadId: string) {
   const { data: threadData, isLoading: isLoadingBundle } =
     useGetThreadBundle(threadId)
   const { data: threadBody, isLoading: isLoadingBody } = useGetThreadBody(
-    threadData,
+    threadData!,
     { enabled: !!threadData },
   )
   const { mutate: pinThread } = usePinThread()
@@ -54,17 +53,29 @@ export function useGetThreadBundle(
 }
 
 export function useGetThreadBody(
-  threadData?: DiscussionThreadBundle,
+  threadData: DiscussionThreadBundle,
   options?: UseQueryOptions<string, SynapseClientError>,
 ) {
   const { accessToken } = useSynapseContext()
-  const messageUrl = SynapseClient.getThreadMessageUrl(
-    threadData?.messageKey ?? '',
-    accessToken,
-  )
+
+  const queryFn = async () => {
+    const messageUrl = await SynapseClient.getThreadMessageUrl(
+      threadData.messageKey,
+      accessToken,
+    )
+    const data = await fetch(messageUrl.messageUrl, {
+      method: 'GET',
+      headers: {
+        Accept: '*/*',
+        'Access-Control-Request-Headers': 'authorization',
+        'Content-Type': 'text/plain; charset=utf-8',
+      },
+    })
+    return data.text()
+  }
   return useQuery<string, SynapseClientError>(
     ['thread', threadData?.id, threadData?.messageKey, accessToken],
-    async () => getMessage((await messageUrl).messageUrl),
+    queryFn,
     options,
   )
 }
