@@ -4,9 +4,11 @@ import {
   useCreateThread,
   useUpdateThreadTitle,
   useUpdateThreadMessage,
+} from '../../utils/hooks/SynapseAPI/forum/useThread'
+import {
   usePostReply,
   usePutReply,
-} from '../../utils/hooks/SynapseAPI/forum/useForum'
+} from '../../utils/hooks/SynapseAPI/forum/useReply'
 import { CreateDiscussionThread } from '../../utils/synapseTypes/DiscussionBundle'
 import { MarkdownEditor } from '../markdown/MarkdownEditor'
 

@@ -16,10 +16,8 @@ import {
   useGetCurrentUserProfile,
   useGetEntityBundle,
 } from '../../utils/hooks/SynapseAPI'
-import {
-  useDeleteReply,
-  useGetModerators,
-} from '../../utils/hooks/SynapseAPI/forum/useForum'
+import { useGetModerators } from '../../utils/hooks/SynapseAPI/forum/useForum'
+import { useDeleteReply } from '../../utils/hooks/SynapseAPI/forum/useReply'
 import { displayToast } from '../ToastMessage'
 import WarningModal from '../synapse_form_wrapper/WarningModal'
 

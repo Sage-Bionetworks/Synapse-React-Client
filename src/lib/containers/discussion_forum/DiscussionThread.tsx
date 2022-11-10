@@ -1,12 +1,12 @@
 import moment from 'moment'
 import React, { useState } from 'react'
 import { formatDate } from '../../utils/functions/DateFormatter'
+import { useGetModerators } from '../../utils/hooks/SynapseAPI/forum/useForum'
+import { useGetRepliesInfinite } from '../../utils/hooks/SynapseAPI/forum/useReply'
 import {
   useDeleteThread,
-  useGetModerators,
-  useGetRepliesInfinite,
   useGetThread,
-} from '../../utils/hooks/SynapseAPI/forum/useForum'
+} from '../../utils/hooks/SynapseAPI/forum/useThread'
 import {
   ALL_ENTITY_BUNDLE_FIELDS,
   SMALL_USER_CARD,
