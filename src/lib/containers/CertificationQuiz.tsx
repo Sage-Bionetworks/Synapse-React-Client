@@ -11,7 +11,7 @@ import {
   QuestionResponse,
 } from '../utils/synapseTypes/CertificationQuiz/Questions'
 import { displayToast } from './ToastMessage'
-import { Button } from 'react-bootstrap'
+import { Button, Link } from '@mui/material'
 import { MarkdownPopover } from './MarkdownPopover'
 import { HelpOutlineTwoTone } from '@mui/icons-material'
 import { Typography } from '@mui/material'
@@ -114,7 +114,7 @@ const CertificationQuiz: React.FunctionComponent = () => {
             ) : (
               <Typography variant="body1">
                 Please review the items shown in red below, and{' '}
-                <a
+                <Link
                   href="#"
                   onClick={e => {
                     e.preventDefault()
@@ -122,7 +122,7 @@ const CertificationQuiz: React.FunctionComponent = () => {
                   }}
                 >
                   try again
-                </a>
+                </Link>
                 .
               </Typography>
             )}
@@ -133,7 +133,8 @@ const CertificationQuiz: React.FunctionComponent = () => {
         <Button
           onClick={() => window.open(GETTING_STARTED_URL, '_blank')}
           className="help-button"
-          variant="light-secondary"
+          color="secondary"
+          variant="contained"
         >
           <HelpOutlineTwoTone
             className="HelpButton"
@@ -209,7 +210,9 @@ const CertificationQuiz: React.FunctionComponent = () => {
         {!passingRecord && (
           <Button
             className="help-button"
-            variant="primary"
+            color="primary"
+            variant="contained"
+            size="large"
             onClick={() => handleSubmit()}
           >
             Submit

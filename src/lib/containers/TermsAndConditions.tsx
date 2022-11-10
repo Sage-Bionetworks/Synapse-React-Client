@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { tcItem } from './TermsAndConditionsItem'
 import TermsAndConditionsItem from './TermsAndConditionsItem'
-import { Button } from 'react-bootstrap'
+import { Button } from '@mui/material'
 import { ChatBubblesIcon } from '../assets/icons/terms/ChatBubblesIcon'
 import { LockIcon } from '../assets/icons/terms/LockIcon'
 import { ScaleIcon } from '../assets/icons/terms/ScaleIcon'

@@ -5,7 +5,18 @@ import { PaletteOptions } from '@mui/material'
  */
 const palette: PaletteOptions = {
   primary: {
-    main: '#407ba0',
+    100: '#d7dee4',
+    200: '#b0bdc9',
+    300: '#889baf',
+    400: '#617a94',
+    500: '#395979',
+    600: '#2e4761',
+    700: '#223549',
+    800: '#172430',
+    900: '#0b1218',
+    light: '#617a94', // 400
+    main: '#395979', // 500
+    dark: '#2e4761', // 600
   },
   secondary: {
     main: '#469285',
