@@ -10,9 +10,11 @@ const defaultMuiTheme: ThemeOptions = {
   components: {
     MuiLink: linkTheme,
     MuiButton: {
+      defaultProps: {
+        disableRipple: true,
+      },
       styleOverrides: {
         root: {
-          disableRipple: true,
           borderRadius: '0px',
           textTransform: 'none',
           '&:hover': {
