@@ -14,6 +14,7 @@ export const defaultQueryClientConfig: QueryClientConfig = {
       staleTime: 1000 * 60 * 5, // 5 min
       cacheTime: 1000 * 60 * 30, // 30 min
       retry: false, // SynapseClient knows which queries to retry
+      refetchOnWindowFocus: true,
     },
   },
 }
