@@ -1,12 +1,12 @@
 import moment from 'moment'
 import React, { useState } from 'react'
 import { formatDate } from '../../utils/functions/DateFormatter'
+import { useGetModerators } from '../../utils/hooks/SynapseAPI/forum/useForum'
+import { useGetRepliesInfinite } from '../../utils/hooks/SynapseAPI/forum/useReply'
 import {
   useDeleteThread,
-  useGetModerators,
-  useGetRepliesInfinite,
   useGetThread,
-} from '../../utils/hooks/SynapseAPI/forum/useForum'
+} from '../../utils/hooks/SynapseAPI/forum/useThread'
 import {
   ALL_ENTITY_BUNDLE_FIELDS,
   SMALL_USER_CARD,
@@ -48,7 +48,7 @@ export function DiscussionThread(props: DiscussionThreadProps) {
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [showSignInModal, setShowSignInModal] = useState(false)
 
-  const { threadData, threadBody } = useGetThread(threadId)
+  const { threadData, threadBody, togglePin } = useGetThread(threadId)
   const { data: currentUserProfile } = useGetCurrentUserProfile()
   const { data: entityBundle } = useGetEntityBundle(
     threadData?.projectId ?? '',
@@ -159,9 +159,22 @@ export function DiscussionThread(props: DiscussionThreadProps) {
         )}
 
         {entityBundle?.permissions.canModerate ? (
-          <button onClick={() => setShowDeleteModal(true)}>
-            <IconSvg icon="delete" label="Delete thread" />
-          </button>
+          <>
+            <button onClick={() => setShowDeleteModal(true)}>
+              <IconSvg icon="delete" label="Delete thread" />
+            </button>
+            <button onClick={() => togglePin()}>
+              {threadData?.isPinned ? (
+                <IconSvg
+                  icon="pushpin"
+                  sx={{ color: 'error.main' }}
+                  label="Unpin thread"
+                />
+              ) : (
+                <IconSvg icon="pushpin" label="Pin thread" />
+              )}
+            </button>
+          </>
         ) : null}
       </div>
       {!showReplyEditor1 ? (
@@ -245,7 +258,7 @@ export function DiscussionThread(props: DiscussionThreadProps) {
         title="Confirm Deletion"
         modalBody="Are you sure you want to delete this thread?"
         onCancel={() => setShowDeleteModal(false)}
-        onConfirm={() => deleteThread(threadId)}
+        onConfirm={() => threadData && deleteThread(threadData)}
         confirmButtonVariant="danger"
         confirmButtonText="Delete"
       />

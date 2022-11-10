@@ -56,6 +56,7 @@ import {
   PhoneTwoTone,
   PhotoCameraOutlined,
   PublicTwoTone,
+  PushPinTwoTone,
   QuestionAnswerTwoTone,
   RadioButtonUncheckedTwoTone,
   RemoveCircleTwoTone,
@@ -101,7 +102,6 @@ import Other from '../assets/mui_components/Other'
 import PackagableFile from '../assets/mui_components/PackagableFile'
 import Proteomics from '../assets/mui_components/Proteomics'
 import Rat from '../assets/mui_components/Rat'
-import PushPin from '../assets/mui_components/PushPin'
 import { EntityType } from '../utils/synapseTypes'
 import { SxProps, Tooltip } from '@mui/material'
 
@@ -410,7 +410,7 @@ function IconMapping(props: { icon: string; sx?: SxProps }) {
     case 'chevronLeft':
       return <ChevronLeft sx={sx} />
     case 'pushpin':
-      return <PushPin sx={sx}></PushPin>
+      return <PushPinTwoTone sx={sx} />
     case 'addBoxOutline':
       return <AddBoxOutlined sx={sx} />
     case 'minusBoxOutline':

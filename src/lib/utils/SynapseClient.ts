@@ -3710,6 +3710,46 @@ export const getReplyMessageUrl = (
 }
 
 /**
+ * This API is used to mark a thread as pinned.
+ * Target users: only forum's moderator can mark a thread as pinned.
+ * https://rest-docs.synapse.org/rest/PUT/thread/threadId/pin.html
+ * @param accessToken
+ * @param threadId
+ * @returns
+ */
+export const pinThread = (
+  accessToken: string | undefined,
+  threadId: string,
+) => {
+  return doPut<void>(
+    `${THREAD_ID(threadId)}/pin`,
+    undefined,
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ * This API is used to unpin a thread.
+ * Target users: only forum's moderator can unpin a thread.
+ * https://rest-docs.synapse.org/rest/PUT/thread/threadId/unpin.html
+ * @param accessToken
+ * @param threadId
+ * @returns
+ */
+export const unPinThread = (
+  accessToken: string | undefined,
+  threadId: string,
+) => {
+  return doPut<void>(
+    `${THREAD_ID(threadId)}/unpin`,
+    undefined,
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
  * This API is used to get a thread and its statistic given its ID.
  * Target users: anyone who has READ permission to the project.
  * http://rest-docs.synapse.org/rest/GET/thread/threadId.html
