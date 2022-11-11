@@ -79,3 +79,8 @@ HtmlRenderingTest.args = {
   ownerId: 'syn5585645',
   wikiId: '493662',
 }
+
+export const MarkdownIDUReport = Template.bind({})
+MarkdownIDUReport.args = {
+  markdown: '${iduReport?accessRestrictionId=9605700}',
+}
