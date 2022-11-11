@@ -5,6 +5,7 @@
   &__top-level-control {
     float: right;
     margin-bottom: 16px;
+    display: flex;
   }
 
   thead {
@@ -70,4 +71,10 @@
   .message-body {
     padding: 6px 22px;
   }
+}
+.SubscribersModal {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin: 0 4px;
 }
