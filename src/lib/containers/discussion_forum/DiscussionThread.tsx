@@ -14,11 +14,11 @@ import {
   SRC_SIGN_IN_CLASS,
 } from '../../utils/SynapseConstants'
 import { SubscriptionObjectType } from '../../utils/synapseTypes/Subscription'
-import { Typography } from '@mui/material'
 import UserCard from '../UserCard'
 import { displayToast } from '../ToastMessage'
 import { DiscussionReply } from './DiscussionReply'
-import { Button, FormControl, Modal } from 'react-bootstrap'
+import { FormControl, Modal } from 'react-bootstrap'
+import { Button, Typography } from '@mui/material'
 import IconSvg from '../IconSvg'
 import MarkdownSynapse from '../markdown/MarkdownSynapse'
 import { ObjectType } from '../../utils/synapseTypes'
@@ -29,6 +29,7 @@ import {
 } from '../../utils/hooks/SynapseAPI'
 import { ForumThreadEditor } from './ForumThreadEditor'
 import WarningModal from '../synapse_form_wrapper/WarningModal'
+import { SubscribersModal } from './SubscribersModal'
 
 export type DiscussionThreadProps = {
   threadId: string
@@ -38,6 +39,7 @@ export type DiscussionThreadProps = {
 const FOLLOWING_TEXT = 'You are following this topic. Click to stop following.'
 const UNFOLLOWING_TEXT = 'You are not following this topic. Click to follow.'
 const SIGN_IN_TEXT = 'You will need to sign in for access to that resource'
+const INPUT_PLACEHOLDER = 'Write a reply...'
 
 export function DiscussionThread(props: DiscussionThreadProps) {
   const { threadId, limit } = props
@@ -49,6 +51,7 @@ export function DiscussionThread(props: DiscussionThreadProps) {
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [showSignInModal, setShowSignInModal] = useState(false)
   const [showRestoreModal, setShowRestoreModal] = useState(false)
+  const [showSubscriberModal, setShowSubscriberModal] = useState(false)
 
   const { threadData, threadBody, togglePin } = useGetThread(threadId)
   const { data: currentUserProfile } = useGetCurrentUserProfile()
@@ -111,13 +114,13 @@ export function DiscussionThread(props: DiscussionThreadProps) {
         <>
           <div style={{ textAlign: 'center' }}>
             <Button
-              variant={orderByDatePosted ? 'primary' : 'outline-primary'}
+              variant={orderByDatePosted ? 'contained' : 'outlined'}
               onClick={() => setOrderByDatePosted(true)}
             >
               Date Posted
             </Button>
             <Button
-              variant={orderByDatePosted ? 'outline-primary' : 'primary'}
+              variant={orderByDatePosted ? 'outlined' : 'contained'}
               onClick={() => setOrderByDatePosted(false)}
             >
               Most Recent
@@ -130,9 +133,17 @@ export function DiscussionThread(props: DiscussionThreadProps) {
             size={SMALL_USER_CARD}
             ownerId={threadData.createdBy}
           />
-          <Typography style={{ marginTop: '4px' }} variant="headline2">
-            {threadData.title}
-          </Typography>
+          <div>
+            <Typography style={{ marginTop: '4px' }} variant="headline2">
+              {threadData.title}
+            </Typography>
+            <SubscribersModal
+              id={threadId}
+              objectType={SubscriptionObjectType.THREAD}
+              showModal={showSubscriberModal}
+              handleModal={setShowSubscriberModal}
+            />
+          </div>
           <div>
             <MarkdownSynapse
               markdown={threadBody}
@@ -197,7 +208,7 @@ export function DiscussionThread(props: DiscussionThreadProps) {
       {!showReplyEditor1 ? (
         <FormControl
           type="text"
-          placeholder="Write a reply..."
+          placeholder={INPUT_PLACEHOLDER}
           onClick={() => {
             currentUserProfile?.userName == 'anonymous'
               ? setShowSignInModal(true)
@@ -221,7 +232,7 @@ export function DiscussionThread(props: DiscussionThreadProps) {
           {!showReplyEditor2 ? (
             <FormControl
               type="text"
-              placeholder="Write a reply..."
+              placeholder={INPUT_PLACEHOLDER}
               onClick={() => {
                 currentUserProfile?.userName == 'anonymous'
                   ? setShowSignInModal(true)
@@ -240,7 +251,7 @@ export function DiscussionThread(props: DiscussionThreadProps) {
 
       {hasNextPage ? (
         <Button
-          variant="outline-primary"
+          variant="outlined"
           onClick={() => {
             fetchNextPage()
           }}
@@ -300,6 +311,7 @@ export function DiscussionThread(props: DiscussionThreadProps) {
         <Modal.Footer>
           <Button
             onClick={() => setShowSignInModal(false)}
+            variant="contained"
             className={SRC_SIGN_IN_CLASS}
           >
             Sign In

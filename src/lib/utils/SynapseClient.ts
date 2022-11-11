@@ -259,6 +259,7 @@ import {
 import { GeoData } from '../containers/GoogleMap/GeoData'
 import { TeamMember } from './synapseTypes/TeamMember'
 import {
+  SubscriberPagedResults,
   Subscription,
   SubscriptionPagedResults,
   SubscriptionRequest,
@@ -4149,6 +4150,23 @@ export function getSubscription(
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
+
+/**
+ * Retrieve subscribers for a given topic.
+ * https://rest-docs.synapse.org/rest/POST/subscription/subscribers.html
+ * @param accessToken
+ * @param topic
+ * @returns
+ */
+export function getSubscribers(accessToken: string | undefined, topic: Topic) {
+  return doPost<SubscriberPagedResults>(
+    '/repo/v1/subscription/subscribers',
+    topic,
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
 /**
  * This API is used to subscribe to a topic.
  * Target users: anyone who has READ permission on the object.

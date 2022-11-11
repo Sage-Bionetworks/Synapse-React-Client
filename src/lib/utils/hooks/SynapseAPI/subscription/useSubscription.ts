@@ -4,6 +4,7 @@ import {
   SortByType,
   SubscriptionRequest,
   Topic,
+  SubscriberPagedResults,
 } from '../../../synapseTypes/Subscription'
 import {
   useMutation,
@@ -17,6 +18,18 @@ import { useSynapseContext } from '../../../SynapseContext'
 import { Direction } from '../../../synapseTypes'
 import { SynapseClient } from '../../..'
 import { useCallback } from 'react'
+
+export function useGetSubscribers(
+  topic: Topic,
+  options?: UseQueryOptions<SubscriberPagedResults, SynapseClientError>,
+) {
+  const { accessToken } = useSynapseContext()
+  return useQuery<SubscriberPagedResults, SynapseClientError>(
+    ['subscriber', topic.objectId, topic.objectType],
+    () => SynapseClient.getSubscribers(accessToken, topic),
+    options,
+  )
+}
 
 export function useGetSubscription(
   objectId: string,
@@ -56,6 +69,11 @@ export function usePostSubscription(
       ...options,
       onSuccess: async (updatedSubscription, variables, ctx) => {
         await queryClient.invalidateQueries([accessToken, 'subscription'])
+        await queryClient.invalidateQueries([
+          'subscriber',
+          variables.objectId,
+          variables.objectType,
+        ])
         if (options?.onSuccess) {
           await options.onSuccess(updatedSubscription, variables, ctx)
         }
@@ -77,6 +95,7 @@ export function useDeleteSubscription(
       ...options,
       onSuccess: async (updatedSubscription, variables, ctx) => {
         await queryClient.invalidateQueries([accessToken, 'subscription'])
+        await queryClient.invalidateQueries(['subscriber'])
         if (options?.onSuccess) {
           await options.onSuccess(updatedSubscription, variables, ctx)
         }
@@ -93,6 +112,7 @@ export const useSubscription = (
     objectId,
     objectType,
   )
+  const { data: subscribers } = useGetSubscribers({ objectId, objectType })
   const { mutate: postSubscription, isLoading: isLoadingPost } =
     usePostSubscription()
   const { mutate: deleteSubscription, isLoading: isLoadingDelete } =
@@ -107,5 +127,5 @@ export const useSubscription = (
     }
   }, [deleteSubscription, objectId, objectType, postSubscription, subscription])
 
-  return { isLoading, subscription, toggleSubscribed }
+  return { isLoading, subscription, toggleSubscribed, subscribers }
 }

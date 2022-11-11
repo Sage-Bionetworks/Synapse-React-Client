@@ -39,3 +39,8 @@ export interface SubscriptionPagedResults {
   results: Subscription[]
   totalNumberOfResults: number
 }
+
+export interface SubscriberPagedResults {
+  subscribers: string[]
+  nextPageToken: string
+}
