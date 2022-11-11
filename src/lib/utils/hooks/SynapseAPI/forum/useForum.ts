@@ -58,8 +58,14 @@ export function useGetForumInfinite(
     {
       ...options,
       getNextPageParam: (lastPage, pages) => {
-        if (lastPage.results.length > 0) return pages.length * limit
-        else return undefined
+        const numberOfFetchedResults = pages.flatMap(
+          page => page.results,
+        ).length
+        if (lastPage.totalNumberOfResults! > numberOfFetchedResults) {
+          return numberOfFetchedResults
+        } else {
+          return undefined
+        }
       },
     },
   )

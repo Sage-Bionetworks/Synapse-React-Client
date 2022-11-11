@@ -62,6 +62,7 @@ import {
   RemoveCircleTwoTone,
   ReplyTwoTone,
   ReportProblemOutlined,
+  RestoreFromTrashTwoTone,
   SearchOutlined,
   SearchTwoTone,
   ShoppingCartOutlined,
@@ -210,6 +211,7 @@ export const IconStrings = [
   'image',
   'edit',
   'tag',
+  'restore',
 ] as const
 
 export type Icon = typeof IconStrings[number]
@@ -439,6 +441,8 @@ function IconMapping(props: { icon: string; sx?: SxProps }) {
       return <EditTwoTone sx={sx} />
     case 'tag':
       return <AlternateEmail sx={sx} />
+    case 'restore':
+      return <RestoreFromTrashTwoTone sx={sx} />
     default:
       return <></>
   }
