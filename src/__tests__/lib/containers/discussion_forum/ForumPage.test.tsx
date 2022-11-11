@@ -2,11 +2,11 @@ import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import React from 'react'
 import {
-  ForumTable,
-  ForumTableProps,
-} from '../../../../lib/containers/discussion_forum/ForumTable'
+  ForumPage,
+  ForumPageProps,
+} from '../../../../lib/containers/discussion_forum/ForumPage'
 import { createWrapper } from '../../../../lib/testutils/TestingLibraryUtils'
-import { FORUM_THREAD } from '../../../../lib/utils/APIConstants'
+import { FORUM, FORUM_THREAD } from '../../../../lib/utils/APIConstants'
 import {
   BackendDestinationEnum,
   getEndpoint,
@@ -28,7 +28,7 @@ import { rest, server } from '../../../../mocks/msw/server'
 const MOCK_FORUM_ID = 'syn123'
 const MOCK_SUBSCRIPTION_ID = '123'
 
-const defaultProps: ForumTableProps = {
+const defaultProps: ForumPageProps = {
   forumId: MOCK_FORUM_ID,
   limit: 1,
 }
@@ -67,7 +67,7 @@ const mockSubscriptionPagedResult: SubscriptionPagedResults = {
 }
 
 function renderComponent() {
-  render(<ForumTable {...defaultProps} />, {
+  render(<ForumPage {...defaultProps} />, {
     wrapper: createWrapper(),
   })
 }

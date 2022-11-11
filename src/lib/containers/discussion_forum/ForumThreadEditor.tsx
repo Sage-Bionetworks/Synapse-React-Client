@@ -1,12 +1,14 @@
 import React, { useState } from 'react'
-import { Button } from 'react-bootstrap'
+import { Button, FormControl } from 'react-bootstrap'
 import {
   useCreateThread,
   useUpdateThreadTitle,
   useUpdateThreadMessage,
+} from '../../utils/hooks/SynapseAPI/forum/useThread'
+import {
   usePostReply,
   usePutReply,
-} from '../../utils/hooks/SynapseAPI/forum/useForum'
+} from '../../utils/hooks/SynapseAPI/forum/useReply'
 import { CreateDiscussionThread } from '../../utils/synapseTypes/DiscussionBundle'
 import { MarkdownEditor } from '../markdown/MarkdownEditor'
 
@@ -89,10 +91,9 @@ export const ForumThreadEditor: React.FunctionComponent<
   return (
     <div className="bootstrap-4-backport">
       {!isReply && (
-        <input
-          placeholder="Title"
+        <FormControl
           type="text"
-          style={{ width: '100%', padding: '4px' }}
+          placeholder="Title"
           value={title}
           onChange={e => setTitle(e.target.value)}
         />

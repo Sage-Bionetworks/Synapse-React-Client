@@ -9,6 +9,20 @@ const defaultMuiTheme: ThemeOptions = {
   palette: palette,
   components: {
     MuiLink: linkTheme,
+    MuiButton: {
+      defaultProps: {
+        disableRipple: true,
+      },
+      styleOverrides: {
+        root: {
+          borderRadius: '0px',
+          textTransform: 'none',
+          '&:hover': {
+            transition: '0.2s',
+          },
+        },
+      },
+    },
     MuiTooltip: {
       defaultProps: {
         arrow: true,

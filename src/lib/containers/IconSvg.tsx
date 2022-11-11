@@ -5,6 +5,7 @@ import {
   AddCircleTwoTone,
   AddShoppingCart,
   AddTwoTone,
+  AlternateEmail,
   ArrowBackIos,
   ArrowDropDownTwoTone,
   ArrowDropUpTwoTone,
@@ -55,11 +56,13 @@ import {
   PhoneTwoTone,
   PhotoCameraOutlined,
   PublicTwoTone,
+  PushPinTwoTone,
   QuestionAnswerTwoTone,
   RadioButtonUncheckedTwoTone,
   RemoveCircleTwoTone,
   ReplyTwoTone,
   ReportProblemOutlined,
+  RestoreFromTrashTwoTone,
   SearchOutlined,
   SearchTwoTone,
   ShoppingCartOutlined,
@@ -67,6 +70,8 @@ import {
   StarTwoTone,
   StorageTwoTone,
   StrikethroughS,
+  Subscript,
+  Superscript,
   SyncTwoTone,
   TableChartTwoTone,
   Title,
@@ -98,7 +103,6 @@ import Other from '../assets/mui_components/Other'
 import PackagableFile from '../assets/mui_components/PackagableFile'
 import Proteomics from '../assets/mui_components/Proteomics'
 import Rat from '../assets/mui_components/Rat'
-import PushPin from '../assets/mui_components/PushPin'
 import { EntityType } from '../utils/synapseTypes'
 import { SxProps, Tooltip } from '@mui/material'
 
@@ -206,6 +210,8 @@ export const IconStrings = [
   'latex',
   'image',
   'edit',
+  'tag',
+  'restore',
 ] as const
 
 export type Icon = typeof IconStrings[number]
@@ -406,7 +412,7 @@ function IconMapping(props: { icon: string; sx?: SxProps }) {
     case 'chevronLeft':
       return <ChevronLeft sx={sx} />
     case 'pushpin':
-      return <PushPin sx={sx}></PushPin>
+      return <PushPinTwoTone sx={sx} />
     case 'addBoxOutline':
       return <AddBoxOutlined sx={sx} />
     case 'minusBoxOutline':
@@ -428,11 +434,15 @@ function IconMapping(props: { icon: string; sx?: SxProps }) {
     case 'image':
       return <Image sx={sx} />
     case 'superscript':
-      return <span>X&sup2;</span>
+      return <Superscript sx={sx} />
     case 'subscript':
-      return <span>X&#8322;</span>
+      return <Subscript sx={sx} />
     case 'edit':
       return <EditTwoTone sx={sx} />
+    case 'tag':
+      return <AlternateEmail sx={sx} />
+    case 'restore':
+      return <RestoreFromTrashTwoTone sx={sx} />
     default:
       return <></>
   }

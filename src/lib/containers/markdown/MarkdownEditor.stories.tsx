@@ -1,19 +1,16 @@
 import React from 'react'
 import { ComponentStory, ComponentMeta } from '@storybook/react'
 
-import { MarkdownEditor } from './MarkdownEditor'
-
+import { ForumThreadEditor } from '../discussion_forum/ForumThreadEditor'
 export default {
   title: 'Markdown/MarkdownEditor',
-  component: MarkdownEditor,
+  component: ForumThreadEditor,
   argTypes: {},
-} as ComponentMeta<typeof MarkdownEditor>
+} as ComponentMeta<typeof ForumThreadEditor>
 
-const Template: ComponentStory<typeof MarkdownEditor> = args => (
-  <MarkdownEditor {...args} />
+const Template: ComponentStory<typeof ForumThreadEditor> = args => (
+  <ForumThreadEditor {...args} />
 )
 
 export const MarkdownEditorDemo = Template.bind({})
-MarkdownEditorDemo.args = {
-  placeholder: 'Leave your comment...',
-}
+MarkdownEditorDemo.args = {}
