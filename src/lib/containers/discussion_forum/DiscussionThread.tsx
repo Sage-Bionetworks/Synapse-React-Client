@@ -6,6 +6,7 @@ import { useGetRepliesInfinite } from '../../utils/hooks/SynapseAPI/forum/useRep
 import {
   useDeleteThread,
   useGetThread,
+  useRestoreThread,
 } from '../../utils/hooks/SynapseAPI/forum/useThread'
 import {
   ALL_ENTITY_BUNDLE_FIELDS,
@@ -47,6 +48,7 @@ export function DiscussionThread(props: DiscussionThreadProps) {
   const [showReplyEditor2, setShowReplyEditor2] = useState(false)
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [showSignInModal, setShowSignInModal] = useState(false)
+  const [showRestoreModal, setShowRestoreModal] = useState(false)
 
   const { threadData, threadBody, togglePin } = useGetThread(threadId)
   const { data: currentUserProfile } = useGetCurrentUserProfile()
@@ -71,6 +73,13 @@ export function DiscussionThread(props: DiscussionThreadProps) {
       displayToast('A thread has been deleted.', 'info')
     },
   })
+  const { mutate: restoreThread } = useRestoreThread({
+    onSuccess: () => {
+      setShowRestoreModal(false)
+      displayToast('A thread has been restored.', 'info')
+    },
+  })
+
   const isCurrentUserAuthor =
     threadData?.createdBy == currentUserProfile?.ownerId
   const isCurrentUserModerator = moderatorList?.results.includes(
@@ -138,44 +147,52 @@ export function DiscussionThread(props: DiscussionThreadProps) {
         <></>
       )}
       <div className="control-container">
-        <span>
-          <button
-            className="follow-button"
-            aria-label={subscription ? 'Unfollow thread' : 'Follow thread'}
-            disabled={isLoading}
-            onClick={() => handleFollowBtn()}
-          >
-            {subscription ? (
-              <IconSvg icon="visibility" label={FOLLOWING_TEXT} />
-            ) : (
-              <IconSvg icon="visibilityOff" label={UNFOLLOWING_TEXT} />
-            )}
+        {threadData?.isDeleted ? (
+          <button onClick={() => setShowRestoreModal(true)}>
+            <IconSvg icon="restore" label="Restore deleted thread" />
           </button>
-        </span>
-        {isCurrentUserAuthor && (
-          <button onClick={() => setShowThreadModal(true)}>
-            <IconSvg icon="edit" label="Edit thread" />
-          </button>
-        )}
-
-        {entityBundle?.permissions.canModerate ? (
+        ) : (
           <>
-            <button onClick={() => setShowDeleteModal(true)}>
-              <IconSvg icon="delete" label="Delete thread" />
-            </button>
-            <button onClick={() => togglePin()}>
-              {threadData?.isPinned ? (
-                <IconSvg
-                  icon="pushpin"
-                  sx={{ color: 'error.main' }}
-                  label="Unpin thread"
-                />
-              ) : (
-                <IconSvg icon="pushpin" label="Pin thread" />
-              )}
-            </button>
+            <span>
+              <button
+                className="follow-button"
+                aria-label={subscription ? 'Unfollow thread' : 'Follow thread'}
+                disabled={isLoading}
+                onClick={() => handleFollowBtn()}
+              >
+                {subscription ? (
+                  <IconSvg icon="visibility" label={FOLLOWING_TEXT} />
+                ) : (
+                  <IconSvg icon="visibilityOff" label={UNFOLLOWING_TEXT} />
+                )}
+              </button>
+            </span>
+            {isCurrentUserAuthor && (
+              <button onClick={() => setShowThreadModal(true)}>
+                <IconSvg icon="edit" label="Edit thread" />
+              </button>
+            )}
+
+            {entityBundle?.permissions.canModerate ? (
+              <>
+                <button onClick={() => setShowDeleteModal(true)}>
+                  <IconSvg icon="delete" label="Delete thread" />
+                </button>
+                <button onClick={() => togglePin()}>
+                  {threadData?.isPinned ? (
+                    <IconSvg
+                      icon="pushpin"
+                      sx={{ color: 'error.main' }}
+                      label="Unpin thread"
+                    />
+                  ) : (
+                    <IconSvg icon="pushpin" label="Pin thread" />
+                  )}
+                </button>
+              </>
+            ) : null}
           </>
-        ) : null}
+        )}
       </div>
       {!showReplyEditor1 ? (
         <FormControl
@@ -261,6 +278,16 @@ export function DiscussionThread(props: DiscussionThreadProps) {
         onConfirm={() => threadData && deleteThread(threadData)}
         confirmButtonVariant="danger"
         confirmButtonText="Delete"
+      />
+      <WarningModal
+        show={showRestoreModal}
+        className="bootstrap-4-backport"
+        title="Confirm Restoration"
+        modalBody="Are you sure you want to restore this thread?"
+        onCancel={() => setShowRestoreModal(false)}
+        onConfirm={() => threadData && restoreThread(threadData)}
+        confirmButtonVariant="info"
+        confirmButtonText="Restore"
       />
       <Modal
         className="bootstrap-4-backport"

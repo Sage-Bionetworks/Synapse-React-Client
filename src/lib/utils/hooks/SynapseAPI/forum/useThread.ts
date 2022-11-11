@@ -200,6 +200,35 @@ export function useDeleteThread(
   )
 }
 
+export function useRestoreThread(
+  options?: UseMutationOptions<
+    void,
+    SynapseClientError,
+    DiscussionThreadBundle
+  >,
+) {
+  const queryClient = useQueryClient()
+  const { accessToken } = useSynapseContext()
+
+  return useMutation<void, SynapseClientError, DiscussionThreadBundle>(
+    (threadBundle: DiscussionThreadBundle) =>
+      SynapseClient.restoreThread(accessToken, threadBundle.id),
+    {
+      ...options,
+      onSuccess: async (updatedThread, threadBundle, ctx) => {
+        await queryClient.invalidateQueries([
+          'forumthread',
+          threadBundle.forumId,
+        ])
+        await queryClient.invalidateQueries(['thread', threadBundle.id])
+        if (options?.onSuccess) {
+          await options.onSuccess(updatedThread, threadBundle, ctx)
+        }
+      },
+    },
+  )
+}
+
 export function usePinThread(
   options?: UseMutationOptions<
     void,

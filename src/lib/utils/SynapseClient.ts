@@ -3863,6 +3863,18 @@ export const deleteThread = (
   )
 }
 
+export const restoreThread = (
+  accessToken: string | undefined,
+  threadId: string,
+) => {
+  return doPut<void>(
+    `${THREAD_ID(threadId)}/restore`,
+    undefined,
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
 /**
  * Returns a page of moderators for a given forum ID.
  * Target users: anyone who has READ permission to the project.
@@ -3882,7 +3894,7 @@ export const getModerators = (
   params.set('limit', limit.toString())
 
   return doGet<PaginatedIds>(
-    `/repo/v1/forum/${forumId}/moderators?${params.toString()}`,
+    `${FORUM}/${forumId}/moderators?${params.toString()}`,
     accessToken,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
