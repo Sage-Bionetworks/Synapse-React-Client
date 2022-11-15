@@ -3,7 +3,7 @@ import { PaletteOptions } from '@mui/material'
 /**
  * TODO: Ensure the default colors here match the default colors in _variables.scss, ideally having a single point of control
  */
-const palette: PaletteOptions = {
+export const palette: PaletteOptions = {
   primary: {
     100: '#d7dee4',
     200: '#b0bdc9',
@@ -40,6 +40,19 @@ const palette: PaletteOptions = {
   text: {
     primary: '#353a3f', // gray-900
     secondary: '#4a5056', // gray-800
+  },
+}
+
+export const mtbPalette: PaletteOptions = {
+  ...palette,
+  primary: {
+    ...palette.primary,
+    light: '#777aa6',
+    main: '#4F527D',
+    dark: '#2b2d4a',
+  },
+  secondary: {
+    main: '#C22E49',
   },
 }
 

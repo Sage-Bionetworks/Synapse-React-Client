@@ -1,6 +1,6 @@
 import { ThemeOptions } from '@mui/material/styles'
 import { typographyOptions } from './typography/Typography'
-import palette from './palette/Palette'
+import palette from './palette/Palettes'
 import { Fade } from '@mui/material'
 import linkTheme from './typography/Link'
 
