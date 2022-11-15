@@ -21,7 +21,6 @@ import {
   DATASET_COLLECTION_CONCRETE_TYPE_VALUE,
   FILE_ENTITY_CONCRETE_TYPE_VALUE,
   LINK_CONCRETE_TYPE_VALUE,
-  DOCKER_REPOSITORY_CONCRETE_TYPE_VALUE,
   FOLDER_CONCRETE_TYPE_VALUE,
   PROJECT_CONCRETE_TYPE_VALUE,
 } from '../synapseTypes'
@@ -32,6 +31,7 @@ import {
 } from '../synapseTypes/Table/MaterializedView'
 import { TABLE_ENTITY_CONCRETE_TYPE_VALUE } from '../synapseTypes/Table/TableEntity'
 import { isTypeViaConcreteTypeFactory } from './TypeUtils'
+import { DOCKER_REPOSITORY_CONCRETE_TYPE_VALUE } from '../synapseTypes/docker/DockerRepository'
 
 export function getEntityTypeFromHeader(
   header:
@@ -247,6 +247,9 @@ export const isDatasetCollection = isTypeViaConcreteTypeFactory<
   DatasetCollection,
   Entity
 >(DATASET_COLLECTION_CONCRETE_TYPE_VALUE)
+
+export const isEntityRefCollectionView = (entity: Entity) =>
+  isDataset(entity) || isDatasetCollection(entity)
 
 export const isEntityView = isTypeViaConcreteTypeFactory<EntityView, Entity>(
   ENTITY_VIEW_CONCRETE_TYPE_VALUE,
