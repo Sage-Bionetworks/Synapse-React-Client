@@ -53,6 +53,7 @@ import UserProfileLinks from './containers/user_profile_links/UserProfileLinks'
 import SynapsePlot from './containers/widgets/SynapsePlot'
 import ThemesPlot from './containers/widgets/themes-plot/ThemesPlot'
 import { SynapseClient, SynapseConstants, SynapseQueries } from './utils'
+import Palettes from './utils/theme/palette/Palettes'
 import {
   SynapseContextConsumer,
   SynapseContextProvider,
@@ -133,4 +134,5 @@ export {
   SynapseContext,
   Typography,
   SynapseQueries,
+  Palettes,
 }
