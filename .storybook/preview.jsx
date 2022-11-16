@@ -3,7 +3,7 @@ import '../src/demo/style/DemoStyle.scss'
 import whyDidYouRender from '@welldone-software/why-did-you-render'
 import { Buffer } from 'buffer'
 import { StorybookComponentWrapper } from '../src/lib/containers/StorybookComponentWrapper'
-import { initialize } from 'msw-storybook-addon'
+import { initialize, mswDecorator } from 'msw-storybook-addon'
 
 globalThis.Buffer = Buffer
 globalThis.process = {
@@ -38,8 +38,8 @@ initialize({
   onUnhandledRequest: 'bypass',
 })
 
-// For now, don't apply the MSW decorator. Only use on a per-story basis.
 export const decorators = [
+  mswDecorator,
   Story => (
     <StorybookComponentWrapper>
       <Story />

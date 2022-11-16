@@ -67,6 +67,7 @@ export function StorybookComponentWrapper(props: {
   useEffect(() => {
     async function resetCache() {
       await storybookQueryClient.cancelQueries()
+      storybookQueryClient.removeQueries()
       await storybookQueryClient.invalidateQueries()
     }
     resetCache()
