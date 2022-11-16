@@ -1,7 +1,9 @@
-import { PaletteOptions } from '@mui/material'
+import { PaletteColorOptions, PaletteOptions } from '@mui/material'
 import tinycolor from 'tinycolor2'
 
-const generatePalette = (mainColor: tinycolor.ColorInput) => {
+const generatePalette = (
+  mainColor: tinycolor.ColorInput,
+): PaletteColorOptions => {
   return {
     100: tinycolor(mainColor).desaturate(25).lighten(50).toString(),
     200: tinycolor(mainColor).desaturate(13).lighten(20).toString(),
