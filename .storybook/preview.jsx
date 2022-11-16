@@ -4,6 +4,8 @@ import whyDidYouRender from '@welldone-software/why-did-you-render'
 import { Buffer } from 'buffer'
 import { StorybookComponentWrapper } from '../src/lib/containers/StorybookComponentWrapper'
 import { initialize, mswDecorator } from 'msw-storybook-addon'
+import { getHandlers } from '../src/mocks/msw/handlers'
+import { MOCK_REPO_ORIGIN } from '../src/lib/containers/StackChanger'
 
 globalThis.Buffer = Buffer
 globalThis.process = {
@@ -30,6 +32,12 @@ export const parameters = {
       color: /(background|color)$/i,
       date: /Date$/,
     },
+  },
+  msw: {
+    handlers: [
+      // Only return mocked data when making requests to our mock stack
+      ...getHandlers(MOCK_REPO_ORIGIN),
+    ],
   },
 }
 

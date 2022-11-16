@@ -38,7 +38,6 @@ export const Demo = Template.bind({})
 Demo.parameters = {
   msw: {
     handlers: [
-      ...getHandlers(MOCK_REPO_ORIGIN),
       // Return submission based on ID
       rest.get(
         `${MOCK_REPO_ORIGIN}${DATA_ACCESS_SUBMISSION_BY_ID(':id')}`,
