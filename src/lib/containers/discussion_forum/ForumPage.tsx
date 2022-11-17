@@ -10,6 +10,7 @@ import { SubscriptionObjectType } from '../../utils/synapseTypes/Subscription'
 import { displayToast } from '../ToastMessage'
 import { ForumTable } from './ForumTable'
 import { ForumThreadEditor } from './ForumThreadEditor'
+import { SubscribersModal } from './SubscribersModal'
 
 export type ForumPageProps = {
   forumId: string
@@ -27,6 +28,7 @@ export const ForumPage: React.FC<ForumPageProps> = ({
   const [showThreadModal, setShowThreadModal] = useState(false)
   const [showSignInModal, setShowSignInModal] = useState(false)
   const [showDeletedThread, setShowDeletedThread] = useState(false)
+  const [showSubscriberModal, setShowSubscriberModal] = useState(false)
   const { subscription, isLoading, toggleSubscribed } = useSubscription(
     forumId,
     SubscriptionObjectType.FORUM,
@@ -57,6 +59,12 @@ export const ForumPage: React.FC<ForumPageProps> = ({
   return (
     <div className="ForumTable bootstrap-4-backport">
       <div className="ForumTable__top-level-control">
+        <SubscribersModal
+          id={forumId}
+          objectType={SubscriptionObjectType.FORUM}
+          showModal={showSubscriberModal}
+          handleModal={setShowSubscriberModal}
+        />
         <Button
           variant={subscription ? 'outline-primary' : 'primary'}
           onClick={() => handleFollowBtn()}

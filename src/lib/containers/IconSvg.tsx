@@ -10,6 +10,7 @@ import {
   ArrowDropDownTwoTone,
   ArrowDropUpTwoTone,
   ArrowForwardIos,
+  ArticleTwoTone,
   AssessmentTwoTone,
   AssignmentTurnedInTwoTone,
   Block,
@@ -23,6 +24,7 @@ import {
   CloseTwoTone,
   Code,
   ContentCopyTwoTone,
+  CreateNewFolderTwoTone,
   DashboardTwoTone,
   DeleteSweepTwoTone,
   DeleteTwoTone,
@@ -30,6 +32,7 @@ import {
   ErrorOutlined,
   ExpandLess,
   ExpandMore,
+  FlagTwoTone,
   FolderTwoTone,
   FormatBold,
   FormatItalic,
@@ -44,6 +47,7 @@ import {
   InfoOutlined,
   InsertDriveFileOutlined,
   InsertDriveFileTwoTone,
+  LabelTwoTone,
   LanguageTwoTone,
   LayersTwoTone,
   LinkTwoTone,
@@ -75,7 +79,9 @@ import {
   SyncTwoTone,
   TableChartTwoTone,
   Title,
+  UploadTwoTone,
   ViewAgendaTwoTone,
+  ViewColumnTwoTone,
   VisibilityOffTwoTone,
   VisibilityTwoTone,
   VpnKeyTwoTone,
@@ -105,6 +111,7 @@ import Proteomics from '../assets/mui_components/Proteomics'
 import Rat from '../assets/mui_components/Rat'
 import { EntityType } from '../utils/synapseTypes'
 import { SxProps, Tooltip } from '@mui/material'
+import CreateVersion from '../assets/icons/CreateVersion'
 
 export const IconStrings = [
   'accessOpen',
@@ -113,12 +120,14 @@ export const IconStrings = [
   'arrowForward',
   'arrowDropUp',
   'arrowDropDown',
+  'article',
   'cards',
   'check',
   'clear',
   'cart',
   'clock',
   'code',
+  'columns',
   'openInNewWindow',
   'dashboard',
   'delete',
@@ -212,6 +221,11 @@ export const IconStrings = [
   'edit',
   'tag',
   'restore',
+  'label',
+  'upload',
+  'flag',
+  'newFolder',
+  'createVersion',
 ] as const
 
 export type Icon = typeof IconStrings[number]
@@ -221,6 +235,7 @@ export type IconSvgProps = {
   // If provided, will be shown in tooltip
   label?: string
   sx?: SxProps
+  wrap?: boolean
 }
 
 function IconMapping(props: { icon: string; sx?: SxProps }) {
@@ -247,6 +262,8 @@ function IconMapping(props: { icon: string; sx?: SxProps }) {
       return <ArrowDropUpTwoTone sx={sx} />
     case 'arrowDropDown':
       return <ArrowDropDownTwoTone sx={sx} />
+    case 'article':
+      return <ArticleTwoTone sx={sx} />
     case 'block':
       return <Block sx={sx} />
     case 'check':
@@ -261,10 +278,14 @@ function IconMapping(props: { icon: string; sx?: SxProps }) {
       return <AccessTimeTwoTone sx={sx} />
     case 'code':
       return <Code sx={sx}></Code>
+    case 'columns':
+      return <ViewColumnTwoTone sx={sx}></ViewColumnTwoTone>
     case 'circle':
       return <RadioButtonUncheckedTwoTone sx={sx} />
     case 'checkCircle':
       return <CheckCircleTwoTone sx={sx} />
+    case 'createVersion':
+      return <CreateVersion sx={sx} />
     case 'dashboard':
       return <DashboardTwoTone sx={sx}></DashboardTwoTone>
     case 'delete':
@@ -369,6 +390,8 @@ function IconMapping(props: { icon: string; sx?: SxProps }) {
       return <InsertDriveFileOutlined sx={sx} />
     case 'folder':
       return <FolderTwoTone sx={sx} />
+    case 'newFolder':
+      return <CreateNewFolderTwoTone sx={sx} />
     case 'link':
       return <LinkTwoTone sx={sx} />
     case 'table':
@@ -443,24 +466,35 @@ function IconMapping(props: { icon: string; sx?: SxProps }) {
       return <AlternateEmail sx={sx} />
     case 'restore':
       return <RestoreFromTrashTwoTone sx={sx} />
+    case 'label':
+      return <LabelTwoTone sx={sx} />
+    case 'upload':
+      return <UploadTwoTone sx={sx} />
+    case 'flag':
+      return <FlagTwoTone sx={sx} />
     default:
       return <></>
   }
 }
 
 function IconSvg(props: IconSvgProps) {
-  const { icon, label = '', sx } = props
+  const { icon, label = '', sx, wrap = true } = props
+
+  const Wrapper = wrap ? 'span' : React.Fragment
+  const wrapperProps = wrap
+    ? {
+        'data-svg': icon,
+        className: 'styled-svg-wrapper',
+        id: `icon-${icon}`,
+        role: 'img',
+      }
+    : {}
 
   return (
     <Tooltip placement="top" title={label}>
-      <span
-        data-svg={icon}
-        className="styled-svg-wrapper"
-        id={`icon-${icon}`}
-        role={'img'}
-      >
+      <Wrapper {...wrapperProps}>
         <IconMapping icon={icon} sx={sx} />
-      </span>
+      </Wrapper>
     </Tooltip>
   )
 }
