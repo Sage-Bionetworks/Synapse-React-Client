@@ -1,6 +1,8 @@
 @use '../abstracts/variables' as SRC;
+@use '../abstracts/mixins' as SrcMixins;
 
 .CertificationQuiz {
+  @include SrcMixins.MuiTypographyTopMargins();
   .failBanner {
     background-color: red;
     color: white;

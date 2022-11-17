@@ -160,7 +160,7 @@ export const DownloadCartPage: React.FunctionComponent<
                         Packages)
                       </Typography>
                       <HelpPopover
-                        markdownText="This will allow you to create a .zip file that contains eligible files. Files greater that 100 MB, external links, or files which are not stored on Synapse native storage are ineligible. In most cases, ineligible files can be downloaded individually. External links will require navigation to an external site, which may require a seperate login process."
+                        markdownText="This will allow you to create a .zip file that contains eligible files. Files greater that 100 MB, external links, or files which are not stored on Synapse native storage are ineligible. In most cases, ineligible files can be downloaded individually. External links will require navigation to an external site, which may require a separate login process."
                         helpUrl="https://help.synapse.org/docs/Downloading-Data-From-the-Synapse-UI.2004254837.html"
                       />
                     </div>
