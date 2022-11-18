@@ -236,7 +236,9 @@
     "js-yaml": "3.13.1",
     "@types/react": "18.0.17",
     "@types/webpack": "^5.28.0",
-    "trim": "^0.0.3"
+    "trim": "^0.0.3",
+    "webpack/**/loader-utils": "^1.4.2",
+    "storybook/**/loader-utils": "^2.0.4"
   },
   "browser": {
     "timers": "timers-browserify"
