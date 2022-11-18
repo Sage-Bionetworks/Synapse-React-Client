@@ -16,7 +16,11 @@ export const CustomDateTimeWidget: Widget = ({
       disabled={disabled}
       value={value ? dayjs(value) : ''}
       setterCallback={(newValue: string | Dayjs | null) => {
-        onChange(newValue)
+        if (newValue == null || typeof newValue === 'string') {
+          onChange(newValue)
+        } else {
+          onChange(newValue.toISOString())
+        }
       }}
     ></CalendarWithIconFormGroup>
   )
