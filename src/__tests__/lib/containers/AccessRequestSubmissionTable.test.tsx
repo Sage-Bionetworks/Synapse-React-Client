@@ -25,7 +25,7 @@ import {
 } from '../../../mocks/user/mock_user_profile'
 import { upperFirst } from 'lodash-es'
 import { formatDate } from '../../../lib/utils/functions/DateFormatter'
-import moment from 'moment'
+import dayjs from 'dayjs'
 import { Router } from 'react-router-dom'
 import { createMemoryHistory } from 'history'
 
@@ -167,7 +167,7 @@ describe('Access Request Submission Table tests', () => {
     screen.getByRole('cell', { name: 'Synapse Access and Compliance Team' })
     screen.getByRole('cell', {
       name: formatDate(
-        moment(mockSubmissionSearchResponse.results[0].createdOn),
+        dayjs(mockSubmissionSearchResponse.results[0].createdOn),
       ),
     })
   })

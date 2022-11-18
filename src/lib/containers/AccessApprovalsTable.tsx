@@ -1,4 +1,4 @@
-import moment from 'moment'
+import dayjs from 'dayjs'
 import React, { useMemo, useState } from 'react'
 import { Button, Table } from 'react-bootstrap'
 import { SMALL_USER_CARD } from '../utils/SynapseConstants'
@@ -114,7 +114,7 @@ export const AccessApprovalsTable: React.FunctionComponent<
                   <UserCard size={SMALL_USER_CARD} ownerId={item.submitterId} />
                 </td>
                 <td>{upperFirst(item.state.toLocaleLowerCase())}</td>
-                <td>{formatDate(moment(item.modifiedOn))}</td>
+                <td>{formatDate(dayjs(item.modifiedOn))}</td>
                 <td
                   className={`${
                     item.expiredOn
@@ -124,9 +124,7 @@ export const AccessApprovalsTable: React.FunctionComponent<
                       : 'non-expire'
                   } remove-border`}
                 >
-                  {item.expiredOn
-                    ? formatDate(moment(item.expiredOn))
-                    : 'Never'}
+                  {item.expiredOn ? formatDate(dayjs(item.expiredOn)) : 'Never'}
                 </td>
               </tr>
             )

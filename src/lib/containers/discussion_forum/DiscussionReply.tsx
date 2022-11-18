@@ -1,4 +1,4 @@
-import moment from 'moment'
+import dayjs from 'dayjs'
 import React, { useState } from 'react'
 import { formatDate } from '../../utils/functions/DateFormatter'
 import { SMALL_USER_CARD } from '../../utils/SynapseConstants'
@@ -71,7 +71,7 @@ export const DiscussionReply: React.FC<DiscussionReplyProps> = ({
                   objectType={ObjectType.REPLY}
                 />
                 <span>
-                  posted {formatDate(moment(reply.createdOn), 'M/D/YYYY')}
+                  posted {formatDate(dayjs(reply.createdOn), 'M/D/YYYY')}
                 </span>
                 <div style={{ float: 'right' }}>
                   <button onClick={() => onClickLink()}>

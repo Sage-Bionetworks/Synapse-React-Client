@@ -1,6 +1,6 @@
 import { Skeleton } from '@mui/material'
 import { toLower, upperFirst } from 'lodash-es'
-import moment from 'moment'
+import dayjs from 'dayjs'
 import React, { useState } from 'react'
 import { Button } from 'react-bootstrap'
 import { useErrorHandler } from 'react-error-boundary'
@@ -27,6 +27,9 @@ import WarningModal, {
 import UserCard from '../UserCard'
 import UserOrTeamBadge from '../UserOrTeamBadge'
 import { FileHandleLink } from '../widgets/FileHandleLink'
+import duration from 'dayjs/plugin/duration'
+
+dayjs.extend(duration)
 
 export type SubmissionPageProps = {
   /** The ID of the submission to view */
@@ -236,8 +239,10 @@ export default function SubmissionPage(props: SubmissionPageProps) {
             <ul>
               <li>
                 Expiration period:{' '}
-                {moment
-                  .duration(accessRequirement.expirationPeriod, 'milliseconds')
+                {dayjs
+                  .duration({
+                    milliseconds: accessRequirement.expirationPeriod,
+                  })
                   .asDays()}{' '}
                 day(s)
                 {accessRequirement.expirationPeriod === 0 && ' (no expiration)'}
@@ -281,7 +286,7 @@ export default function SubmissionPage(props: SubmissionPageProps) {
           <Typography variant="dataFieldKey">Submitted On</Typography>
           <Typography variant="smallText1">
             {submission ? (
-              formatDate(moment(submission.submittedOn))
+              formatDate(dayjs(submission.submittedOn))
             ) : (
               <Skeleton width={100} />
             )}
@@ -300,7 +305,7 @@ export default function SubmissionPage(props: SubmissionPageProps) {
           <Typography variant="dataFieldKey">Modified On</Typography>
           <Typography variant="smallText1">
             {submission ? (
-              formatDate(moment(submission.modifiedOn))
+              formatDate(dayjs(submission.modifiedOn))
             ) : (
               <Skeleton width={100} />
             )}

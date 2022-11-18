@@ -1,16 +1,16 @@
 import React, { useState } from 'react'
-import { Moment } from 'moment'
-import moment from 'moment-timezone'
+import { Dayjs } from 'dayjs'
 import { Form, InputGroup } from 'react-bootstrap'
-import { ReactComponent as CalendarClockIcon } from '../../assets/icons/calendar-clock.svg'
-import Datetime from 'react-datetime'
 import 'react-datetime/css/react-datetime.css'
-import { useSynapseContext } from '../../utils/SynapseContext'
 import { uniqueId } from 'lodash-es'
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
+import { TextField } from '@mui/material'
+import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker'
 
 export type CalendarWithIconFormGroupProps = {
-  value: string | Moment
-  setterCallback: (value: string | Moment) => void
+  value: string | Dayjs | null
+  setterCallback: (value: string | Dayjs | null) => void
   label?: string
   disabled?: boolean
   isValidDate?: (currentDate: any) => boolean
@@ -18,37 +18,29 @@ export type CalendarWithIconFormGroupProps = {
 
 export const CalendarWithIconFormGroup: React.FunctionComponent<
   CalendarWithIconFormGroupProps
-> = ({ value, setterCallback, label, disabled = false, isValidDate }) => {
+> = ({ value, setterCallback, label, disabled = false }) => {
   const [id] = useState(uniqueId('calendar-with-icon-form-group-'))
-  const { utcTime } = useSynapseContext()
   return (
     <Form.Group className="calendar-with-icon-form-group">
-      {label && <label htmlFor={id}>{label}</label>}
-      <InputGroup>
-        <InputGroup.Prepend>
-          <InputGroup.Text>
-            <CalendarClockIcon />
-          </InputGroup.Text>
-        </InputGroup.Prepend>
-        <Datetime
-          value={value}
-          utc={utcTime}
-          // using 24-hour time format
-          timeFormat={'HH:mm z'}
-          displayTimeZone={moment.tz.guess()}
-          onChange={setterCallback}
-          inputProps={{
-            id: id,
-            disabled: disabled,
-            className: 'form-control calendar-date-time-input rounded-right',
-            // Chrome for some reason decides to autofill this input box with email address, so we must disable autofill
-            // this is a hacky, but consistent way to disable autofill because Chrome does not respect the spec :(
-            // https://bugs.chromium.org/p/chromium/issues/detail?id=914451
-            autoComplete: 'new-password',
-          }}
-          isValidDate={isValidDate}
-        />
-      </InputGroup>
+      <LocalizationProvider dateAdapter={AdapterDayjs}>
+        {label && <label htmlFor={id}>{label}</label>}
+        <InputGroup>
+          <DateTimePicker
+            value={value}
+            disabled={disabled}
+            onChange={setterCallback}
+            renderInput={params => (
+              <TextField
+                disabled={disabled}
+                id={id}
+                className="form-control calendar-date-time-input rounded-right"
+                variant="outlined"
+                {...params}
+              />
+            )}
+          />
+        </InputGroup>
+      </LocalizationProvider>
     </Form.Group>
   )
 }

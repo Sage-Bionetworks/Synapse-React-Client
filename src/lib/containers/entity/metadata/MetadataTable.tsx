@@ -1,4 +1,4 @@
-import moment from 'moment'
+import dayjs from 'dayjs'
 import React, { useEffect, useState } from 'react'
 import { formatDate } from '../../../utils/functions/DateFormatter'
 import {
@@ -80,7 +80,7 @@ export const MetadataTable = ({
               size="SMALL USER CARD"
               ownerId={entityBundle.entity?.modifiedBy}
             />{' '}
-            at {formatDate(moment(entityBundle.entity?.modifiedOn))}
+            at {formatDate(dayjs(entityBundle.entity?.modifiedOn))}
           </td>
         </tr>
         <tr className="MetadataTable__Row">
@@ -90,7 +90,7 @@ export const MetadataTable = ({
               size="SMALL USER CARD"
               ownerId={entityBundle.entity?.createdBy}
             />{' '}
-            at {formatDate(moment(entityBundle.entity?.createdOn))}
+            at {formatDate(dayjs(entityBundle.entity?.createdOn))}
           </td>
         </tr>
       </tbody>

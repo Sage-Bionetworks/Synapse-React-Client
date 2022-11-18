@@ -12,7 +12,7 @@ import {
 } from '../../utils/synapseTypes/DownloadListV2/QueryRequestDetails'
 import { DownloadListItem } from '../../utils/synapseTypes/DownloadListV2/DownloadListItem'
 import { SynapseClient } from '../../utils'
-import moment from 'moment'
+import dayjs from 'dayjs'
 import UserCard from '../UserCard'
 import SortIcon from '../../assets/icons/Sort'
 import { Direction, FileHandleAssociateType } from '../../utils/synapseTypes'
@@ -28,8 +28,11 @@ import DirectProgrammaticDownload from './DirectProgrammaticDownload'
 import { BlockingLoader } from '../LoadingScreen'
 import { Tooltip } from '@mui/material'
 import { InteractiveCopyIdsIcon } from '../InteractiveCopyIdsIcon'
+import localizedFormat from 'dayjs/plugin/localizedFormat'
 export const TESTING_TRASH_BTN_CLASS = 'TESTING_TRASH_BTN_CLASS'
 export const TESTING_CLEAR_BTN_CLASS = 'TESTING_CLEAR_BTN_CLASS'
+
+dayjs.extend(localizedFormat)
 
 export type DownloadListTableProps = {
   filesStatistics: FilesStatisticsResponse
@@ -251,8 +254,8 @@ export default function DownloadListTable(props: DownloadListTableProps) {
             <tbody>
               {allRows.map((item: DownloadListItemResult) => {
                 if (item) {
-                  const addedOn = moment(item.addedOn).format('L LT')
-                  const createdOn = moment(item.createdOn).format('L LT')
+                  const addedOn = dayjs(item.addedOn).format('L LT')
+                  const createdOn = dayjs(item.createdOn).format('L LT')
                   return (
                     <tr key={item.fileEntityId}>
                       <td

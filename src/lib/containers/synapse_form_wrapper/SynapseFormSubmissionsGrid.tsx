@@ -11,11 +11,13 @@ import WarningModal from './WarningModal'
 import { Button } from 'react-bootstrap'
 import { Modal } from 'react-bootstrap'
 
-import moment from 'moment'
+import dayjs from 'dayjs'
+import calendar from 'dayjs/plugin/calendar'
 import { SRC_SIGN_IN_CLASS } from '../../utils/SynapseConstants'
 import { ReactComponent as NoSubmissionsIcon } from '../../assets/icons/json-form-tool-no-submissions.svg'
 import IconSvg from '../IconSvg'
 
+dayjs.extend(calendar)
 /**
  * TODO: SWC-5612 - Replace token prop with SynapseContext.accessToken
  *
@@ -346,7 +348,7 @@ export default class SynapseFormSubmissionGrid extends React.Component<
                           {dataFileRecord.name}
                         </a>
                       </td>
-                      <td>{moment(dataFileRecord.modifiedOn).calendar()}</td>
+                      <td>{dayjs(dataFileRecord.modifiedOn).calendar()}</td>
                       <td>&nbsp;</td>
                       <td className="text-right">
                         <button
@@ -374,7 +376,7 @@ export default class SynapseFormSubmissionGrid extends React.Component<
                           {dataFileRecord.name}
                         </a>
                       </td>
-                      <td>{moment(dataFileRecord.modifiedOn).calendar()}</td>
+                      <td>{dayjs(dataFileRecord.modifiedOn).calendar()}</td>
                       <td>{dataFileRecord.submissionStatus.state}</td>
                       <td className="text-right">
                         <button

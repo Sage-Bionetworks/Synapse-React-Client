@@ -1,4 +1,4 @@
-import moment from 'moment'
+import dayjs from 'dayjs'
 import React, { useMemo, useState } from 'react'
 import { Button, Table } from 'react-bootstrap'
 import SortIcon from '../../assets/icons/Sort'
@@ -149,8 +149,8 @@ export function AccessRequirementTable(props: AccessRequirementTableProps) {
                       ))
                     )}
                   </td>
-                  <td>{formatDate(moment(ar.modifiedOn))}</td>
-                  <td>{formatDate(moment(ar.createdOn))}</td>
+                  <td>{formatDate(dayjs(ar.modifiedOn))}</td>
+                  <td>{formatDate(dayjs(ar.createdOn))}</td>
                 </tr>
               )
             })}

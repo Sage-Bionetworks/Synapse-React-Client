@@ -1,7 +1,8 @@
 import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import JestMockPromise from 'jest-mock-promise'
-import moment, { Moment } from 'moment'
+import dayjs, { Dayjs } from 'dayjs'
+import duration from 'dayjs/plugin/duration'
 import React from 'react'
 import {
   EvaluationRoundEditor,
@@ -16,6 +17,8 @@ import { createWrapper } from '../../../../lib/testutils/TestingLibraryUtils'
 import { SynapseClient } from '../../../../lib/utils/'
 import { EvaluationRound } from '../../../../lib/utils/synapseTypes'
 import { MOCK_CONTEXT_VALUE } from '../../../../mocks/MockSynapseContext'
+
+dayjs.extend(duration)
 
 describe('test EvaluationRoundEditor', () => {
   let props: EvaluationRoundEditorProps
@@ -143,8 +146,8 @@ describe('test EvaluationRoundEditor', () => {
   })
 
   it('test start date input: disabled when current time past start', () => {
-    const roundStartInPast = moment().subtract(1, 'day')
-    const roundEnd = moment().add(1, 'day')
+    const roundStartInPast = dayjs().subtract(1, 'days')
+    const roundEnd = dayjs().add(1, 'days')
     props.evaluationRoundInput.roundStart = roundStartInPast.toJSON()
     props.evaluationRoundInput.roundEnd = roundEnd.toJSON()
 
@@ -155,8 +158,8 @@ describe('test EvaluationRoundEditor', () => {
   })
 
   it('test start date input: enabled when current time not past start', () => {
-    const roundStartInFuture = moment().add(1, 'day')
-    const roundEnd = moment().add(2, 'day')
+    const roundStartInFuture = dayjs().add(1, 'days')
+    const roundEnd = dayjs().add(2, 'days')
     props.evaluationRoundInput.roundStart = roundStartInFuture.toJSON()
     props.evaluationRoundInput.roundEnd = roundEnd.toJSON()
 
@@ -349,8 +352,8 @@ describe('test EvaluationRoundEditor', () => {
 
 describe('test determineRoundStatus helper', () => {
   it('status: in progress', () => {
-    const roundStart = moment().subtract(1, 'day')
-    const roundEnd = moment().add(1, 'day')
+    const roundStart = dayjs().subtract(1, 'days')
+    const roundEnd = dayjs().add(1, 'days')
     expect(
       render(
         HelpersToTest.determineRoundStatus(roundStart, roundEnd),
@@ -359,8 +362,8 @@ describe('test determineRoundStatus helper', () => {
   })
 
   it('status: completed', () => {
-    const roundStart = moment().subtract(2, 'day')
-    const roundEnd = moment().subtract(1, 'day')
+    const roundStart = dayjs().subtract(2, 'days')
+    const roundEnd = dayjs().subtract(1, 'days')
     expect(
       render(
         HelpersToTest.determineRoundStatus(roundStart, roundEnd),
@@ -369,8 +372,8 @@ describe('test determineRoundStatus helper', () => {
   })
 
   it('status: not yet started', () => {
-    const roundStart = moment().add(1, 'day')
-    const roundEnd = moment().add(2, 'day')
+    const roundStart = dayjs().add(1, 'days')
+    const roundEnd = dayjs().add(2, 'days')
     expect(
       render(
         HelpersToTest.determineRoundStatus(roundStart, roundEnd),
@@ -381,8 +384,8 @@ describe('test determineRoundStatus helper', () => {
 
 describe('test convertInputsToEvaluationRound', () => {
   let evaluationRoundInputProp: EvaluationRoundInput
-  let startDate: string | Moment
-  let endDate: string | Moment
+  let startDate: string | Dayjs
+  let endDate: string | Dayjs
   let totalSubmissionLimit: string
   let advancedLimits: EvaluationRoundLimitInput[]
   let expected: EvaluationRound
@@ -573,14 +576,14 @@ describe('test convertInputsToEvaluationRound', () => {
 })
 
 describe('test disallowCalendarDateBefore', () => {
-  const now = moment()
+  const now = dayjs()
   const generatedFunc = HelpersToTest.disallowCalendarDateBefore(now)
 
   it('before now', () =>
-    expect(generatedFunc(now.clone().subtract(1, 'day'))).toBe(false))
+    expect(generatedFunc(now.clone().subtract(1, 'days'))).toBe(false))
 
   it('is now', () => expect(generatedFunc(now.clone())).toBe(true))
 
   it('after now', () =>
-    expect(generatedFunc(now.clone().add(1, 'day'))).toBe(true))
+    expect(generatedFunc(now.clone().add(1, 'days'))).toBe(true))
 })

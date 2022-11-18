@@ -1,6 +1,6 @@
 import * as React from 'react'
 import Parser from 'rss-parser'
-import moment from 'moment'
+import dayjs from 'dayjs'
 import { ReactComponent as SubscribePlus } from '../assets/icons/subscribe_plus.svg'
 import MailchimpSubscribe from 'react-mailchimp-subscribe'
 import { LockedColumn } from './QueryContext'
@@ -166,7 +166,7 @@ export default class RssFeedCards extends React.Component<
                           </div>
                         )}
                       <p className="FeedItemDate">
-                        {moment(item['isoDate']).format('MMMM YYYY')}
+                        {dayjs(item['isoDate']).format('MMMM YYYY')}
                       </p>
                       <p className="FeedItemTitle">{item['title']}</p>
                       <div className="FeedItemDescription">
