@@ -194,3 +194,35 @@ $link-underline-color-default: adjust-color(
     @include disabled($ignoreLink: true);
   }
 }
+
+// Always top margins to the MuiTypography variants causes problems with some built-in MUI components
+// Use this mixin within a selector to apply the margins
+@mixin MuiTypographyTopMargins() {
+  .MuiTypography-headline1 {
+    margin-top: 28px;
+  }
+  .MuiTypography-headline2 {
+    margin-top: 24px;
+  }
+  .MuiTypography-headline3 {
+    margin-top: 20px;
+  }
+  .MuiTypography-body1 {
+    margin-top: 24px;
+  }
+  .MuiTypography-body1Italic {
+    margin-top: 24px;
+  }
+  .MuiTypography-body2 {
+    margin-top: 24px;
+  }
+  .MuiTypography-smallText1 {
+    margin-top: 16px;
+  }
+  .MuiTypography-smallText2 {
+    margin-top: 16px;
+  }
+  .MuiTypography-dataFieldKey {
+    margin-top: 16px;
+  }
+}

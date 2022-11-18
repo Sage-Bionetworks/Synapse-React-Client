@@ -1,4 +1,5 @@
 @use '../abstracts/variables' as SRC;
+@use '../abstracts/mixins' as SrcMixins;
 @use 'sass:map';
 .SubmissionPage {
   @media screen and (min-width: map.get(SRC.$breakpoints, 'medium')) {
@@ -42,7 +43,6 @@
       }
     }
   }
-
   ul {
     padding-left: 25px;
     li {
@@ -58,4 +58,6 @@
       margin: 40px;
     }
   }
+
+  @include SrcMixins.MuiTypographyTopMargins();
 }
