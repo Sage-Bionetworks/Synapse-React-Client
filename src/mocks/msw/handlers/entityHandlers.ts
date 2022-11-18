@@ -29,46 +29,41 @@ import { MOCK_INVALID_PROJECT_NAME } from '../../entity/mockEntity'
 import { mockSchemaBinding } from '../../mockSchema'
 import { SynapseApiResponse } from '../handlers'
 
-export const entityHandlers = [
+export const getEntityHandlers = (backendOrigin: string) => [
   /**
    * Create a new entity
    */
-  rest.post(
-    `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY}`,
-    async (req, res, ctx) => {
-      let status = 404
-      let response: SynapseApiResponse<Entity> = {
-        reason: `Mock Service worker could not find a matching mock entity for this request : ${JSON.stringify(
-          req.body,
-        )}`,
-      }
-      if (req.body) {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        const requestBody = req.body as Entity
+  rest.post(`${backendOrigin}${ENTITY}`, async (req, res, ctx) => {
+    let status = 404
+    let response: SynapseApiResponse<Entity> = {
+      reason: `Mock Service worker could not find a matching mock entity for this request : ${JSON.stringify(
+        req.body,
+      )}`,
+    }
+    if (req.body) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      const requestBody = req.body as Entity
 
-        const entityData = mockEntities.find(
-          entity => entity.name === requestBody.name,
-        )
-        if (entityData) {
-          response = entityData.entity
-          status = 200
-        } else if (requestBody.name === MOCK_INVALID_PROJECT_NAME) {
-          response.reason = 'Invalid project name'
-          status = 403
-        }
+      const entityData = mockEntities.find(
+        entity => entity.name === requestBody.name,
+      )
+      if (entityData) {
+        response = entityData.entity
+        status = 200
+      } else if (requestBody.name === MOCK_INVALID_PROJECT_NAME) {
+        response.reason = 'Invalid project name'
+        status = 403
       }
+    }
 
-      return res(ctx.status(status), ctx.json(response))
-    },
-  ),
+    return res(ctx.status(status), ctx.json(response))
+  }),
 
   /**
    * Get entity by ID
    */
   rest.get(
-    `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY_ID(
-      ':entityId',
-    )}`,
+    `${backendOrigin}${ENTITY_ID(':entityId')}`,
     async (req, res, ctx) => {
       let status = 404
       let response: SynapseApiResponse<Entity> = {
@@ -87,9 +82,7 @@ export const entityHandlers = [
   ),
 
   rest.get(
-    `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY_ID_VERSIONS(
-      ':entityId',
-    )}`,
+    `${backendOrigin}${ENTITY_ID_VERSIONS(':entityId')}`,
     async (req, res, ctx) => {
       let status = 404
       let response: SynapseApiResponse<PaginatedResults<VersionInfo>> = {
@@ -108,10 +101,7 @@ export const entityHandlers = [
   ),
 
   rest.get(
-    `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY_ID_VERSION(
-      ':entityId',
-      ':versionNumber',
-    )}`,
+    `${backendOrigin}${ENTITY_ID_VERSION(':entityId', ':versionNumber')}`,
     async (req, res, ctx) => {
       let status = 404
       const entityId = req.params.entityId
@@ -140,9 +130,7 @@ export const entityHandlers = [
   ),
 
   rest.post(
-    `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY_BUNDLE_V2(
-      ':entityId',
-    )}`,
+    `${backendOrigin}${ENTITY_BUNDLE_V2(':entityId')}`,
     async (req, res, ctx) => {
       let status = 404
       let response: SynapseApiResponse<EntityBundle> = {
@@ -160,10 +148,7 @@ export const entityHandlers = [
   ),
 
   rest.post(
-    `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY_BUNDLE_V2(
-      ':entityId',
-      ':versionNumber',
-    )}`,
+    `${backendOrigin}${ENTITY_BUNDLE_V2(':entityId', ':versionNumber')}`,
     async (req, res, ctx) => {
       const entityId = req.params.entityId
       const versionNumber = parseInt(req.params.versionNumber as string)
@@ -189,17 +174,13 @@ export const entityHandlers = [
     },
   ),
   rest.get(
-    `${getEndpoint(
-      BackendDestinationEnum.REPO_ENDPOINT,
-    )}${ENTITY_SCHEMA_BINDING(':entityId')}`,
+    `${backendOrigin}${ENTITY_SCHEMA_BINDING(':entityId')}`,
     async (req, res, ctx) => {
       return res(ctx.status(200), ctx.json(mockSchemaBinding))
     },
   ),
   rest.get(
-    `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY_JSON(
-      ':entityId',
-    )}`,
+    `${backendOrigin}${ENTITY_JSON(':entityId')}`,
 
     async (req, res, ctx) => {
       let status = 404
@@ -219,7 +200,7 @@ export const entityHandlers = [
   ),
 
   rest.post(
-    `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY_HEADERS}`,
+    `${backendOrigin}${ENTITY_HEADERS}`,
 
     async (req, res, ctx) => {
       let status = 404
@@ -244,9 +225,7 @@ export const entityHandlers = [
   ),
 
   rest.get(
-    `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY_ID(
-      ':entityId',
-    )}/path`,
+    `${backendOrigin}${ENTITY_ID(':entityId')}/path`,
 
     async (req, res, ctx) => {
       let status = 404
@@ -264,3 +243,7 @@ export const entityHandlers = [
     },
   ),
 ]
+
+export const entityHandlers = getEntityHandlers(
+  getEndpoint(BackendDestinationEnum.REPO_ENDPOINT),
+)

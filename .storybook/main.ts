@@ -15,6 +15,7 @@ module.exports = {
   features: {
     storyStoreV7: true,
   },
+  staticDirs: ['../public'],
   async viteFinal(config, { configType }) {
     let base = undefined
     // Fix deployment to github pages

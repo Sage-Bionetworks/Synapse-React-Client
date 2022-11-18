@@ -2,6 +2,10 @@ import React from 'react'
 import '../src/demo/style/DemoStyle.scss'
 import whyDidYouRender from '@welldone-software/why-did-you-render'
 import { Buffer } from 'buffer'
+import { StorybookComponentWrapper } from '../src/lib/containers/StorybookComponentWrapper'
+import { initialize, mswDecorator } from 'msw-storybook-addon'
+import { getHandlers } from '../src/mocks/msw/handlers'
+import { MOCK_REPO_ORIGIN } from '../src/lib/containers/StackChanger'
 
 globalThis.Buffer = Buffer
 globalThis.process = {
@@ -29,11 +33,21 @@ export const parameters = {
       date: /Date$/,
     },
   },
+  msw: {
+    handlers: [
+      // Only return mocked data when making requests to our mock stack
+      ...getHandlers(MOCK_REPO_ORIGIN),
+    ],
+  },
 }
 
-import { StorybookComponentWrapper } from '../src/lib/containers/StorybookComponentWrapper'
+// Initialize MSW
+initialize({
+  onUnhandledRequest: 'bypass',
+})
 
 export const decorators = [
+  mswDecorator,
   Story => (
     <StorybookComponentWrapper>
       <Story />

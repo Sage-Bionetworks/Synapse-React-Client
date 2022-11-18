@@ -26,14 +26,12 @@ import {
 } from '../../user/mock_user_profile'
 import { SynapseApiResponse } from '../handlers'
 
-export const userProfileHandlers = [
+export const getUserProfileHandlers = (backendOrigin: string) => [
   /**
    * Get User Profile by ID
    */
   rest.get(
-    `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${USER_PROFILE_ID(
-      ':id',
-    )}`,
+    `${backendOrigin}${USER_PROFILE_ID(':id')}`,
     async (req, res, ctx) => {
       let status = 404
       let response: SynapseApiResponse<UserProfile> = {
@@ -53,23 +51,18 @@ export const userProfileHandlers = [
   /**
    * Get the caller's user profile
    */
-  rest.get(
-    `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${USER_PROFILE}`,
-    async (req, res, ctx) => {
-      // default return a mock UserProfile.
-      const response: UserProfile = mockUserProfileData
-      const status = 200
-      return res(ctx.status(status), ctx.json(response))
-    },
-  ),
+  rest.get(`${backendOrigin}${USER_PROFILE}`, async (req, res, ctx) => {
+    // default return a mock UserProfile.
+    const response: UserProfile = mockUserProfileData
+    const status = 200
+    return res(ctx.status(status), ctx.json(response))
+  }),
 
   /**
    * Get a user bundle by ID
    */
   rest.get(
-    `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${USER_ID_BUNDLE(
-      ':id',
-    )}`,
+    `${backendOrigin}${USER_ID_BUNDLE(':id')}`,
     async (req, res, ctx) => {
       let status = 404
       let response: SynapseApiResponse<UserBundle> = {
@@ -89,20 +82,15 @@ export const userProfileHandlers = [
   /**
    * Get the caller's favorites
    */
-  rest.get(
-    `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${FAVORITES}`,
-    async (req, res, ctx) => {
-      return res(ctx.status(200), ctx.json(mockPaginatedEntityHeaders))
-    },
-  ),
+  rest.get(`${backendOrigin}${FAVORITES}`, async (req, res, ctx) => {
+    return res(ctx.status(200), ctx.json(mockPaginatedEntityHeaders))
+  }),
 
   /**
    * Get a batch of user group headers
    */
   rest.get(
-    `${getEndpoint(
-      BackendDestinationEnum.REPO_ENDPOINT,
-    )}${USER_GROUP_HEADERS_BATCH}`,
+    `${backendOrigin}${USER_GROUP_HEADERS_BATCH}`,
     async (req, res, ctx) => {
       const ids = req.url.searchParams.get('ids')!.split(',')
       const responsePage: UserGroupHeaderResponsePage = {
@@ -117,28 +105,23 @@ export const userProfileHandlers = [
   /**
    * Get userGroupHeaders by prefix
    */
-  rest.get(
-    `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${USER_GROUP_HEADERS}`,
-    async (req, res, ctx) => {
-      const prefix = req.url.searchParams.get('prefix')
-      const responsePage: UserGroupHeaderResponsePage = {
-        children: mockUserData
-          .filter(userData =>
-            userData.userGroupHeader.userName.startsWith(prefix ?? ''),
-          )
-          .map(userData => userData.userGroupHeader),
-      }
-      return res(ctx.status(200), ctx.json(responsePage))
-    },
-  ),
+  rest.get(`${backendOrigin}${USER_GROUP_HEADERS}`, async (req, res, ctx) => {
+    const prefix = req.url.searchParams.get('prefix')
+    const responsePage: UserGroupHeaderResponsePage = {
+      children: mockUserData
+        .filter(userData =>
+          userData.userGroupHeader.userName.startsWith(prefix ?? ''),
+        )
+        .map(userData => userData.userGroupHeader),
+    }
+    return res(ctx.status(200), ctx.json(responsePage))
+  }),
 
   /**
    * Return a 404 when fetching the profile image
    */
   rest.get(
-    `${getEndpoint(
-      BackendDestinationEnum.REPO_ENDPOINT,
-    )}${PROFILE_IMAGE_PREVIEW(':userId')}`,
+    `${backendOrigin}${PROFILE_IMAGE_PREVIEW(':userId')}`,
     async (req, res, ctx) => {
       return res(
         ctx.status(404),
@@ -147,13 +130,14 @@ export const userProfileHandlers = [
     },
   ),
 
-  rest.get(
-    `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${NOTIFICATION_EMAIL}`,
-    async (req, res, ctx) => {
-      return res(
-        ctx.status(200),
-        ctx.json({ email: mockUserBundle.userProfile?.email }),
-      )
-    },
-  ),
+  rest.get(`${backendOrigin}${NOTIFICATION_EMAIL}`, async (req, res, ctx) => {
+    return res(
+      ctx.status(200),
+      ctx.json({ email: mockUserBundle.userProfile?.email }),
+    )
+  }),
 ]
+
+export const userProfileHandlers = getUserProfileHandlers(
+  getEndpoint(BackendDestinationEnum.REPO_ENDPOINT),
+)
