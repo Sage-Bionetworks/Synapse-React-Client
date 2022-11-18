@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Dayjs } from 'dayjs'
+import dayjs, { Dayjs } from 'dayjs'
 import { Form, InputGroup } from 'react-bootstrap'
 import 'react-datetime/css/react-datetime.css'
 import { uniqueId } from 'lodash-es'
@@ -7,6 +7,13 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { TextField } from '@mui/material'
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker'
+import utc from 'dayjs/plugin/utc'
+import timezone from 'dayjs/plugin/timezone'
+import advancedFormat from 'dayjs/plugin/advancedFormat'
+
+dayjs.extend(utc)
+dayjs.extend(timezone)
+dayjs.extend(advancedFormat)
 
 export type CalendarWithIconFormGroupProps = {
   value: string | Dayjs | null
@@ -26,6 +33,7 @@ export const CalendarWithIconFormGroup: React.FunctionComponent<
         {label && <label htmlFor={id}>{label}</label>}
         <InputGroup>
           <DateTimePicker
+            className="datetime-picker"
             value={value}
             disabled={disabled}
             onChange={setterCallback}
@@ -33,12 +41,14 @@ export const CalendarWithIconFormGroup: React.FunctionComponent<
               <TextField
                 disabled={disabled}
                 id={id}
-                className="form-control calendar-date-time-input rounded-right"
                 variant="outlined"
                 {...params}
               />
             )}
           />
+          <span style={{ margin: 'auto 8px' }}>
+            {dayjs().tz(dayjs.tz.guess()).format('z')}
+          </span>
         </InputGroup>
       </LocalizationProvider>
     </Form.Group>

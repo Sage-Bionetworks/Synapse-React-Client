@@ -21,12 +21,14 @@
       }
     }
   }
-  .css-12wm9o4-MuiInputBase-root-MuiOutlinedInput-root {
-    margin-top: 0;
-    padding: 8px;
+  .datetime-picker {
+    padding: 7.5px;
     border: 1px #dcdcdc solid;
     border-radius: 2px;
-    .css-ihdtdm {
+    .MuiOutlinedInput-root {
+      margin-top: 0;
+    }
+    legend {
       width: 0;
     }
   }

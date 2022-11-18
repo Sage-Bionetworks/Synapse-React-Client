@@ -26,7 +26,7 @@ export const SubmissionInfoCard: React.FunctionComponent<
           <strong>
             {' '}
             Intended Data Use Statement &#40;accepted on{' '}
-            {formatDate(dayjs(info.modifiedOn, 'M/D/YYYY'))}&#41;:
+            {formatDate(dayjs(info.modifiedOn), 'M/D/YYYY')}&#41;:
           </strong>
           <div>{info.intendedDataUseStatement}</div>
           {info.accessorChanges &&
