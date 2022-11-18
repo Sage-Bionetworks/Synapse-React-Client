@@ -48,6 +48,7 @@ import IDUReport from './containers/IDUReport'
 import HtmlPreview from './containers/FilePreview/HtmlPreview/HtmlPreview'
 import EntityPageBreadcrumbs from './containers/entity/page/breadcrumbs/EntityPageBreadcrumbs'
 import { SynapseClient, SynapseConstants } from './utils'
+import Palettes from './utils/theme/palette/Palettes'
 import {
   SynapseContextConsumer,
   SynapseContextProvider,
@@ -125,4 +126,5 @@ export {
   SynapseConstants,
   SynapseClient,
   SynapseContext,
+  Palettes,
 }

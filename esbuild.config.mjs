@@ -30,7 +30,6 @@ const globals = {
   markdownitInlineComments: 'markdownitInlineComments',
   markdownitBr: 'markdownitBr',
   markdownitMath: 'markdownitMath',
-  'prop-types': 'PropTypes',
   'universal-cookie': 'UniversalCookie',
 }
 
@@ -57,7 +56,6 @@ const esBuildOptions = {
   external: [
     '^react$', // Use regex ^$ because we do want to bundle 'react/jsx-transform'
     'react-dom',
-    'prop-types',
     'react-router',
     'react-router-dom',
     'react-measure',

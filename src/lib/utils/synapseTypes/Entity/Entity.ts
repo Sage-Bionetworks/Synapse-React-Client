@@ -1,6 +1,7 @@
 import { FILE_ENTITY_CONCRETE_TYPE_VALUE } from './FileEntity'
 import { LINK_CONCRETE_TYPE } from './Link'
 import { TABLE_CONCRETE_TYPE_VALUES } from '../Table/Table'
+import { DOCKER_REPOSITORY_CONCRETE_TYPE } from '../docker/DockerRepository'
 
 // https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/Entity.html
 
@@ -26,11 +27,6 @@ export interface Entity {
   /** Indicates which implementation of Entity this object represents. */
   readonly concreteType: ENTITY_CONCRETE_TYPE
 }
-
-export const DOCKER_REPOSITORY_CONCRETE_TYPE_VALUE =
-  'org.sagebionetworks.repo.model.docker.DockerRepository'
-export type DOCKER_REPOSITORY_CONCRETE_TYPE =
-  typeof DOCKER_REPOSITORY_CONCRETE_TYPE_VALUE
 
 export const FOLDER_CONCRETE_TYPE_VALUE =
   'org.sagebionetworks.repo.model.Folder'
