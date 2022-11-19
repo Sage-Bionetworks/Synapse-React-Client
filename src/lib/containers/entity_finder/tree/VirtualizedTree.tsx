@@ -1,7 +1,7 @@
 import { Skeleton } from '@mui/material'
 import { Map } from 'immutable'
 import { cloneDeep } from 'lodash-es'
-import moment from 'moment'
+import dayjs from 'dayjs'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useInView } from 'react-intersection-observer'
 import AutoSizer from 'react-virtualized-auto-sizer'
@@ -302,7 +302,7 @@ export function Node(
             <>
               <br />
               <b>Modified On: </b>
-              {formatDate(moment(node.modifiedOn))}
+              {formatDate(dayjs(node.modifiedOn))}
             </>
           )}
         </Typography>

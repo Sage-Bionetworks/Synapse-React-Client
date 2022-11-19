@@ -1,5 +1,5 @@
 import { upperFirst } from 'lodash-es'
-import moment from 'moment'
+import dayjs from 'dayjs'
 import React, { useMemo, useState } from 'react'
 import { Button, Table } from 'react-bootstrap'
 import { Link } from 'react-router-dom'
@@ -152,7 +152,7 @@ export const AccessRequestSubmissionTable: React.FunctionComponent<
                     ))
                   )}
                 </td>
-                <td>{formatDate(moment(item.createdOn))}</td>
+                <td>{formatDate(dayjs(item.createdOn))}</td>
               </tr>
             )
           })}
@@ -171,7 +171,12 @@ export const AccessRequestSubmissionTable: React.FunctionComponent<
       {!hasNextPage ? (
         ''
       ) : (
-        <Button variant="outline" onClick={() => fetchNextPage()}>
+        <Button
+          variant="outline"
+          onClick={() => {
+            fetchNextPage()
+          }}
+        >
           Show More
         </Button>
       )}

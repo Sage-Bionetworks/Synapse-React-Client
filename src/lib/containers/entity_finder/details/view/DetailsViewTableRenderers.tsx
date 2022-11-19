@@ -4,7 +4,7 @@ import BaseTable, {
   ColumnShape,
   SortOrder,
 } from '@sage-bionetworks/react-base-table'
-import moment from 'moment'
+import dayjs from 'dayjs'
 import React, { SyntheticEvent, useEffect } from 'react'
 import { Form } from 'react-bootstrap'
 import SortIcon from '../../../../assets/icons/Sort'
@@ -109,7 +109,7 @@ export function BadgeIconsRenderer(props: EntityIdAndVersionRendererProps) {
 }
 
 export function DateRenderer({ cellData }: { cellData?: string }) {
-  return <>{(cellData && formatDate(moment(cellData))) ?? <></>}</>
+  return <>{(cellData && formatDate(dayjs(cellData))) ?? <></>}</>
 }
 
 /**

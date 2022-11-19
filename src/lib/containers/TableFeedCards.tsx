@@ -1,6 +1,6 @@
 import { SynapseConstants, SynapseClient } from '../utils/'
 import React, { useEffect, useState } from 'react'
-import moment from 'moment'
+import dayjs from 'dayjs'
 import {
   QueryBundleRequest,
   RowSet,
@@ -96,7 +96,7 @@ const TableFeedCards: React.FunctionComponent<TableFeedCardsProps> = ({
                   </div>
                 )}
                 <p className="FeedItemDate">
-                  {moment(new Date(parseInt(dateStringTimestamp))).format(
+                  {dayjs(new Date(parseInt(dateStringTimestamp))).format(
                     'MMMM YYYY',
                   )}
                 </p>

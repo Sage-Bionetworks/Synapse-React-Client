@@ -1,6 +1,6 @@
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import moment from 'moment'
+import dayjs from 'dayjs'
 import React from 'react'
 import { OAuthManagement } from '../../../../lib/containers/oauth/OAuthManagement'
 import { createWrapper } from '../../../../lib/testutils/TestingLibraryUtils'
@@ -89,10 +89,10 @@ describe('oAuthManagement tests', () => {
 
     // Check first row of data
     screen.findAllByText(
-      formatDate(moment(mockClientList1.results[0].createdOn)),
+      formatDate(dayjs(mockClientList1.results[0].createdOn)),
     )
     screen.findAllByText(
-      formatDate(moment(mockClientList1.results[0].modifiedOn)),
+      formatDate(dayjs(mockClientList1.results[0].modifiedOn)),
     )
     screen.findByText(mockClientList1.results[0].client_name)
 

@@ -10,7 +10,7 @@ import {
   FormGroup,
   Row,
 } from 'react-bootstrap'
-import moment, { Moment } from 'moment'
+import dayjs, { Dayjs } from 'dayjs'
 import { CalendarWithIconFormGroup } from './CalendarWithIconFormGroup'
 import { EvaluationRoundLimitOptionsList } from './round_limits/EvaluationRoundLimitOptionsList'
 import { useListState } from '../../utils/hooks/useListState'
@@ -29,6 +29,10 @@ import { EvaluationRoundEditorDropdown } from './EvaluationRoundEditorDropdown'
 import { ErrorBanner } from '../ErrorBanner'
 import { useSynapseContext } from '../../utils/SynapseContext'
 import IconSvg, { IconSvgProps } from '../IconSvg'
+import utc from 'dayjs/plugin/utc'
+import isSameOrAfter from 'dayjs/plugin/isSameOrAfter'
+dayjs.extend(utc)
+dayjs.extend(isSameOrAfter)
 
 export type EvaluationRoundEditorProps = {
   evaluationRoundInput: EvaluationRoundInput
@@ -36,19 +40,19 @@ export type EvaluationRoundEditorProps = {
   onSave: (evaluationRound: EvaluationRoundInput) => void
 }
 
-const disallowCalendarDateBefore = (date: Moment) => {
+const disallowCalendarDateBefore = (date: Dayjs) => {
   const startOfDay = date.startOf('day')
-  return (currentDate: Moment) => currentDate.isSameOrAfter(startOfDay)
+  return (currentDate: Dayjs) => currentDate.isSameOrAfter(startOfDay)
 }
 
 const determineRoundStatus = (
-  roundStart: Moment | string,
-  roundEnd: Moment | string,
+  roundStart: Dayjs | string,
+  roundEnd: Dayjs | string,
 ) => {
   let className: string
   let iconProps: IconSvgProps | undefined
   let status: string
-  const now = moment()
+  const now = dayjs()
   // based off of start/end datetime from props so that users making
   // unsaved changes to the start/end dates do not change the status
   if (now.isSameOrAfter(roundStart)) {
@@ -79,8 +83,8 @@ const determineRoundStatus = (
 
 const convertInputsToEvaluationRound = (
   evaluationRoundInputProp: EvaluationRoundInput,
-  startDate: string | Moment,
-  endDate: string | Moment,
+  startDate: string | Dayjs | null,
+  endDate: string | Dayjs | null,
   totalSubmissionLimit: string,
   advancedLimits: EvaluationRoundLimitInput[],
 ): EvaluationRound => {
@@ -112,8 +116,8 @@ const convertInputsToEvaluationRound = (
     id: evaluationRoundInputProp.id,
     etag: evaluationRoundInputProp.etag,
     evaluationId: evaluationRoundInputProp.evaluationId,
-    roundStart: moment.utc(startDate).toJSON(),
-    roundEnd: moment.utc(endDate).toJSON(),
+    roundStart: dayjs.utc(startDate).toJSON(),
+    roundEnd: dayjs.utc(endDate).toJSON(),
     limits: limits,
   }
 }
@@ -131,11 +135,11 @@ export const EvaluationRoundEditor: React.FunctionComponent<
     }
   }, [error])
 
-  const [startDate, setStartDate] = useState<string | Moment>(
-    moment(evaluationRoundInput.roundStart),
+  const [startDate, setStartDate] = useState<string | Dayjs | null>(
+    dayjs(evaluationRoundInput.roundStart),
   )
-  const [endDate, setEndDate] = useState<string | Moment>(
-    moment(evaluationRoundInput.roundEnd),
+  const [endDate, setEndDate] = useState<string | Dayjs | null>(
+    dayjs(evaluationRoundInput.roundEnd),
   )
 
   const [totalSubmissionLimit, setTotalSubmissionLimit] = useState<string>(
@@ -216,7 +220,7 @@ export const EvaluationRoundEditor: React.FunctionComponent<
     }
   }
 
-  const disallowDatesBeforeNow = disallowCalendarDateBefore(moment())
+  const disallowDatesBeforeNow = disallowCalendarDateBefore(dayjs())
 
   // https://react-bootstrap.github.io/components/forms/#forms-validation-native
   return (
@@ -263,7 +267,7 @@ export const EvaluationRoundEditor: React.FunctionComponent<
                   setterCallback={setStartDate}
                   label="Round Start"
                   isValidDate={disallowDatesBeforeNow}
-                  disabled={moment().isSameOrAfter(
+                  disabled={dayjs().isSameOrAfter(
                     evaluationRoundInput.roundStart,
                   )}
                 />

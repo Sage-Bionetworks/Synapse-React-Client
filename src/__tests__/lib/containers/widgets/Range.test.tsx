@@ -1,6 +1,6 @@
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import moment from 'moment'
+import dayjs from 'dayjs'
 import * as React from 'react'
 import { Range, RangeProps } from '../../../../lib/containers/widgets/Range'
 
@@ -75,8 +75,8 @@ describe('Range input test', () => {
       max: new Date(2019, 9, 3).toISOString(),
     }
     const updatedValues = {
-      min: moment(new Date(2019, 7, 1)).format('YYYY-MM-DD'),
-      max: moment(new Date(2019, 7, 3)).format('YYYY-MM-DD'),
+      min: dayjs(new Date(2019, 7, 1)).format('YYYY-MM-DD'),
+      max: dayjs(new Date(2019, 7, 3)).format('YYYY-MM-DD'),
     }
     it('should render with correct checked state', () => {
       renderComponent({ type: 'date', initialValues: initialValues })

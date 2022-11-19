@@ -1,4 +1,4 @@
-import moment from 'moment'
+import dayjs from 'dayjs'
 import React, { useMemo } from 'react'
 import { formatDate } from '../../utils/functions/DateFormatter'
 import { useGetUserProfile } from '../../utils/hooks/SynapseAPI'
@@ -9,7 +9,7 @@ import { UserCardSmall } from '../UserCardSmall'
 
 export const ActivityNodeLabel = (data: Activity) => {
   const { data: userProfile } = useGetUserProfile(data.modifiedBy)
-  const friendlyModifiedOn = formatDate(moment(data.modifiedOn))
+  const friendlyModifiedOn = formatDate(dayjs(data.modifiedOn))
   const { name, description } = data
   return useMemo(
     () => (

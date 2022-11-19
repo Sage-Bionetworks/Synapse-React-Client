@@ -1,4 +1,4 @@
-import moment from 'moment'
+import dayjs from 'dayjs'
 import React from 'react'
 import { formatDate } from '../../utils/functions/DateFormatter'
 import { Typography } from '@mui/material'
@@ -17,7 +17,7 @@ export default function LastUpdatedOn() {
       }}
     >
       <Typography variant="body1Italic">
-        Last updated on {formatDate(moment(data.lastUpdatedOn))}
+        Last updated on {formatDate(dayjs(data.lastUpdatedOn))}
       </Typography>
     </div>
   ) : (

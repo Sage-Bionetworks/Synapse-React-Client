@@ -9,7 +9,7 @@ import { QueryClient } from 'react-query'
 import { SynapseClient } from '../utils'
 import { SynapseToastContainer } from './ToastMessage'
 import { ReactQueryDevtools } from 'react-query/devtools'
-import moment from 'moment'
+import dayjs from 'dayjs'
 import {
   detectSSOCode,
   getAccessTokenFromCookie,
@@ -41,7 +41,7 @@ export async function sessionChangeHandler() {
   let date
   if (accessToken) {
     getAuthenticatedOn(accessToken).then(authenticatedOn => {
-      date = moment(authenticatedOn.authenticatedOn).format('L LT')
+      date = dayjs(authenticatedOn.authenticatedOn).format('L LT')
     })
   }
   return { accessToken, profile, authenticatedOn: date }

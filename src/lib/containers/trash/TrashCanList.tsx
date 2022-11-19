@@ -1,4 +1,4 @@
-import moment from 'moment'
+import dayjs from 'dayjs'
 import React, { useEffect, useRef, useState } from 'react'
 import { Alert, Button, Table } from 'react-bootstrap'
 import { formatDate } from '../../utils/functions/DateFormatter'
@@ -45,7 +45,7 @@ function TrashCanListItem(props: TrashCanListItemProps) {
           {item.originalParentId})
         </>
       </td>
-      <td>{formatDate(moment(item.deletedOn))}</td>
+      <td>{formatDate(dayjs(item.deletedOn))}</td>
       <td>
         <Button size="sm" variant="outline" onClick={onRestore}>
           Restore

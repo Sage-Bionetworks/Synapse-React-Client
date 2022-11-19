@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import moment from 'moment'
+import dayjs from 'dayjs'
 
 type ControlType = 'number' | 'date'
 
@@ -25,8 +25,8 @@ export const Range: React.FunctionComponent<RangeProps> = (
     props.type === 'number' && props.initialValues
       ? props.initialValues
       : (props.initialValues && {
-          min: moment(props.initialValues.min).format('YYYY-MM-DD'),
-          max: moment(props.initialValues.max).format('YYYY-MM-DD'),
+          min: dayjs(props.initialValues.min).format('YYYY-MM-DD'),
+          max: dayjs(props.initialValues.max).format('YYYY-MM-DD'),
         }) || {
           min: undefined,
           max: undefined,
