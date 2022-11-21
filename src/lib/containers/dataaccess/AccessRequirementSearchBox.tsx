@@ -122,6 +122,12 @@ export default function AccessRequirementSearchBox(
       styles={{
         // Bootstrap's form-control class overrides the display value, manually set to flex (the default without Bootstrap)
         control: styles => ({ ...styles, display: 'flex !important' }),
+        input: provided => ({
+          ...provided,
+          input: {
+            gridArea: '1 / 2 / 4 / 4 !important',
+          },
+        }),
       }}
       components={customSelectComponents}
       loadOptions={loadOptions}
