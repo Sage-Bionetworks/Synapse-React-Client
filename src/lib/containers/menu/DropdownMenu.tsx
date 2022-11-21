@@ -25,6 +25,10 @@ export type DropdownMenuItem = {
   text: string
   /* The icon to show for this item in the menu. */
   icon?: Icon
+  /* A function invoked upon clicking the item, assuming `disabled` is falsy */
+  onClick?: (e: React.MouseEvent) => void
+  /* A link that the item should point to. */
+  href?: string
   /* The optional tooltipText to show for this item. Compatible with the `disabled` prop. */
   tooltipText?: string
   /* Whether the item should be disabled from selection. */
@@ -33,16 +37,7 @@ export type DropdownMenuItem = {
   textSx?: SxProps
   /* Additional MUI SxProps to pass to the icon component */
   iconSx?: SxProps
-} & (
-  | {
-      /* A function invoked upon clicking the item, assuming `disabled` is falsy */
-      onClick: (e: React.MouseEvent) => void
-    }
-  | {
-      /* A link that the item should point to. */
-      href: string
-    }
-)
+}
 
 export type DropdownMenuProps = {
   /* Groups of menu items. Each group will be split with a divider. See DropdownMenuItem for per-item configuration */
