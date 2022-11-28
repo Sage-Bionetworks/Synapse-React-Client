@@ -1,1 +1,0 @@
-import{_ as s}from"./styled.b8cd841c.js";import{r as e,j as c}from"./jsx-runtime.0721b30f.js";import{S as o}from"./TransitionGroupContext.536780f6.js";function u(t,m){function r(n,a){return c(o,s({"data-testid":`${m}Icon`,ref:a},n,{children:t}))}return r.muiName=o.muiName,e.exports.memo(e.exports.forwardRef(r))}export{u as c};
