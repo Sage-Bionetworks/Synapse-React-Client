@@ -1,5 +1,5 @@
 import React from 'react'
-import { IconButton, Tooltip } from '@mui/material'
+import { Box, IconButton, Tooltip } from '@mui/material'
 import IconSvg, { Icon } from '../IconSvg'
 import { DropdownMenu, DropdownMenuProps } from './DropdownMenu'
 
@@ -34,7 +34,7 @@ export function ComplexMenu(props: ComplexMenuProps) {
   const { iconButtons = [], dropdownMenus = [] } = props
 
   return (
-    <div style={{ display: 'flex', gap: '10px' }}>
+    <Box sx={{ display: 'flex', gap: '10px' }}>
       {iconButtons.map(iconButton => {
         return (
           <Tooltip key={iconButton.tooltipText} title={iconButton.tooltipText}>
@@ -47,6 +47,6 @@ export function ComplexMenu(props: ComplexMenuProps) {
       {dropdownMenus.map((menuProps, index) => {
         return <DropdownMenu key={index} {...menuProps} />
       })}
-    </div>
+    </Box>
   )
 }
