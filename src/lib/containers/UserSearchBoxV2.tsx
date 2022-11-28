@@ -152,6 +152,13 @@ const UserSearchBoxV2: React.FC<UserSearchBoxProps> = props => {
       styles={{
         // Bootstrap's form-control class overrides the display value, manually set to flex (the default without Bootstrap)
         control: styles => ({ ...styles, display: 'flex !important' }),
+        input: provided => ({
+          ...provided,
+          // SWC-6327 - Adjust the input style so a right-click focuses on the input field
+          input: {
+            gridArea: '1 / 2 / 4 / 4 !important',
+          },
+        }),
       }}
       components={customSelectComponents}
       onChange={option => {
