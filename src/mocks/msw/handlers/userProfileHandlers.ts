@@ -25,6 +25,7 @@ import {
   mockUserProfileData,
 } from '../../user/mock_user_profile'
 import { SynapseApiResponse } from '../handlers'
+import { UserProfileList } from '../../../lib/utils/SynapseClient'
 
 export const getUserProfileHandlers = (backendOrigin: string) => [
   /**
@@ -101,6 +102,22 @@ export const getUserProfileHandlers = (backendOrigin: string) => [
       return res(ctx.status(200), ctx.json(responsePage))
     },
   ),
+
+  /**
+   * Get a batch of user profiles
+   */
+  rest.post(`${backendOrigin}${USER_PROFILE}`, async (req, res, ctx) => {
+    const requestedList = (await req.json()).list as string[]
+    const responsePage: UserProfileList = {
+      list: mockUserData
+        .filter(userData => requestedList.includes(userData.id.toString()))
+        .map(userData => userData.userProfile)
+        .filter(
+          (userProfile): userProfile is UserProfile => userProfile != null,
+        ),
+    }
+    return res(ctx.status(200), ctx.json(responsePage))
+  }),
 
   /**
    * Get userGroupHeaders by prefix
