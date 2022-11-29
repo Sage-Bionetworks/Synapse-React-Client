@@ -2,7 +2,11 @@ import React from 'react'
 import { ComponentStory, ComponentMeta } from '@storybook/react'
 
 import QueryWrapperPlotNav from './QueryWrapperPlotNav'
-import { EXPERIMENTAL_TOOL, GENERIC_CARD } from '../../utils/SynapseConstants'
+import {
+  EXPERIMENTAL_TOOL,
+  GENERIC_CARD,
+  MEDIUM_USER_CARD,
+} from '../../utils/SynapseConstants'
 import { Query } from '../../utils/synapseTypes'
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
@@ -202,4 +206,17 @@ DatasetCollection.args = {
   sqlOperator: '=',
   hideSqlEditorControl: false,
   shouldDeepLink: false,
+}
+
+export const People = Template.bind({})
+People.args = {
+  sql: 'SELECT * FROM syn13897207',
+
+  name: 'People Demo',
+  sqlOperator: '=',
+  hideSqlEditorControl: false,
+  shouldDeepLink: false,
+  cardConfiguration: {
+    type: MEDIUM_USER_CARD,
+  },
 }
