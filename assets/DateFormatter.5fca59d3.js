@@ -1,1 +1,0 @@
-import{o as m}from"./index.d78db713.js";import{d as o}from"./dayjs.min.4f8336ad.js";import{u as e}from"./utc.762ba311.js";o.extend(e);function i(r,t="M/D/YYYY h:mm A"){return m()?o.utc(r).format(t)+" UTC":o(r).format(t)}export{i as f};
