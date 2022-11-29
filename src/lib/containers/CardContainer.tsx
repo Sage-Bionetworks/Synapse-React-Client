@@ -111,8 +111,7 @@ export const CardContainer = (props: CardContainerProps) => {
       )
     }
     const listIds = data.queryResult!.queryResults.rows.map(
-      el =>
-        el.values.filter((id): id is string => id !== null)[userIdColumnIndex],
+      el => el.values[userIdColumnIndex],
     )
     cards = <UserCardList data={data} list={listIds} size={MEDIUM_USER_CARD} />
   } else {

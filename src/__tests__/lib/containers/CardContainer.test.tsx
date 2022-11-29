@@ -10,6 +10,7 @@ import {
   QueryVisualizationContextType,
 } from '../../../lib/containers/QueryVisualizationWrapper'
 import {
+  InfiniteQueryContextType,
   QueryContextProvider,
   QueryContextType,
 } from '../../../lib/containers/QueryContext'
@@ -19,6 +20,10 @@ import {
   QueryResultBundle,
 } from '../../../lib/utils/synapseTypes/'
 import syn16787123Json from '../../../mocks/query/syn16787123'
+import { MEDIUM_USER_CARD } from '../../../lib/utils/SynapseConstants'
+import mockUserCardTableQueryResultBundle from '../../../mocks/query/mockUserCardTableQueryResultBundle'
+import { server } from '../../../mocks/msw/server'
+import { mockUserProfileData } from '../../../mocks/user/mock_user_profile'
 
 const renderComponent = (
   props: CardContainerProps,
@@ -42,7 +47,11 @@ const renderComponent = (
 }
 
 describe('CardContainer tests', () => {
-  // for our purposes its okay to return the same data again
+  beforeAll(() => server.listen())
+  afterEach(() => server.restoreHandlers())
+  afterAll(() => server.close())
+
+  // for our purposes, it's okay to return the same data again
   const getNextPageOfData = jest.fn(() => {})
   const sql = 'SELECT * FROM syn16787123'
   const lastQueryRequest: QueryBundleRequest = {
@@ -70,7 +79,7 @@ describe('CardContainer tests', () => {
     type,
   }
 
-  const queryContext: Partial<QueryContextType> = {
+  const queryContext: Partial<InfiniteQueryContextType> = {
     data,
     hasNextPage: true,
     getLastQueryRequest: getLastQueryRequest,
@@ -116,5 +125,21 @@ describe('CardContainer tests', () => {
     expect(
       screen.queryByRole('button', { name: 'View More' }),
     ).not.toBeInTheDocument()
+  })
+
+  it('Does not filter null IDs when rendering user cards (PORTALS-2430)', async () => {
+    renderComponent(
+      { ...props, type: MEDIUM_USER_CARD },
+      { ...queryContext, data: mockUserCardTableQueryResultBundle },
+    )
+
+    // Since the first user in the mock data has a user ID, their profile information will be fetched, ignoring the table data.
+    await screen.findByText(
+      mockUserProfileData.firstName + ' ' + mockUserProfileData.lastName,
+    )
+    // The second user has a null ID, so their profile information will be pulled from the table data.
+    await screen.findByText('FakeFirst FakeLast')
+    // Verify that the first user's profile information sourced from the table is not rendered.
+    expect(screen.queryByText('John Doe')).not.toBeInTheDocument()
   })
 })
