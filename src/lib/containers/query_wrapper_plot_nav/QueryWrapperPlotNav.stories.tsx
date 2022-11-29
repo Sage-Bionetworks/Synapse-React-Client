@@ -220,16 +220,3 @@ People.args = {
     type: MEDIUM_USER_CARD,
   },
 }
-
-export const ColumnTypes = Template.bind({})
-ColumnTypes.args = {
-  sql: 'SELECT * FROM syn27370719',
-  name: 'Column types Demo',
-  sqlOperator: '=',
-  hideSqlEditorControl: false,
-  shouldDeepLink: false,
-  tableConfiguration: {
-    showAccessColumn: true,
-    showDownloadColumn: true,
-  },
-}
