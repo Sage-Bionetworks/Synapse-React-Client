@@ -4,17 +4,18 @@ import { useGetUserGroupHeaderWithAlias } from '../../../utils/hooks/SynapseAPI'
 import TeamBadge from '../../TeamBadge'
 import UserCard from '../../UserCard'
 
-export type MarkdownUserBadgeProps = {
+export type MarkdownUserOrTeamBadgeProps = {
   alias: string
 }
 
-export default function MarkdownUserBadge(props: MarkdownUserBadgeProps) {
+export default function MarkdownUserOrTeamBadge(
+  props: MarkdownUserOrTeamBadgeProps,
+) {
   const { alias } = props
   const { data: userGroupheader } = useGetUserGroupHeaderWithAlias([alias])
 
-  return (
-    userGroupheader &&
-    (userGroupheader[0].isIndividual ? (
+  return userGroupheader ? (
+    userGroupheader[0].isIndividual ? (
       <UserCard
         ownerId={userGroupheader[0].ownerId}
         size={SynapseConstants.SMALL_USER_CARD}
@@ -24,6 +25,8 @@ export default function MarkdownUserBadge(props: MarkdownUserBadgeProps) {
         teamId={userGroupheader[0].ownerId}
         teamName={userGroupheader[0].userName}
       />
-    ))
+    )
+  ) : (
+    <></>
   )
 }
