@@ -146,6 +146,10 @@ export function DropdownMenu(props: DropdownMenuProps) {
         role={undefined}
         placement="bottom-end"
         transition
+        style={{
+          // Fixes issue where react-flow (provenance) would appear above the menu
+          zIndex: 10,
+        }}
       >
         {({ TransitionProps }) => (
           <Fade {...TransitionProps}>
