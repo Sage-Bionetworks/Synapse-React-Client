@@ -1,4 +1,6 @@
 import React from 'react'
+import dayjs from 'dayjs'
+import { formatDate } from '../../utils/functions/DateFormatter'
 import {
   isDataset,
   isDatasetCollection,
@@ -135,7 +137,7 @@ export const SynapseTableCell: React.FC<SynapseTableCellProps> = ({
           {jsonData.map((val: number, index: number) => {
             return (
               <span key={index} className={isBold}>
-                {new Date(val).toLocaleString()}
+                {formatDate(dayjs(Number(val)))}
                 {index !== jsonData.length - 1 ? ', ' : ''}
               </span>
             )
@@ -201,11 +203,7 @@ export const SynapseTableCell: React.FC<SynapseTableCellProps> = ({
     }
 
     case ColumnType.DATE:
-      return (
-        <p className={isBold}>
-          {new Date(Number(columnValue)).toLocaleString()}
-        </p>
-      )
+      return <p className={isBold}>{formatDate(dayjs(Number(columnValue)))}</p>
 
     case ColumnType.USERID:
       if (
