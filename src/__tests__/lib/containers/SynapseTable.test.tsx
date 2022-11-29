@@ -590,7 +590,7 @@ describe('SynapseTable tests', () => {
         },
       )
 
-      await screen.findByText(formatDate(dayjs(Number(val))))
+      await screen.findByText(formatDate(dayjs(Number(mockDateValue))))
     })
 
     it('renders a date list value', async () => {
