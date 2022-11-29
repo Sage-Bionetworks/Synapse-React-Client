@@ -947,10 +947,10 @@ export const getUserGroupHeaders = (
  * Get Users and Groups that match the given list of aliases.
  * https://repo-prod.prod.sagebase.org/repo/v1/userGroupHeaders/aliases
  */
-export const postUserGroupHeadersWithAlias = (list: string[]) => {
+export const postUserGroupHeadersWithAlias = (aliases: string[]) => {
   return doPost<UserGroupHeaderResponse>(
     `${USER_GROUP_HEADERS}/aliases`,
-    { list },
+    { list: aliases },
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
