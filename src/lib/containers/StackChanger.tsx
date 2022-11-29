@@ -6,7 +6,10 @@ import { getStyleguideStack } from '../utils/SynapseClient'
 import { STYLEGUIDE_STACK_LOCAL_STORAGE_KEY } from '../utils/SynapseConstants'
 import { RadioGroup } from './widgets/RadioGroup'
 
-type Stack = 'production' | 'staging' | 'development'
+type Stack = 'production' | 'staging' | 'development' | 'mock'
+export const MOCK_REPO_ORIGIN = 'https://mock-repo.sagebase.org'
+const MOCK_PORTAL_ORIGIN = 'https://mock-repo.sagebase.org/'
+
 const STACK_MAP: Record<Stack, EndpointObject> = {
   production: {
     REPO: 'https://repo-prod.prod.sagebase.org',
@@ -19,6 +22,10 @@ const STACK_MAP: Record<Stack, EndpointObject> = {
   development: {
     REPO: 'https://repo-dev.dev.sagebase.org',
     PORTAL: 'https://portal-dev.dev.sagebase.org/',
+  },
+  mock: {
+    REPO: MOCK_REPO_ORIGIN,
+    PORTAL: MOCK_PORTAL_ORIGIN,
   },
 }
 
@@ -69,6 +76,10 @@ const StackChanger: React.FC = () => {
         {
           label: 'Development (portal-dev.dev.sagebase.org)',
           value: 'development',
+        },
+        {
+          label: 'Mocked Data',
+          value: 'mock',
         },
       ]}
       onChange={(value: string) => setStack(value as Stack)}

@@ -1,6 +1,6 @@
 {
   "name": "synapse-react-client",
-  "version": "3.1.13",
+  "version": "3.1.14",
   "private": false,
   "main": "dist/index.js",
   "types": "./dist/index.d.ts",
@@ -21,6 +21,7 @@
     "@emotion/styled": "^11.10.5",
     "@mui/icons-material": "^5.10.9",
     "@mui/material": "^5.10.12",
+    "@mui/x-date-pickers": "^5.0.8",
     "@popperjs/core": "^2.10.2",
     "@react-google-maps/api": "^2.13.1",
     "@react-hook/resize-observer": "^1.2.6",
@@ -35,6 +36,7 @@
     "classnames": "^2.3.1",
     "column-resizer": "^1.3.5",
     "dagre": "^0.8.5",
+    "dayjs": "^1.11.6",
     "downshift": "^6.1.2",
     "gh-pages": "^3.2.3",
     "history": "^5.3.0",
@@ -55,8 +57,6 @@
     "markdown-it-synapse-heading": "^1.0.1",
     "markdown-it-synapse-math": "^3.0.4",
     "markdown-it-synapse-table": "^1.0.6",
-    "moment": "^2.29.4",
-    "moment-timezone": "^0.5.37",
     "plotly.js-basic-dist": "^2.11.1",
     "pluralize": "^8.0.0",
     "raf": "^3.4.1",
@@ -188,6 +188,7 @@
     "lint-staged": ">=10",
     "memfs": "^3.4.7",
     "msw": "^0.47.4",
+    "msw-storybook-addon": "^1.6.3",
     "path-browserify": "^1.0.1",
     "postcss-normalize": "^10.0.1",
     "prettier": "^2.6.2",
@@ -235,7 +236,8 @@
     "js-yaml": "3.13.1",
     "@types/react": "18.0.17",
     "@types/webpack": "^5.28.0",
-    "trim": "^0.0.3"
+    "trim": "^0.0.3",
+    "terser": "5.14.2"
   },
   "browser": {
     "timers": "timers-browserify"
@@ -255,5 +257,8 @@
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx,json,yml,scss,css,md}": "prettier --write"
+  },
+  "msw": {
+    "workerDirectory": "public"
   }
 }

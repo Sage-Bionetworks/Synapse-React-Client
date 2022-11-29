@@ -34,7 +34,7 @@ export const UserMentionModal: React.FC<UserMentionModalProps> = ({
           <UserSearchBoxV2
             placeholder="Search for a user or team name"
             onChange={onUserChange}
-            typeFilter={TYPE_FILTER.USERS_ONLY}
+            typeFilter={TYPE_FILTER.ALL}
           />
         </Modal.Body>
       </Modal>

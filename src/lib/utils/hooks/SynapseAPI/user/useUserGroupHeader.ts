@@ -48,3 +48,21 @@ export function useSearchUserGroupHeaders(
     options,
   )
 }
+
+export function useGetUserGroupHeaderWithAlias(
+  aliases: string[],
+  options?: UseQueryOptions<UserGroupHeader[], SynapseClientError>,
+) {
+  const queryKey = ['userGroupHeader', aliases]
+
+  return useQuery<UserGroupHeader[], SynapseClientError>(
+    queryKey,
+    async () => {
+      const response = await SynapseClient.postUserGroupHeadersWithAlias(
+        aliases,
+      )
+      return response.list
+    },
+    options,
+  )
+}

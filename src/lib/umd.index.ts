@@ -47,6 +47,7 @@ import ProvenanceGraph from './containers/provenance/ProvenanceGraph'
 import IDUReport from './containers/IDUReport'
 import HtmlPreview from './containers/FilePreview/HtmlPreview/HtmlPreview'
 import EntityPageBreadcrumbs from './containers/entity/page/breadcrumbs/EntityPageBreadcrumbs'
+import EntityActionMenu from './containers/entity/page/action_menu/EntityActionMenu'
 import { SynapseClient, SynapseConstants } from './utils'
 import Palettes from './utils/theme/palette/Palettes'
 import {
@@ -114,6 +115,7 @@ const SynapseComponents = {
   HtmlPreview,
   IDUReport,
   EntityPageBreadcrumbs,
+  EntityActionMenu,
 }
 
 // Include the version in the build

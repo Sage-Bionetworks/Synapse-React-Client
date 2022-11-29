@@ -1,6 +1,6 @@
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import moment from 'moment'
+import dayjs from 'dayjs'
 import React from 'react'
 import { QueryClient } from 'react-query'
 import {
@@ -157,10 +157,10 @@ describe('Access Requirement Table tests', () => {
     await screen.findAllByText(MOCK_PROJECT_NAME)
     await screen.findAllByText('@' + MOCK_USER_NAME)
     screen.getByRole('cell', {
-      name: formatDate(moment(mockSearchResults.results[0].modifiedOn)),
+      name: formatDate(dayjs(mockSearchResults.results[0].modifiedOn)),
     })
     screen.getByRole('cell', {
-      name: formatDate(moment(mockSearchResults.results[0].createdOn)),
+      name: formatDate(dayjs(mockSearchResults.results[0].createdOn)),
     })
   })
 

@@ -1,12 +1,17 @@
 import React, { useState, useEffect } from 'react'
 import { testDownloadSpeed } from '../../utils/functions/testDownloadSpeed'
 import { calculateFriendlyFileSize } from '../../utils/functions/calculateFriendlyFileSize'
-import moment from 'moment'
+import dayjs from 'dayjs'
 import { TOOLTIP_DELAY_SHOW } from '../table/SynapseTableConstants'
 import { useSynapseContext } from '../../utils/SynapseContext'
 import { SkeletonInlineBlock } from '../../assets/skeletons/SkeletonInlineBlock'
 import IconSvg from '../IconSvg'
 import { Tooltip } from '@mui/material'
+import duration from 'dayjs/plugin/duration'
+import relativeTime from 'dayjs/plugin/relativeTime'
+
+dayjs.extend(duration)
+dayjs.extend(relativeTime)
 
 export type DownloadDetailsProps = {
   numFiles: number
@@ -50,7 +55,7 @@ export default function DownloadDetails(props: DownloadDetailsProps) {
   const isTimeEstimateLoading = timeEstimateInSeconds === 0
   const friendlyTime = isTimeEstimateLoading
     ? ''
-    : moment.duration(timeEstimateInSeconds, 'seconds').humanize()
+    : dayjs.duration({ seconds: timeEstimateInSeconds }).humanize()
 
   const isZeroFiles = numFiles === 0
   const fileCountIconClass = isZeroFiles

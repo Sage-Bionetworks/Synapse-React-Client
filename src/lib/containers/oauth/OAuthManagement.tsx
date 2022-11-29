@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Button, Modal, Table } from 'react-bootstrap'
 import { formatDate } from '../../utils/functions/DateFormatter'
-import moment from 'moment'
+import dayjs from 'dayjs'
 import { useGetOAuthClientInfinite } from '../../utils/hooks/SynapseAPI'
 import { CreateOAuthModal } from './CreateOAuthClient'
 import { OAuthClient } from '../../utils/synapseTypes/OAuthClient'
@@ -72,8 +72,8 @@ export const OAuthManagement: React.FunctionComponent = () => {
           {oAuthClientList.map(item => {
             return (
               <tr key={item.client_id}>
-                <td>{formatDate(moment(item.createdOn))}</td>
-                <td>{formatDate(moment(item.modifiedOn))}</td>
+                <td>{formatDate(dayjs(item.createdOn))}</td>
+                <td>{formatDate(dayjs(item.modifiedOn))}</td>
                 <td>{item.client_id}</td>
                 <td>{item.client_name}</td>
                 <td>

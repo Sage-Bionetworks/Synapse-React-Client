@@ -9,12 +9,15 @@ const defaultMuiTheme: ThemeOptions = {
   palette: palette,
   components: {
     MuiLink: linkTheme,
-    MuiButton: {
+    MuiButtonBase: {
       defaultProps: {
         disableRipple: true,
       },
+    },
+    MuiButton: {
       styleOverrides: {
         root: {
+          padding: '6px 12px',
           borderRadius: '0px',
           textTransform: 'none',
           '&:hover': {
@@ -29,10 +32,10 @@ const defaultMuiTheme: ThemeOptions = {
         TransitionComponent: Fade,
       },
       styleOverrides: {
-        arrow: ({ ownerState, theme }) => ({
+        arrow: ({ theme }) => ({
           color: theme.palette.common.black,
         }),
-        tooltip: ({ ownerState, theme }) => ({
+        tooltip: ({ theme }) => ({
           fontSize: '14px',
           borderRadius: '2px',
           backgroundColor: theme.palette.common.black,

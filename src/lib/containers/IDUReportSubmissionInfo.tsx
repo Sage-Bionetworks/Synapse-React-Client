@@ -4,8 +4,9 @@ import { SubmissionInfo } from '../utils/synapseTypes/SubmissionInfo'
 import { SMALL_USER_CARD } from '../utils/SynapseConstants'
 import UserCard from './UserCard'
 import { formatDate } from '../utils/functions/DateFormatter'
-import moment from 'moment'
+import dayjs from 'dayjs'
 import { SkeletonTable } from '../assets/skeletons/SkeletonTable'
+import MarkdownSynapse from './markdown/MarkdownSynapse'
 
 export type SubmissionInfoCardProps = {
   info: SubmissionInfo
@@ -26,9 +27,9 @@ export const SubmissionInfoCard: React.FunctionComponent<
           <strong>
             {' '}
             Intended Data Use Statement &#40;accepted on{' '}
-            {formatDate(moment(info.modifiedOn), 'M/D/YYYY')}&#41;:
+            {formatDate(dayjs(info.modifiedOn), 'M/D/YYYY')}&#41;:
           </strong>
-          <div>{info.intendedDataUseStatement}</div>
+          <MarkdownSynapse markdown={info.intendedDataUseStatement} />
           {info.accessorChanges &&
             info.accessorChanges.map(accessorChange => (
               <div key={`${accessorChange.userId}-${accessorChange.type}`}>

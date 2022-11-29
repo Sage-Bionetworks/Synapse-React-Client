@@ -1,4 +1,4 @@
-import moment from 'moment'
+import dayjs from 'dayjs'
 import React from 'react'
 import { formatDate } from '../../../utils/functions/DateFormatter'
 
@@ -25,7 +25,7 @@ export const FeaturedToolCard: React.FunctionComponent<
         <span className="SRC-tag">{type}</span>
       </div>
       <div className="FeaturedToolCard__Date">
-        {formatDate(moment(parseInt(date)), 'MMMM YYYY')}
+        {formatDate(dayjs(parseInt(date)), 'MMMM YYYY')}
       </div>
       <div className="FeaturedToolCard__Name">{name}</div>
       <div className="FeaturedToolCard__Description">{description}</div>

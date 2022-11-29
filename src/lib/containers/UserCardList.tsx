@@ -1,17 +1,18 @@
-import * as React from 'react'
+import React from 'react'
 import { getUserProfileWithProfilePicAttached } from '../utils/functions/getUserData'
 import { UserProfileList } from '../utils/SynapseClient'
 import { MEDIUM_USER_CARD } from '../utils/SynapseConstants'
 import {
+  ColumnType,
   QueryResultBundle,
   UserProfile,
-  ColumnType,
 } from '../utils/synapseTypes/'
 import UserCard, { UserCardSize } from './UserCard'
 import { without } from 'lodash-es'
 
 export type UserCardListProps = {
-  list: string[]
+  /* The list of user IDs or null values to render. For null values, the card will be rendered with table data supplied by `firstName`, `lastName`, and `institution` columns supplied by the data prop.  */
+  list: (string | null)[]
   size?: UserCardSize
   // Data should not be needed, however, it gives the option to fill in a user profile with other column
   // fields. This is required specifically by AMP-AD Explore/People page
@@ -53,8 +54,10 @@ export default class UserCardList extends React.Component<
     }
   }
 
-  update(list: string[]) {
-    getUserProfileWithProfilePicAttached(list.filter(el => el))
+  update(list: (string | null)[]) {
+    getUserProfileWithProfilePicAttached(
+      list.filter((el): el is string => !!el),
+    )
       .then((data: UserProfileList) => {
         const newEntries = {}
         data.list.forEach(el => {
@@ -66,13 +69,13 @@ export default class UserCardList extends React.Component<
         })
       })
       .catch((err: string) => {
-        console.log('Error on batch call =', err)
+        console.error('Error on batch call =', err)
       })
   }
 
   /**
    * Given data this will find rows where there is no userId columnType and create faux user profiles
-   * using firstName, lastName, and instituion (company in UserProfile object).
+   * using firstName, lastName, and institution (company in UserProfile object).
    * @param {QueryResultBundle} data
    * @returns list of UserProfiles with firstName, lastName, company, userName (first letter of firstName) filled out.
    * @memberof UserCardList
@@ -93,13 +96,13 @@ export default class UserCardList extends React.Component<
     const nullOwnerIdsRows = data.queryResult!.queryResults.rows.filter(
       el => !el.values[ownerId],
     )
-    return nullOwnerIdsRows.map<UserProfile>(el => {
+    return nullOwnerIdsRows.map<Omit<UserProfile, 'ownerId'>>(el => {
       const values = el.values
       return {
         firstName: values[firstNameIndex] ?? '',
         lastName: values[lastNameIndex] ?? '',
         company: values[institutionIndex] ?? undefined,
-        ownerId: '',
+        ownerId: null,
         userName: values[firstNameIndex]
           ? values[firstNameIndex]![0] ?? ''
           : '',
@@ -117,7 +120,7 @@ export default class UserCardList extends React.Component<
         {
           // we loop through the list from the props because thats the 'active set of data' whereas the data stored in state could be stale
           list.map(ownerId => {
-            const userProfile = userProfileMap[ownerId]
+            const userProfile = ownerId != null ? userProfileMap[ownerId] : null
             if (userProfile) {
               return (
                 <div
@@ -150,7 +153,8 @@ export default class UserCardList extends React.Component<
                   disableLink={true}
                   hideEmail={true}
                   size={size}
-                  userProfile={fauxUserProfile}
+                  // TODO: Modify UserCard to accept a fake profile with no ownerId field, and remove this cast.
+                  userProfile={fauxUserProfile as UserProfile}
                 />
               </div>
             )

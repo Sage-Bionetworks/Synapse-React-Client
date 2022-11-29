@@ -1,4 +1,4 @@
-import moment from 'moment'
+import dayjs from 'dayjs'
 import React, { useState } from 'react'
 import { formatDate } from '../../utils/functions/DateFormatter'
 import { useGetModerators } from '../../utils/hooks/SynapseAPI/forum/useForum'
@@ -151,7 +151,7 @@ export function DiscussionThread(props: DiscussionThreadProps) {
             />
           </div>
           <span>
-            posted {formatDate(moment(threadData.createdOn), 'M/D/YYYY')}
+            posted {formatDate(dayjs(threadData.createdOn), 'M/D/YYYY')}
           </span>
         </>
       ) : (

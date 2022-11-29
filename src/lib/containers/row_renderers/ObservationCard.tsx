@@ -2,8 +2,7 @@ import * as React from 'react'
 import UserCard from '../UserCard'
 import IconSvg from '../IconSvg'
 import { ShowMore } from './utils'
-import { getFriendlyPreciseDuration } from '../../utils/functions/getFriendlyPreciseDuration'
-import { unitOfTime } from 'moment'
+import { UnitType } from 'dayjs'
 import { Skeleton } from '@mui/material'
 import { SkeletonTable } from '../../assets/skeletons/SkeletonTable'
 
@@ -11,7 +10,7 @@ type ObservationCardSchema = {
   submitterName: string
   submitterUserId: string
   time: string
-  timeUnits: unitOfTime.Base
+  timeUnits: UnitType
   text: string
   tag: string
 }
@@ -32,7 +31,7 @@ export const ObservationCard: React.FunctionComponent<ObservationCardProps> = ({
   const submitterName = data[schema.submitterName]
   const submitterUserId = data[schema.submitterUserId]
   const time = data[schema.time]
-  const timeUnits = data[schema.timeUnits] as unitOfTime.Base
+  const timeUnits = data[schema.timeUnits] as UnitType
   const text = data[schema.text]
   const tag = data[schema.tag]
   return (
@@ -46,7 +45,10 @@ export const ObservationCard: React.FunctionComponent<ObservationCardProps> = ({
       {time && (
         <div className="ObservationCard__time">
           <IconSvg icon="time" />
-          <span>{getFriendlyPreciseDuration(time, timeUnits)}</span>
+          <span>
+            {`${time} ${timeUnits}`}
+            {Number(time) > 1 ? 's' : ''}
+          </span>
         </div>
       )}
       <div className="ObservationCard__text">

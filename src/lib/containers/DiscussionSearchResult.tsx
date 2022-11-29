@@ -12,7 +12,7 @@ import {
   DiscussionReplyBundle,
   DiscussionThreadBundle,
 } from '../utils/synapseTypes/DiscussionBundle'
-import moment from 'moment'
+import dayjs from 'dayjs'
 import { Typography } from '@mui/material'
 import { Col, Row } from 'react-bootstrap'
 import UserCard from './UserCard'
@@ -21,6 +21,7 @@ import IconSvg from './IconSvg'
 import { Skeleton } from '@mui/material'
 import { SkeletonTable } from '../assets/skeletons/SkeletonTable'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../utils/functions/getEndpoint'
+import { formatDate } from '../utils/functions/DateFormatter'
 
 export const getMessage = async (url: string): Promise<string> => {
   const response = await fetch(url, {
@@ -118,7 +119,7 @@ const DiscussionSearchResult = (props: DiscussionSearchResultProps) => {
                     ownerId={replyAuthor?.ownerId!}
                   />
                 }{' '}
-                {moment(replyBundle?.createdOn).format('l LT')}
+                {formatDate(dayjs(replyBundle?.createdOn))}
               </div>
             </>
           )}

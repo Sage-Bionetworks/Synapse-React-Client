@@ -1,4 +1,4 @@
-import moment from 'moment'
+import dayjs from 'dayjs'
 import React, { useState } from 'react'
 import { Button, Table } from 'react-bootstrap'
 import SortIcon from '../../assets/icons/Sort'
@@ -179,7 +179,7 @@ export const ForumTable: React.FC<ForumTableProps> = ({
                 </td>
                 <td>{item.numberOfReplies}</td>
                 <td>{item.numberOfViews}</td>
-                <td>{moment(item.lastActivity).format('L')}</td>
+                <td>{dayjs(item.lastActivity).format('L')}</td>
               </tr>
             )
           })}

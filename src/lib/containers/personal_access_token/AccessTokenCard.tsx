@@ -1,4 +1,4 @@
-import moment from 'moment'
+import dayjs from 'dayjs'
 import React, { useState } from 'react'
 import { Button } from 'react-bootstrap'
 import { useErrorHandler } from 'react-error-boundary'
@@ -9,6 +9,9 @@ import { scopeDescriptions } from '../../utils/synapseTypes/AccessToken/ScopeDes
 import { Tooltip } from '@mui/material'
 import IconSvg from '../IconSvg'
 import WarningModal from '../synapse_form_wrapper/WarningModal'
+import relativeTime from 'dayjs/plugin/relativeTime'
+
+dayjs.extend(relativeTime)
 
 export type AccessTokenCardProps = {
   /** Record referring to an access token, not a token itself */
@@ -93,9 +96,9 @@ export const AccessTokenCard: React.FunctionComponent<AccessTokenCardProps> = ({
           })}
         </div>
         <div className="SRC-eqHeightRow">
-          <span>Last used {moment(accessToken.lastUsed).fromNow()}</span>
+          <span>Last used {dayjs(accessToken.lastUsed).fromNow()}</span>
           <span className={'SRC-deemphasized-text'}>{' | '}</span>
-          <span>Created {moment(accessToken.createdOn).fromNow()}</span>
+          <span>Created {dayjs(accessToken.createdOn).fromNow()}</span>
         </div>
       </div>
       {/* Delete button */}
