@@ -20,9 +20,9 @@ import MarkdownSynapseTable, {
   MarkdownSynapseTableProps,
 } from './widget/MarkdownSynapseTable'
 import MarkdownTableOfContents from './widget/MarkdownTableOfContents'
-import MarkdownUserBadge, {
-  MarkdownUserBadgeProps,
-} from './widget/MarkdownUserBadge'
+import MarkdownUserOrTeamBadge, {
+  MarkdownUserOrTeamBadgeProps,
+} from './widget/MarkdownUserOrTeamBadge'
 import MarkdownVideo, { MarkdownVideoProps } from './widget/MarkdownVideo'
 
 type ButtonLink = {
@@ -47,7 +47,7 @@ type TableOfContents = {
 
 type UserBadge = {
   widgetType: 'badge'
-  widgetParamsMapped: MarkdownUserBadgeProps
+  widgetParamsMapped: MarkdownUserOrTeamBadgeProps
 }
 
 type IDUReport = {
@@ -103,7 +103,7 @@ function MarkdownWidget(props: MarkdownWidgetProps) {
     case 'toc':
       return <MarkdownTableOfContents originalMarkup={originalMarkup} />
     case 'badge':
-      return <MarkdownUserBadge {...widgetParamsMapped} />
+      return <MarkdownUserOrTeamBadge {...widgetParamsMapped} />
     case 'iduReport':
       return <MarkdownIDUReport {...widgetParamsMapped} />
     case 'video':
