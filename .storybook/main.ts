@@ -49,6 +49,7 @@ module.exports = {
           '@storybook/addon-outline/preview.js',
           '@storybook/addon-interactions/preview.js',
           'buffer/',
+          'msw-storybook-addon',
         ],
       },
       build: {
