@@ -6,6 +6,7 @@ import UserCard from './UserCard'
 import { formatDate } from '../utils/functions/DateFormatter'
 import dayjs from 'dayjs'
 import { SkeletonTable } from '../assets/skeletons/SkeletonTable'
+import MarkdownSynapse from './markdown/MarkdownSynapse'
 
 export type SubmissionInfoCardProps = {
   info: SubmissionInfo
@@ -28,7 +29,7 @@ export const SubmissionInfoCard: React.FunctionComponent<
             Intended Data Use Statement &#40;accepted on{' '}
             {formatDate(dayjs(info.modifiedOn), 'M/D/YYYY')}&#41;:
           </strong>
-          <div>{info.intendedDataUseStatement}</div>
+          <MarkdownSynapse markdown={info.intendedDataUseStatement} />
           {info.accessorChanges &&
             info.accessorChanges.map(accessorChange => (
               <div key={`${accessorChange.userId}-${accessorChange.type}`}>
