@@ -42,6 +42,8 @@ import { MOCK_CONTEXT_VALUE } from '../../../mocks/MockSynapseContext'
 import { rest, server } from '../../../mocks/msw/server'
 import queryResultBundleJson from '../../../mocks/query/syn16787123.json'
 import fileViewQueryResultBundleJson from '../../../mocks/query/syn20337467.json'
+import dayjs from 'dayjs'
+import { formatDate } from '../../../lib/utils/functions/DateFormatter'
 
 const queryResultBundle: QueryResultBundle =
   queryResultBundleJson as QueryResultBundle
@@ -588,7 +590,7 @@ describe('SynapseTable tests', () => {
         },
       )
 
-      await screen.findByText(new Date(Number(mockDateValue)).toLocaleString())
+      await screen.findByText(formatDate(dayjs(Number(mockDateValue))))
     })
 
     it('renders a date list value', async () => {
@@ -606,9 +608,7 @@ describe('SynapseTable tests', () => {
         },
       )
 
-      await screen.findByText(
-        new Date(Number(MOCK_DATE_VALUE)).toLocaleString(),
-      )
+      await screen.findByText(formatDate(dayjs(Number(MOCK_DATE_VALUE))))
     })
 
     it('renders a integer list value', async () => {
