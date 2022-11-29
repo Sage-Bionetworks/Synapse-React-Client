@@ -1,5 +1,7 @@
 import React from 'react'
 import { SynapseConstants } from '../../../utils'
+import { useGetUserGroupHeaderWithAlias } from '../../../utils/hooks/SynapseAPI'
+import TeamBadge from '../../TeamBadge'
 import UserCard from '../../UserCard'
 
 export type MarkdownUserBadgeProps = {
@@ -8,5 +10,20 @@ export type MarkdownUserBadgeProps = {
 
 export default function MarkdownUserBadge(props: MarkdownUserBadgeProps) {
   const { alias } = props
-  return <UserCard alias={alias} size={SynapseConstants.SMALL_USER_CARD} />
+  const { data: userGroupheader } = useGetUserGroupHeaderWithAlias([alias])
+
+  return (
+    userGroupheader &&
+    (userGroupheader[0].isIndividual ? (
+      <UserCard
+        ownerId={userGroupheader[0].ownerId}
+        size={SynapseConstants.SMALL_USER_CARD}
+      />
+    ) : (
+      <TeamBadge
+        teamId={userGroupheader[0].ownerId}
+        teamName={userGroupheader[0].userName}
+      />
+    ))
+  )
 }

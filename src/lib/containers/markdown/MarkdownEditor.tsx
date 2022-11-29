@@ -55,7 +55,7 @@ export const MarkdownEditor: React.FunctionComponent<MarkdownEditorProps> = ({
       const textBeforeTag = text.substring(0, start)
       const textAfterTag = text.substring(start, text.length)
       setSelectionStart(start + user.length + 1)
-      newText.push(textBeforeTag, `@${user}`, textAfterTag)
+      newText.push(textBeforeTag, `@${user.replace(/\s/g, '')}`, textAfterTag)
     }
     setText(newText.join(''))
   }

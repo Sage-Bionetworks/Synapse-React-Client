@@ -225,7 +225,10 @@ import {
   TransformSqlWithFacetsRequest,
 } from './synapseTypes/Table/TransformSqlWithFacetsRequest'
 import { Team } from './synapseTypes/Team'
-import { TYPE_FILTER } from './synapseTypes/UserGroupHeader'
+import {
+  TYPE_FILTER,
+  UserGroupHeaderResponse,
+} from './synapseTypes/UserGroupHeader'
 import { VersionInfo } from './synapseTypes/VersionInfo'
 import {
   AccessApprovalSearchRequest,
@@ -935,6 +938,19 @@ export const getUserGroupHeaders = (
   return doGet<UserGroupHeaderResponsePage>(
     USER_GROUP_HEADERS +
       `?prefix=${prefix}&typeFilter=${typeFilter}&offset=${offset}&limit=${limit}`,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ * Get Users and Groups that match the given list of aliases.
+ * https://repo-prod.prod.sagebase.org/repo/v1/userGroupHeaders/aliases
+ */
+export const postUserGroupHeadersWithAlias = (list: string[]) => {
+  return doPost<UserGroupHeaderResponse>(
+    `${USER_GROUP_HEADERS}/aliases`,
+    { list },
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
