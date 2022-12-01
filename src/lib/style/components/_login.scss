@@ -6,7 +6,11 @@
   background: white;
   font-family: Lato, sans-serif;
 
-  .SRC-google-button,
+  .hide-component {
+    visibility: hidden;
+    max-height: 0;
+  }
+  .SRC-signin-button,
   .SRC-login-button {
     font-size: 14px;
     font-weight: 500;
@@ -18,7 +22,7 @@
   .SRC-login-button {
     margin: 44px 0 22px 0;
   }
-  .SRC-google-button {
+  .SRC-signin-button {
     svg {
       font-size: 36px;
     }
@@ -59,6 +63,7 @@
 
 $login-wrapper-width: 910px;
 $login-wrapper-width-tiny: 320px;
+$login-wrapper-height: 560px;
 
 .login-panel-wrapper-bg {
   display: flex;
@@ -76,6 +81,7 @@ $login-wrapper-width-tiny: 320px;
 .login-panel-wrapper {
   display: flex;
   max-width: $login-wrapper-width;
+  min-height: $login-wrapper-height;
   background: #fff
     url('https://s3.amazonaws.com/static.synapse.org/images/login-panel-bg.svg')
     no-repeat right bottom 20px;

@@ -8,6 +8,7 @@ import {
 } from '../utils/functions/getEndpoint'
 import { GoogleIcon24 } from '../assets/GoogleIcon24'
 import { Button, Link } from '@mui/material'
+import IconSvg from './IconSvg'
 
 export const PROVIDERS = {
   GOOGLE: 'GOOGLE_OAUTH_2_0',
@@ -21,6 +22,7 @@ type State = {
   isSignedIn: boolean
   hasLoginInFailed: boolean
   errorMessage: string
+  isEmailLogin: boolean
 }
 
 type Props = {
@@ -59,6 +61,7 @@ class Login extends React.Component<Props, State> {
       isSignedIn: false,
       password: '',
       username: '',
+      isEmailLogin: false,
     }
     this.handleChange = this.handleChange.bind(this)
     this.handleLogin = this.handleLogin.bind(this)
@@ -163,20 +166,36 @@ class Login extends React.Component<Props, State> {
         id="loginPage"
         className="container LoginComponent SRC-syn-border-spacing bootstrap-4-backport"
       >
-        <form>
+        <div className={!this.state.isEmailLogin ? '' : 'hide-component'}>
+          <form>
+            <ButtonWithIcon
+              variant="white"
+              onClick={this.onGoogleSignIn}
+              className={`SRC-signin-button`}
+              icon={<GoogleIcon24 />}
+            >
+              Sign in with Google
+            </ButtonWithIcon>
+          </form>
           <ButtonWithIcon
             variant="white"
-            onClick={this.onGoogleSignIn}
-            className={`SRC-google-button`}
-            icon={<GoogleIcon24 />}
+            className={`SRC-signin-button`}
+            icon={<IconSvg icon="email" />}
+            onClick={() => this.setState({ isEmailLogin: true })}
           >
-            Sign in with Google
+            Sign in with your email
           </ButtonWithIcon>
-        </form>
-        <div className="SRC-center-text SRC-deemphasized-text SRC-marginBottomTen bg-strike">
-          or
         </div>
-        <Form onSubmit={this.handleLogin}>
+        <Form
+          className={this.state.isEmailLogin ? '' : 'hide-component'}
+          onSubmit={this.handleLogin}
+        >
+          <button
+            type="button"
+            onClick={() => this.setState({ isEmailLogin: false })}
+          >
+            <IconSvg icon="arrowBack" />
+          </button>
           <label htmlFor={'username'}>Username or Email Address</label>
           <Form.Control
             required
