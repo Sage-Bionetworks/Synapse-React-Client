@@ -184,6 +184,7 @@ export default function EntityActionMenu(props: EntityActionMenuProps) {
             icon: buttonViewProps.icon as Icon,
             onClick: onClick,
             tooltipText: configForAction.text,
+            disabled: configForAction.disabled,
           })
         }
         return acc
