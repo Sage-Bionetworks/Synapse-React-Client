@@ -9,7 +9,7 @@ import EntityActionMenu, {
   MenuConfigurationMap,
 } from '../../../../../lib/containers/entity/page/action_menu/EntityActionMenu'
 import { createWrapper } from '../../../../../lib/testutils/TestingLibraryUtils'
-import { render, screen } from '@testing-library/react'
+import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
 function renderComponent(props: EntityActionMenuProps) {
@@ -81,9 +81,11 @@ describe('EntityActionMenu tests', () => {
       layout,
     })
 
-    const iconButton = await screen.findByRole('button', {
-      name: 'action 1 text',
-    })
+    const buttonWrapperForTooltip = await screen.findByLabelText(
+      'action 1 text',
+    )
+    const iconButton = within(buttonWrapperForTooltip).getByRole('button')
+
     await userEvent.click(iconButton)
     expect(onClickFn).toHaveBeenCalledWith(ACTION_1)
   })
