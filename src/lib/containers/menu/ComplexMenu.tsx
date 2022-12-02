@@ -10,6 +10,7 @@ export type IconButtonConfiguration = {
   icon: Icon
   tooltipText: string
   onClick: (e: React.MouseEvent) => void
+  disabled?: boolean
 }
 
 export type ComplexMenuProps = {
@@ -34,13 +35,23 @@ export function ComplexMenu(props: ComplexMenuProps) {
   const { iconButtons = [], dropdownMenus = [] } = props
 
   return (
-    <Box sx={{ display: 'flex', gap: '10px' }}>
+    <Box sx={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
       {iconButtons.map(iconButton => {
         return (
-          <Tooltip key={iconButton.tooltipText} title={iconButton.tooltipText}>
-            <IconButton color="primary" onClick={iconButton.onClick}>
-              <IconSvg icon={iconButton.icon} wrap={false} />
-            </IconButton>
+          <Tooltip
+            key={iconButton.tooltipText}
+            title={iconButton.tooltipText}
+            placement={'top'}
+          >
+            <span>
+              <IconButton
+                color="primary"
+                disabled={iconButton.disabled}
+                onClick={iconButton.onClick}
+              >
+                <IconSvg icon={iconButton.icon} wrap={false} />
+              </IconButton>
+            </span>
           </Tooltip>
         )
       })}

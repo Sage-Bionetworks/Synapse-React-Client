@@ -1,5 +1,5 @@
 import React from 'react'
-import { render, screen, waitFor } from '@testing-library/react'
+import { render, screen, waitFor, within } from '@testing-library/react'
 import { createWrapper } from '../../../../lib/testutils/TestingLibraryUtils'
 import userEvent from '@testing-library/user-event'
 import {
@@ -58,9 +58,10 @@ describe('ComplexMenu Tests', function () {
   afterEach(() => jest.clearAllMocks())
   it('Renders an icon button', async () => {
     renderComponent(defaultProps)
-    const iconButton = await screen.findByRole('button', {
-      name: 'Icon button tooltip',
-    })
+    const buttonWrapperForTooltip = await screen.findByLabelText(
+      'Icon button tooltip',
+    )
+    const iconButton = within(buttonWrapperForTooltip).getByRole('button')
 
     await userEvent.click(iconButton)
 
