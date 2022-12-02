@@ -1,6 +1,7 @@
 import * as React from 'react'
 import Login from './Login'
 import IconSvg from './IconSvg'
+import { IconButton } from '@mui/material'
 
 export type LoginPageProps = {
   ssoRedirectUrl?: string
@@ -17,16 +18,15 @@ const LoginPage: React.FunctionComponent<LoginPageProps> = props => {
   return (
     <div className={'login-panel-wrapper-bg'}>
       <div id={thisClass} className={thisClass}>
+        {isOnUsernameOrPasswordScreen && (
+          <IconButton
+            className="back-button"
+            onClick={() => setIsOnUsernameOrPasswordScreen(false)}
+          >
+            <IconSvg icon="arrowBack" />
+          </IconButton>
+        )}
         <div className={'login-panel panel-left'}>
-          {isOnUsernameOrPasswordScreen && (
-            <button
-              type="button"
-              className="back-button"
-              onClick={() => setIsOnUsernameOrPasswordScreen(false)}
-            >
-              <IconSvg icon="arrowBack" />
-            </button>
-          )}
           <div className={'panel-logo'}>
             <img
               alt={'Synapse logo'}

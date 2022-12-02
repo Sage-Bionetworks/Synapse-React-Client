@@ -22,7 +22,7 @@ type State = {
   isSignedIn: boolean
   hasLoginInFailed: boolean
   errorMessage: string
-  isEmailLogin: boolean
+  /* Only used if props.showUsernameOrPassword is undefined */
   showUsernameOrPasswordLocalState: boolean
 }
 
@@ -67,7 +67,6 @@ class Login extends React.Component<Props, State> {
       isSignedIn: false,
       password: '',
       username: '',
-      isEmailLogin: false,
       showUsernameOrPasswordLocalState: false,
     }
     this.handleChange = this.handleChange.bind(this)

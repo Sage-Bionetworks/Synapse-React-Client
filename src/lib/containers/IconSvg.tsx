@@ -6,10 +6,10 @@ import {
   AddShoppingCart,
   AddTwoTone,
   AlternateEmail,
-  ArrowBackIos,
+  ArrowBack,
   ArrowDropDownTwoTone,
   ArrowDropUpTwoTone,
-  ArrowForwardIos,
+  ArrowForward,
   ArticleTwoTone,
   AssessmentTwoTone,
   AssignmentTurnedInTwoTone,
@@ -257,9 +257,9 @@ function IconMapping(props: { icon: string; sx?: SxProps }) {
     case 'add':
       return <AddTwoTone sx={sx} />
     case 'arrowBack':
-      return <ArrowBackIos sx={sx} />
+      return <ArrowBack sx={sx} />
     case 'arrowForward':
-      return <ArrowForwardIos sx={sx} />
+      return <ArrowForward sx={sx} />
     case 'arrowDropUp':
       return <ArrowDropUpTwoTone sx={sx} />
     case 'arrowDropDown':
