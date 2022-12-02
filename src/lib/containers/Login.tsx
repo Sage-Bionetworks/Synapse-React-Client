@@ -7,7 +7,7 @@ import {
   BackendDestinationEnum,
 } from '../utils/functions/getEndpoint'
 import { GoogleIcon24 } from '../assets/GoogleIcon24'
-import { Button, Link } from '@mui/material'
+import { Button, IconButton, Link } from '@mui/material'
 import IconSvg from './IconSvg'
 
 export const PROVIDERS = {
@@ -208,12 +208,12 @@ class Login extends React.Component<Props, State> {
           onSubmit={this.handleLogin}
         >
           {this.props.renderBackButton && (
-            <button
+            <IconButton
               type="button"
               onClick={() => this.handleShowEmailLogin(false)}
             >
               <IconSvg icon="arrowBack" />
-            </button>
+            </IconButton>
           )}
           <label htmlFor={'username'}>Username or Email Address</label>
           <Form.Control
