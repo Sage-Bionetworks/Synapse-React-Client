@@ -122,7 +122,7 @@ export function DropdownMenu(props: DropdownMenuProps) {
 
   return (
     <React.Fragment>
-      <Tooltip title={buttonTooltip}>
+      <Tooltip title={buttonTooltip} placement={'top'}>
         <span>
           <Button
             variant="outlined"
