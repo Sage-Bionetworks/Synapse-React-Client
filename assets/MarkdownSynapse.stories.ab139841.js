@@ -1,0 +1,111 @@
+import{a as o}from"./CardContainerLogic.1635eeaa.js";import{j as e}from"./jsx-runtime.e3bfef16.js";import"./index.62dd2683.js";import"./index.5b26081f.js";import"./iframe.2f11fea3.js";import"./SynapseConstants.290eab74.js";import"./Button.d5f5019a.js";import"./styled.2799bbab.js";import"./utils.09644bf2.js";import"./TransitionGroupContext.f0c2dee6.js";import"./useTheme.9f954659.js";import"./Alert.a811cd40.js";import"./hook.1b918640.js";import"./createWithBsPrefix.af2c57e3.js";import"./divWithClassName.0eda4494.js";import"./index.35ce73ec.js";import"./Fade.8c636cf5.js";import"./isArray.1a1d4e26.js";import"./getEndpoint.bb7ded34.js";import"./Link.7c4fde04.js";import"./Typography.7dc1d80a.js";import"./Button.9a993919.js";import"./ButtonBase.4ded6e01.js";import"./emotion-react.browser.esm.7b70ec33.js";import"./sqlFunctions.952f1ecd.js";import"./RegularExpressions.3cd69849.js";import"./QueryFilter.10fc25c3.js";import"./useGetInfoFromIds.79de9156.js";import"./use-deep-compare-effect.esm.afdf85aa.js";import"./uniq.b52cd8cb.js";import"./_baseSlice.50189bc5.js";import"./toInteger.1f86ccb4.js";import"./isSymbol.425832e0.js";import"./_cacheHas.d0d51990.js";import"./without.de66f971.js";import"./uniqueId.b86d1d32.js";import"./_Set.a4dab575.js";import"./_setToArray.a82100c8.js";import"./ColumnType.744125d2.js";import"./FacetNav.d0eae8c8.js";import"./queryUtils.6d80735e.js";import"./useInfiniteQuery.b4141516.js";import"./queryKeys.e0d3085f.js";import"./cloneDeep.036a0ba6.js";import"./_baseClone.3c332ec4.js";import"./_getTag.f06ee663.js";import"./NoSearchResults.b804eac9.js";import"./NoData.29645260.js";import"./unCamelCase.07e38083.js";import"./useEntity.d2256ec6.js";import"./useMutation.ebd4f8bb.js";import"./pick.0a9b55b1.js";import"./isEqual.ff7613c1.js";import"./ElementWithTooltip.2d828b88.js";import"./SynapseTableConstants.07ecdebd.js";import"./IconSvg.fe1e65ad.js";import"./Tooltip.1d7a2ca6.js";import"./createSvgIcon.3210eda0.js";import"./InfoOutlined.2ed956d4.js";import"./Dropdown.cec674e9.js";import"./usePrevious.3d07995f.js";import"./contains.21883a94.js";import"./usePopperMarginModifiers.5c96dd9b.js";import"./hasClass.56fd144a.js";import"./isRequiredForA11y.20ed4857.js";import"./Checkbox.45cc0138.js";import"./RadioGroup.b6b80b8d.js";import"./dayjs.min.9dddca0b.js";import"./RangeSlider.549d3ce6.js";import"./factory.019abcf2.js";import"./react-sizeme.14caf358.js";import"./Skeleton.1a2438b9.js";import"./ColorGradient.16f0e0f2.js";import"./colorPalette.8145e2e2.js";import"./LoadingScreen.1521de47.js";import"./Modal.a4e0f3c8.js";import"./inheritsLoose.1368d629.js";import"./removeClass.27874bcb.js";import"./useWaitForDOMRef.dee55da0.js";import"./SelectionCriteriaPill.0d49a7af.js";import"./Close.33aa637a.js";import"./react-select.esm.2a22e96a.js";import"./Select-54ac8379.esm.4659c1e6.js";import"./CustomSelectWidget.7dc8e3f9.js";import"./index.browser.97175636.js";import"./UserCard.326e35e8.js";import"./IconCopy.d5fb86d3.js";import"./SkeletonTable.c539f085.js";import"./times.25ed313e.js";import"./ToastMessage.51646f1c.js";import"./FullWidthAlert.88a965d7.js";import"./Overlay.349481dc.js";import"./WarningModal.7f067911.js";import"./react-intersection-observer.esm.d8b41fcb.js";import"./DateFormatter.e8cffcc7.js";import"./utc.89139710.js";import"./EntityIcon.a8a67a66.js";import"./core.esm.24744b56.js";import"./isEmpty.c76f8d43.js";import"./union.17c6db2b.js";import"./isString.9894c5d5.js";import"./relativeTime.0e87f54c.js";import"./useGetDownloadListStatistics.ea831ed1.js";import"./QueryCount.7ca5a477.js";import"./useGetAccessRequirement.7d03ff0c.js";import"./RestrictionInformation.edfbac5a.js";import"./ManagedACTAccessRequirementStatus.be369a71.js";import"./FileUpload.e5b5ce31.js";import"./UserSearchBox.c4b4f10f.js";import"./UserOrTeamBadge.aa102dc2.js";import"./EntityLink.b72cacd3.js";import"./SynapseVideo.c22955ed.js";import"./IconList.60d871b8.js";import"./UserCardList.ff63c51c.js";const xo={parameters:{storySource:{source:`import React from 'react'
+import { ComponentStory, ComponentMeta } from '@storybook/react'
+
+import MarkdownSynapse from './MarkdownSynapse'
+
+// More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
+export default {
+  title: 'Markdown/MarkdownSynapse',
+  component: MarkdownSynapse,
+  // More on argTypes: https://storybook.js.org/docs/react/api/argtypes
+  argTypes: {},
+} as ComponentMeta<typeof MarkdownSynapse>
+
+// More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
+const Template: ComponentStory<typeof MarkdownSynapse> = args => (
+  <MarkdownSynapse {...args} />
+)
+
+export const HardCodedMarkdown = Template.bind({})
+HardCodedMarkdown.args = {
+  markdown: '*markdown* given to the **component**',
+}
+
+export const WikiPage = Template.bind({})
+WikiPage.args = {
+  ownerId: 'syn12666371',
+  wikiId: '585317',
+  loadingSkeletonRowCount: 20,
+}
+
+export const ImageDemo = Template.bind({})
+ImageDemo.args = {
+  ownerId: 'syn18142975',
+}
+
+export const ButtonLink = Template.bind({})
+ButtonLink.args = {
+  markdown: \`Button link demo \\n
+
+\\\${buttonlink?text=Align%20Left&align=left} \\n
+
+\\\${buttonlink?text=Align%20Right&align=right} \\n
+
+\\\${buttonlink?text=Align%20Center&align=center} \\n
+
+\\\${buttonlink?text=Highlight&highlight=true} \\n
+
+Links to synapse: \\n
+\\\${buttonlink?text=This%20Button%20Links%20to%20Synapse&url=https://synapse.org/}
+  \`,
+}
+
+export const ImageBySynID = Template.bind({})
+ImageBySynID.args = {
+  markdown:
+    'Note: you must be signed in to see this image\\n\${image?synapseId=syn36695878}',
+}
+
+export const Plot = Template.bind({})
+Plot.args = {
+  markdown:
+    '\${plot?query=select "id"%2C "createdOn" from syn23567477&title=&type=BAR&barmode=GROUP&horizontal=false&showlegend=true}',
+}
+
+export const SynapseTable = Template.bind({})
+SynapseTable.args = {
+  markdown:
+    '# Synapse Table\\nModify the markdown control to change the parameters\\n\${synapsetable?query=SELECT %2A FROM syn26302617&showquery=false&tableonly=false}',
+}
+
+export const MarkdownProvenanceGraph = Template.bind({})
+MarkdownProvenanceGraph.args = {
+  markdown:
+    '# Provenance Graphs\\nMultiple start nodes\\n\${provenance?entityList=syn12548902%2Csyn33344762&depth=3&displayHeightPx=800&showExpand=false}\\nSpecify the entity version\\n\${provenance?entityList=syn12548902%2Fversion%2F34&depth=1&displayHeightPx=500&showExpand=true}',
+}
+
+export const HtmlRenderingTest = Template.bind({})
+HtmlRenderingTest.args = {
+  ownerId: 'syn5585645',
+  wikiId: '493662',
+}
+
+export const MarkdownIDUReport = Template.bind({})
+MarkdownIDUReport.args = {
+  markdown: '\${iduReport?accessRestrictionId=9605700}',
+}
+`,locationsMap:{"hard-coded-markdown":{startLoc:{col:57,line:15},endLoc:{col:1,line:17},startBody:{col:57,line:15},endBody:{col:1,line:17}},"wiki-page":{startLoc:{col:57,line:15},endLoc:{col:1,line:17},startBody:{col:57,line:15},endBody:{col:1,line:17}},"image-demo":{startLoc:{col:57,line:15},endLoc:{col:1,line:17},startBody:{col:57,line:15},endBody:{col:1,line:17}},"button-link":{startLoc:{col:57,line:15},endLoc:{col:1,line:17},startBody:{col:57,line:15},endBody:{col:1,line:17}},"image-by-syn-id":{startLoc:{col:57,line:15},endLoc:{col:1,line:17},startBody:{col:57,line:15},endBody:{col:1,line:17}},plot:{startLoc:{col:57,line:15},endLoc:{col:1,line:17},startBody:{col:57,line:15},endBody:{col:1,line:17}},"synapse-table":{startLoc:{col:57,line:15},endLoc:{col:1,line:17},startBody:{col:57,line:15},endBody:{col:1,line:17}},"markdown-provenance-graph":{startLoc:{col:57,line:15},endLoc:{col:1,line:17},startBody:{col:57,line:15},endBody:{col:1,line:17}},"html-rendering-test":{startLoc:{col:57,line:15},endLoc:{col:1,line:17},startBody:{col:57,line:15},endBody:{col:1,line:17}},"markdown-idu-report":{startLoc:{col:57,line:15},endLoc:{col:1,line:17},startBody:{col:57,line:15},endBody:{col:1,line:17}}}}},title:"Markdown/MarkdownSynapse",component:o,argTypes:{}},n=t=>e(o,{...t}),r=n.bind({});r.args={markdown:"*markdown* given to the **component**"};const i=n.bind({});i.args={ownerId:"syn12666371",wikiId:"585317",loadingSkeletonRowCount:20};const a=n.bind({});a.args={ownerId:"syn18142975"};const p=n.bind({});p.args={markdown:`Button link demo 
+
+
+\${buttonlink?text=Align%20Left&align=left} 
+
+
+\${buttonlink?text=Align%20Right&align=right} 
+
+
+\${buttonlink?text=Align%20Center&align=center} 
+
+
+\${buttonlink?text=Highlight&highlight=true} 
+
+
+Links to synapse: 
+
+\${buttonlink?text=This%20Button%20Links%20to%20Synapse&url=https://synapse.org/}
+  `};const s=n.bind({});s.args={markdown:"Note: you must be signed in to see this image\n${image?synapseId=syn36695878}"};const m=n.bind({});m.args={markdown:'${plot?query=select "id"%2C "createdOn" from syn23567477&title=&type=BAR&barmode=GROUP&horizontal=false&showlegend=true}'};const l=n.bind({});l.args={markdown:`# Synapse Table
+Modify the markdown control to change the parameters
+\${synapsetable?query=SELECT %2A FROM syn26302617&showquery=false&tableonly=false}`};const d=n.bind({});d.args={markdown:`# Provenance Graphs
+Multiple start nodes
+\${provenance?entityList=syn12548902%2Csyn33344762&depth=3&displayHeightPx=800&showExpand=false}
+Specify the entity version
+\${provenance?entityList=syn12548902%2Fversion%2F34&depth=1&displayHeightPx=500&showExpand=true}`};const c=n.bind({});c.args={ownerId:"syn5585645",wikiId:"493662"};const y=n.bind({});y.args={markdown:"${iduReport?accessRestrictionId=9605700}"};const Bo=["HardCodedMarkdown","WikiPage","ImageDemo","ButtonLink","ImageBySynID","Plot","SynapseTable","MarkdownProvenanceGraph","HtmlRenderingTest","MarkdownIDUReport"];export{p as ButtonLink,r as HardCodedMarkdown,c as HtmlRenderingTest,s as ImageBySynID,a as ImageDemo,y as MarkdownIDUReport,d as MarkdownProvenanceGraph,m as Plot,l as SynapseTable,i as WikiPage,Bo as __namedExportsOrder,xo as default};
