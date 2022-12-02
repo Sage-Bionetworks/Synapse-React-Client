@@ -27,4 +27,5 @@ LoginDemo.args = {
       )
     })
   },
+  renderBackButton: true,
 }

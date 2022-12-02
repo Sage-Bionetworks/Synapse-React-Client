@@ -23,6 +23,7 @@ type State = {
   hasLoginInFailed: boolean
   errorMessage: string
   isEmailLogin: boolean
+  showUsernameOrPasswordLocalState: boolean
 }
 
 type Props = {
@@ -31,6 +32,11 @@ type Props = {
   sessionCallback: () => void // Callback is invoked after login
   registerAccountUrl?: string
   resetPasswordUrl?: string
+  handleIsOnUsernameOrPasswordScreen?: React.Dispatch<
+    React.SetStateAction<boolean | undefined>
+  >
+  showUsernameOrPassword?: boolean | undefined
+  renderBackButton?: boolean
 }
 
 /**
@@ -62,11 +68,13 @@ class Login extends React.Component<Props, State> {
       password: '',
       username: '',
       isEmailLogin: false,
+      showUsernameOrPasswordLocalState: false,
     }
     this.handleChange = this.handleChange.bind(this)
     this.handleLogin = this.handleLogin.bind(this)
     this.getLoginFailureView = this.getLoginFailureView.bind(this)
     this.onGoogleSignIn = this.onGoogleSignIn.bind(this)
+    this.handleShowEmailLogin = this.handleShowEmailLogin.bind(this)
   }
   /**
    * Updates internal state with the event that was triggered
@@ -117,6 +125,13 @@ class Login extends React.Component<Props, State> {
     }
   }
 
+  public handleShowEmailLogin(boolean: boolean) {
+    if (this.props.handleIsOnUsernameOrPasswordScreen) {
+      this.props.handleIsOnUsernameOrPasswordScreen(boolean)
+    } else {
+      this.setState({ showUsernameOrPasswordLocalState: boolean })
+    }
+  }
   /**
    * Shows user login failure view on login failure
    *
@@ -161,12 +176,15 @@ class Login extends React.Component<Props, State> {
     const resetPasswordUrl =
       this.props.resetPasswordUrl ??
       `${getEndpoint(BackendDestinationEnum.PORTAL_ENDPOINT)}#!PasswordReset:0`
+    const showUsernameOrPassword =
+      this.props.showUsernameOrPassword ??
+      this.state.showUsernameOrPasswordLocalState
     return (
       <div
         id="loginPage"
         className="container LoginComponent SRC-syn-border-spacing bootstrap-4-backport"
       >
-        <div className={!this.state.isEmailLogin ? '' : 'hide-component'}>
+        <div className={!showUsernameOrPassword ? '' : 'hide-component'}>
           <form>
             <ButtonWithIcon
               variant="white"
@@ -181,21 +199,23 @@ class Login extends React.Component<Props, State> {
             variant="white"
             className={`SRC-signin-button`}
             icon={<IconSvg icon="email" />}
-            onClick={() => this.setState({ isEmailLogin: true })}
+            onClick={() => this.handleShowEmailLogin(true)}
           >
             Sign in with your email
           </ButtonWithIcon>
         </div>
         <Form
-          className={this.state.isEmailLogin ? '' : 'hide-component'}
+          className={showUsernameOrPassword ? '' : 'hide-component'}
           onSubmit={this.handleLogin}
         >
-          <button
-            type="button"
-            onClick={() => this.setState({ isEmailLogin: false })}
-          >
-            <IconSvg icon="arrowBack" />
-          </button>
+          {this.props.renderBackButton && (
+            <button
+              type="button"
+              onClick={() => this.handleShowEmailLogin(false)}
+            >
+              <IconSvg icon="arrowBack" />
+            </button>
+          )}
           <label htmlFor={'username'}>Username or Email Address</label>
           <Form.Control
             required

@@ -89,6 +89,10 @@ $login-wrapper-height: 560px;
   > div {
     flex: 1;
   }
+  .back-button {
+    padding: 0;
+    width: 24px;
+  }
   .login-panel {
     display: flex;
     align-items: stretch;
