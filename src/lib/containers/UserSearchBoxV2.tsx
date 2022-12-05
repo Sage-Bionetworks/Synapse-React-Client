@@ -4,6 +4,7 @@ import Select, {
   components,
   GroupBase,
   SelectComponentsConfig,
+  SelectInstance,
 } from 'react-select'
 import { useSearchUserGroupHeaders } from '../utils/hooks/SynapseAPI'
 import { useDebouncedEffect } from '../utils/hooks/useDebouncedEffect'
@@ -24,6 +25,7 @@ export type UserSearchBoxProps = {
   typeFilter?: TYPE_FILTER
   filterPredicate?: (item: UserGroupHeader) => boolean
   placeholder?: string
+  focusOnSelect?: boolean
 }
 
 const customSelectComponents: Partial<
@@ -86,6 +88,7 @@ const UserSearchBoxV2: React.FC<UserSearchBoxProps> = props => {
     filterPredicate,
     typeFilter,
     placeholder,
+    focusOnSelect,
   } = props
   const [inputValue, setInputValue] = useState('')
   const [debouncedInput, setDebouncedInput] = useState('')
@@ -107,6 +110,13 @@ const UserSearchBoxV2: React.FC<UserSearchBoxProps> = props => {
     debouncedInput,
     typeFilter,
   )
+
+  const selectRef = React.useRef<SelectInstance>()
+  React.useEffect(() => {
+    if (focusOnSelect) {
+      selectRef.current && selectRef.current.focus()
+    }
+  })
 
   const noOptionsMessage = useMemo(
     () =>
@@ -131,6 +141,7 @@ const UserSearchBoxV2: React.FC<UserSearchBoxProps> = props => {
   return (
     <Select
       className="bootstrap-4-backport UserSearchBoxV2"
+      ref={selectRef}
       inputValue={inputValue}
       onInputChange={setInputValue}
       filterOption={() => true}
