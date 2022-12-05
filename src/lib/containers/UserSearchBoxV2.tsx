@@ -111,7 +111,7 @@ const UserSearchBoxV2: React.FC<UserSearchBoxProps> = props => {
     typeFilter,
   )
 
-  const selectRef = React.useRef<SelectInstance>()
+  const selectRef = React.useRef<SelectInstance>(null)
   React.useEffect(() => {
     if (focusOnSelect) {
       selectRef.current && selectRef.current.focus()
