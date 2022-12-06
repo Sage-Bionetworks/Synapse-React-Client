@@ -25,7 +25,7 @@ import { entityQueryKeys } from '../entity/queryKeys'
 
 const ACCESS_REQUIREMENT_QUERY_KEY = 'accessRequirement'
 
-export default function useAccessRequirements<T extends AccessRequirement>(
+export function useGetAccessRequirements<T extends AccessRequirement>(
   accessRequirementId: string | number,
   options?: UseQueryOptions<T, SynapseClientError>,
 ) {

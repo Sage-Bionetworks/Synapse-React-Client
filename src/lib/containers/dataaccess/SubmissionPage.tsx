@@ -8,7 +8,8 @@ import { formatDate } from '../../utils/functions/DateFormatter'
 import useGetDataAccessSubmission, {
   useUpdateDataAccessSubmissionState,
 } from '../../utils/hooks/SynapseAPI/dataaccess/useDataAccessSubmission'
-import useAccessRequirements, {
+import {
+  useGetAccessRequirements,
   useGetAccessRequirementACL,
   useGetAccessRequirementWikiPageKey,
 } from '../../utils/hooks/SynapseAPI/dataaccess/useAccessRequirements'
@@ -131,7 +132,7 @@ export default function SubmissionPage(props: SubmissionPageProps) {
   const { mutateAsync } = useUpdateDataAccessSubmissionState()
 
   const { data: accessRequirement } =
-    useAccessRequirements<ManagedACTAccessRequirement>(
+    useGetAccessRequirements<ManagedACTAccessRequirement>(
       parseInt(submission?.accessRequirementId!),
       { enabled: !!submission },
     )
