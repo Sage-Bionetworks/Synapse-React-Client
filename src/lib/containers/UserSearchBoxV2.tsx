@@ -87,7 +87,7 @@ const UserSearchBoxV2: React.FC<UserSearchBoxProps> = props => {
     filterPredicate,
     typeFilter,
     placeholder,
-    focusOnSelect,
+    focusOnSelect = false,
   } = props
   const [inputValue, setInputValue] = useState('')
   const [debouncedInput, setDebouncedInput] = useState('')
