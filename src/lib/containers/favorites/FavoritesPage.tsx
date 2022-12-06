@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react'
 import * as ReactBootstrap from 'react-bootstrap'
-import { SynapseClient } from '../../utils'
 import SortIcon from '../../assets/icons/Sort'
 import { Direction, EntityHeader } from '../../utils/synapseTypes'
 import { useSynapseContext } from '../../utils/SynapseContext'

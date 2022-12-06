@@ -21,7 +21,6 @@ import {
 import { SynapseClientError } from '../../../SynapseClientError'
 import { useSynapseContext } from '../../../SynapseContext'
 import { SynapseClient } from '../../../index'
-import { EntityHeader } from '../../../synapseTypes'
 import { AddBatchOfFilesToDownloadListResponse } from '../../../synapseTypes/DownloadListV2/AddBatchOfFilesToDownloadListResponse'
 
 export const downloadListQueryKeys = {
