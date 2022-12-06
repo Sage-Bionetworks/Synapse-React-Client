@@ -5,7 +5,7 @@ import Uploader from '../../lib/containers/Uploader'
 import FileContentDownloadUploadDemo from '../../lib/containers/FileContentDownloadUploadDemo'
 import StatisticsPlot from '../../lib/containers/StatisticsPlot'
 import { testDownloadSpeed } from '../../lib/utils/functions/testDownloadSpeed'
-import { HasAccessV2 as HasAccess } from '../../lib/containers/HasAccessV2'
+import { HasAccessV2 as HasAccess } from '../../lib/containers/access_requirements/HasAccessV2'
 import { SynapseContextProvider } from '../../lib/utils/SynapseContext'
 
 type DemoState = {

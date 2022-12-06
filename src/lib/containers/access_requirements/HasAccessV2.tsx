@@ -1,24 +1,24 @@
 import React, { useMemo } from 'react'
-import { SynapseClient } from '../utils'
+import { SynapseClient } from '../../utils'
 import {
   BackendDestinationEnum,
   getEndpoint,
-} from '../utils/functions/getEndpoint'
-import { useGetRestrictionInformation } from '../utils/hooks/SynapseAPI/dataaccess/useGetAccessRequirement'
-import useGetEntityBundle from '../utils/hooks/SynapseAPI/entity/useEntityBundle'
-import { SRC_SIGN_IN_CLASS } from '../utils/SynapseConstants'
-import { useSynapseContext } from '../utils/SynapseContext'
+} from '../../utils/functions/getEndpoint'
+import { useGetRestrictionInformation } from '../../utils/hooks/SynapseAPI/dataaccess/useAccessRequirements'
+import useGetEntityBundle from '../../utils/hooks/SynapseAPI/entity/useEntityBundle'
+import { SRC_SIGN_IN_CLASS } from '../../utils/SynapseConstants'
+import { useSynapseContext } from '../../utils/SynapseContext'
 import {
   AccessRequirement,
   isFileEntity,
   RestrictableObjectType,
   RestrictionInformationRequest,
   RestrictionLevel,
-} from '../utils/synapseTypes/'
+} from '../../utils/synapseTypes'
 import AccessRequirementList, {
   checkHasUnsportedRequirement,
-} from './access_requirement_list/AccessRequirementList'
-import IconSvg, { Icon } from './IconSvg'
+} from '../access_requirement_list/AccessRequirementList'
+import IconSvg, { Icon } from '../IconSvg'
 import { Theme, useTheme } from '@mui/material'
 
 export type HasAccessProps = {

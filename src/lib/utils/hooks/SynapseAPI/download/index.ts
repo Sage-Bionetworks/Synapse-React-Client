@@ -1,3 +1,5 @@
-export * from './useGetAvailableFilesToDownload'
-export * from './useGetDownloadListActionsRequired'
-export * from './useGetDownloadListStatistics'
+export { useGetAvailableFilesToDownloadInfinite } from './useDownloadList'
+export { useGetAvailableFilesToDownload } from './useDownloadList'
+export { useGetDownloadListActionsRequiredInfinite } from './useDownloadList'
+export { useGetDownloadListActionsRequired } from './useDownloadList'
+export { useGetDownloadListStatistics } from './useDownloadList'

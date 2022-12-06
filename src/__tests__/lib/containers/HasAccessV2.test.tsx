@@ -3,7 +3,7 @@ import * as React from 'react'
 import {
   HasAccessV2,
   HasAccessProps,
-} from '../../../lib/containers/HasAccessV2'
+} from '../../../lib/containers/access_requirements/HasAccessV2'
 import { createWrapper } from '../../../lib/testutils/TestingLibraryUtils'
 import { ENTITY_BUNDLE_V2 } from '../../../lib/utils/APIConstants'
 import {

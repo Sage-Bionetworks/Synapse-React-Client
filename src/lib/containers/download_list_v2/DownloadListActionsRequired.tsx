@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import { useErrorHandler } from 'react-error-boundary'
-import { useGetDownloadListActionsRequiredInfinite } from '../../utils/hooks/SynapseAPI/download/useGetDownloadListActionsRequired'
+import { useGetDownloadListActionsRequiredInfinite } from '../../utils/hooks/SynapseAPI/download/useDownloadList'
 import { useInView } from 'react-intersection-observer'
 import {
   ActionRequiredCount,
