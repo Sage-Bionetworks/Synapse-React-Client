@@ -4,7 +4,6 @@ import Select, {
   components,
   GroupBase,
   SelectComponentsConfig,
-  SelectInstance,
 } from 'react-select'
 import { useSearchUserGroupHeaders } from '../utils/hooks/SynapseAPI'
 import { useDebouncedEffect } from '../utils/hooks/useDebouncedEffect'
@@ -111,7 +110,7 @@ const UserSearchBoxV2: React.FC<UserSearchBoxProps> = props => {
     typeFilter,
   )
 
-  const selectRef = React.useRef<SelectInstance>(null)
+  const selectRef = React.useRef<any>(null)
   React.useEffect(() => {
     if (focusOnSelect) {
       selectRef.current && selectRef.current.focus()
