@@ -4,7 +4,7 @@ import { Button } from 'react-bootstrap'
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {
-  title: 'UI/Button',
+  title: 'UI/Archive/Button',
   component: Button,
   // More on argTypes: https://storybook.js.org/docs/react/api/argtypes
   argTypes: {
