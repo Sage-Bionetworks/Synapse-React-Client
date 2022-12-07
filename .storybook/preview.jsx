@@ -5,20 +5,6 @@ import { Buffer } from 'buffer'
 import { StorybookComponentWrapper } from '../src/lib/containers/StorybookComponentWrapper'
 import { initialize, mswDecorator } from 'msw-storybook-addon'
 import { getHandlers } from '../src/mocks/msw/handlers'
-import palettes, {
-  adKnowledgePortalPalette,
-  arkPortalPalette,
-  bsmnPortalPalette,
-  cancerComplexityPortalPalette,
-  crcResearcherPortalPalette,
-  digitalHealthPortalPalette,
-  mtbPalette,
-  nfPortalPalette,
-  palette,
-  psychEncodePortalPalette,
-  sageBionetworksPalette,
-  stopAdPortalPalette,
-} from '../src/lib/utils/theme/palette/Palettes'
 import { MOCK_REPO_ORIGIN } from '../src/lib/utils/functions/getEndpoint'
 
 globalThis.Buffer = Buffer
@@ -66,6 +52,7 @@ export const globalTypes = {
     toolbar: {
       icon: 'database',
       dynamicTitle: true,
+      showName: true,
       items: [
         { value: 'production', title: 'Production' },
         { value: 'staging', title: 'Staging' },
@@ -82,20 +69,21 @@ export const globalTypes = {
     toolbar: {
       icon: 'paintbrush',
       dynamicTitle: true,
+      showName: true,
       items: [
-        { value: palette, title: 'Default (Synapse.org)' },
-        { value: sageBionetworksPalette, title: 'Sage Bionetworks' },
-        { value: mtbPalette, title: 'MTB' },
-        { value: arkPortalPalette, title: 'ARK Portal' },
-        { value: adKnowledgePortalPalette, title: 'AD Knowledge Portal' },
-        { value: nfPortalPalette, title: 'NF Portal' },
-        { value: bsmnPortalPalette, title: 'BSMN Portal' },
-        { value: psychEncodePortalPalette, title: 'PsychENCODE Portal' },
-        { value: stopAdPortalPalette, title: 'STOP AD Portal' },
-        { value: digitalHealthPortalPalette, title: 'Digital Health Portal' },
-        { value: crcResearcherPortalPalette, title: 'CRC Researcher Portal' },
+        { value: 'default', title: 'Default (Synapse.org)' },
+        { value: 'sageBionetworks', title: 'Sage Bionetworks' },
+        { value: 'mtb', title: 'MTB' },
+        { value: 'arkPortal', title: 'ARK Portal' },
+        { value: 'adKnowledgePortal', title: 'AD Knowledge Portal' },
+        { value: 'nfPortal', title: 'NF Portal' },
+        { value: 'bsmnPortal', title: 'BSMN Portal' },
+        { value: 'psychEncodePortal', title: 'PsychENCODE Portal' },
+        { value: 'stopAdPortal', title: 'STOP AD Portal' },
+        { value: 'digitalHealthPortal', title: 'Digital Health Portal' },
+        { value: 'crcResearcherPortal', title: 'CRC Researcher Portal' },
         {
-          value: cancerComplexityPortalPalette,
+          value: 'cancerComplexityPortal',
           title: 'Cancer Complexity Portal',
         },
       ],

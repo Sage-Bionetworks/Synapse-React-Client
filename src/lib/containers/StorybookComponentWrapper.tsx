@@ -20,6 +20,20 @@ import {
 import { SynapseClientError } from '../utils/SynapseClientError'
 import { STACK_MAP, SynapseStack } from '../utils/functions/getEndpoint'
 import defaultMuiTheme from '../utils/theme/DefaultTheme'
+import {
+  adKnowledgePortalPalette,
+  arkPortalPalette,
+  bsmnPortalPalette,
+  cancerComplexityPortalPalette,
+  crcResearcherPortalPalette,
+  digitalHealthPortalPalette,
+  mtbPalette,
+  nfPortalPalette,
+  palette,
+  psychEncodePortalPalette,
+  sageBionetworksPalette,
+  stopAdPortalPalette,
+} from '../utils/theme/palette/Palettes'
 
 export async function sessionChangeHandler() {
   detectSSOCode()
@@ -56,6 +70,21 @@ function overrideEndpoint(stack: SynapseStack) {
     OVERRIDE_ENDPOINT_CONFIG: endpointConfig,
   }
   storybookQueryClient.resetQueries()
+}
+
+const paletteMap = {
+  default: palette,
+  sageBionetworks: sageBionetworksPalette,
+  mtb: mtbPalette,
+  arkPortal: arkPortalPalette,
+  adKnowledgePortal: adKnowledgePortalPalette,
+  nfPortal: nfPortalPalette,
+  bsmnPortal: bsmnPortalPalette,
+  psychEncodePortal: psychEncodePortalPalette,
+  stopAdPortal: stopAdPortalPalette,
+  digitalHealthPortal: digitalHealthPortalPalette,
+  crcResearcherPortal: crcResearcherPortalPalette,
+  cancerComplexityPortal: cancerComplexityPortalPalette,
 }
 
 /**
@@ -108,7 +137,10 @@ export function StorybookComponentWrapper(props: {
       queryClient={storybookQueryClient}
       key={accessToken}
       synapseContext={synapseContext}
-      theme={{ ...defaultMuiTheme, palette: storybookContext.globals.palette }}
+      theme={{
+        ...defaultMuiTheme,
+        palette: paletteMap[storybookContext.globals.palette],
+      }}
     >
       <MemoryRouter>
         <ReactQueryDevtools />
