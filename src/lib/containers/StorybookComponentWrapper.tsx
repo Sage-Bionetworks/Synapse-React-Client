@@ -18,6 +18,8 @@ import {
   signOut,
 } from '../utils/SynapseClient'
 import { SynapseClientError } from '../utils/SynapseClientError'
+import { STACK_MAP, SynapseStack } from '../utils/functions/getEndpoint'
+import defaultMuiTheme from '../utils/theme/DefaultTheme'
 
 export async function sessionChangeHandler() {
   detectSSOCode()
@@ -47,6 +49,15 @@ export async function sessionChangeHandler() {
   return { accessToken, profile, authenticatedOn: date }
 }
 const storybookQueryClient = new QueryClient(defaultQueryClientConfig)
+
+function overrideEndpoint(stack: SynapseStack) {
+  const endpointConfig = STACK_MAP[stack]
+  window['SRC'] = {
+    OVERRIDE_ENDPOINT_CONFIG: endpointConfig,
+  }
+  storybookQueryClient.resetQueries()
+}
+
 /**
  * Wraps storybook story components to ensure that all components receive required context.
  * @param props
@@ -54,7 +65,15 @@ const storybookQueryClient = new QueryClient(defaultQueryClientConfig)
  */
 export function StorybookComponentWrapper(props: {
   children: React.ReactNode
+  /* This will match the `globalTypes` object in preview.jsx. */
+  storybookContext: any
 }) {
+  const { storybookContext } = props
+
+  useEffect(() => {
+    overrideEndpoint(storybookContext.globals.stack as SynapseStack)
+  }, [storybookContext.globals.stack])
+
   const [accessToken, setAccessToken] = React.useState<string | undefined>(
     undefined,
   )
@@ -73,7 +92,7 @@ export function StorybookComponentWrapper(props: {
     resetCache()
   }, [accessToken])
 
-  const context: SynapseContextType = useMemo(
+  const synapseContext: SynapseContextType = useMemo(
     () => ({
       accessToken: accessToken,
       isInExperimentalMode: SynapseClient.isInSynapseExperimentalMode(),
@@ -88,7 +107,8 @@ export function StorybookComponentWrapper(props: {
     <SynapseContextProvider
       queryClient={storybookQueryClient}
       key={accessToken}
-      synapseContext={context}
+      synapseContext={synapseContext}
+      theme={{ ...defaultMuiTheme, palette: storybookContext.globals.palette }}
     >
       <MemoryRouter>
         <ReactQueryDevtools />
