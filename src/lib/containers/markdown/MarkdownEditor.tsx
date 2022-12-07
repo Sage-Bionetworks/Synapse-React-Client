@@ -57,11 +57,11 @@ export const MarkdownEditor: React.FunctionComponent<MarkdownEditorProps> = ({
       const textBeforeTag = text.substring(0, start)
       const textAfterTag = text.substring(start, text.length)
       setSelectionStart(start + user.length + 1)
-      if (tagModalWithKeyboard) {
-        newText.push(textBeforeTag, `${user.replace(/\s/g, '')}`, textAfterTag)
-      } else {
-        newText.push(textBeforeTag, `@${user.replace(/\s/g, '')}`, textAfterTag)
-      }
+      newText.push(
+        textBeforeTag,
+        `${tagModalWithKeyboard ? '' : '@'}${user.replace(/\s/g, '')}`,
+        textAfterTag,
+      )
     }
     setText(newText.join(''))
     setTagModalWithKeyboard(false)
