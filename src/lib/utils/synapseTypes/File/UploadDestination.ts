@@ -104,7 +104,7 @@ export type EXTERNAL_S3_UPLOAD_DESTINATION_CONCRETE_TYPE =
  */
 export interface ExternalS3UploadDestination extends StsUploadDestination {
   concreteType: EXTERNAL_S3_UPLOAD_DESTINATION_CONCRETE_TYPE
-  /* the s3 endpoint url (default: https://s3.amazonaws.com) */
+  /* the S3 endpoint url (default: https://s3.amazonaws.com) */
   endpointUrl: string
   /* the bucket to use */
   bucket: string
