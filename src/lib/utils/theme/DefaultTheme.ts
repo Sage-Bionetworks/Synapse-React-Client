@@ -17,6 +17,7 @@ const defaultMuiTheme: ThemeOptions = {
     MuiButton: {
       styleOverrides: {
         root: {
+          fontWeight: 900,
           padding: '6px 12px',
           borderRadius: '0px',
           textTransform: 'none',
@@ -24,6 +25,50 @@ const defaultMuiTheme: ThemeOptions = {
             transition: '0.2s',
           },
         },
+        text: ({ theme }) => ({
+          '&:hover': {
+            textDecoration: 'underline',
+            textUnderlineOffset: '4px',
+            textDecorationColor: theme.palette.primary.main,
+            textDecorationThickness: '2px',
+          },
+        }),
+      },
+    },
+    MuiDialog: {
+      defaultProps: {
+        PaperProps: {
+          sx: {
+            borderRadius: '0px',
+            padding: '35px',
+            alignSelf: 'flex-start',
+          },
+        },
+      },
+    },
+    MuiDialogTitle: {
+      styleOverrides: {
+        root: ({ theme }) => ({
+          borderBottom: `1px solid ${theme.palette.grey[300]}`,
+          padding: '0px 0px 20px',
+          marginBottom: '20px',
+        }),
+      },
+    },
+    MuiDialogContent: {
+      styleOverrides: {
+        root: {
+          padding: '0px',
+        },
+      },
+    },
+    MuiDialogActions: {
+      styleOverrides: {
+        root: ({ theme }) => ({
+          padding: '20px 0px 0px',
+          marginTop: '20px',
+          borderTop: `1px solid ${theme.palette.grey[300]}`,
+        }),
       },
     },
     MuiTooltip: {
