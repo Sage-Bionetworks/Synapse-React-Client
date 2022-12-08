@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react'
 import React from 'react'
-import FavoritesPage from '../../../lib/containers/FavoritesPage'
+import FavoritesPage from '../../../lib/containers/favorites/FavoritesPage'
 import { createWrapper } from '../../../lib/testutils/TestingLibraryUtils'
 import { SynapseContextType } from '../../../lib/utils/SynapseContext'
 import { mockFolderEntityHeader } from '../../../mocks/entity/mockEntity'

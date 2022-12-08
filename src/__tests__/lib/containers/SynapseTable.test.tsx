@@ -159,7 +159,7 @@ function renderTableCell(
   )
 }
 
-jest.mock('../../../lib/containers/HasAccessV2', () => ({
+jest.mock('../../../lib/containers/access_requirements/HasAccessV2', () => ({
   HasAccessV2: function MockHasAccess() {
     return <div data-testid="HasAccess"></div>
   },

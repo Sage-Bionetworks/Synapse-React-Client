@@ -1,10 +1,10 @@
 import React from 'react'
-import { addFileToDownloadListV2, getEntity } from '../utils/SynapseClient'
 import IconSvg from './IconSvg'
 import { useSynapseContext } from '../utils/SynapseContext'
 import { displayToast } from './ToastMessage'
-import { useQueryClient } from 'react-query'
 import { Tooltip } from '@mui/material'
+import { useAddFileToDownloadList } from '../utils/hooks/SynapseAPI/download/useDownloadList'
+import { useGetEntity } from '../utils/hooks/SynapseAPI'
 
 export type AddToDownloadListV2Props = {
   entityId: string
@@ -16,30 +16,29 @@ const AddToDownloadListV2: React.FunctionComponent<
 > = props => {
   const { entityId, entityVersionNumber } = props
   const { accessToken } = useSynapseContext()
-  const queryClient = useQueryClient()
-  if (!accessToken) {
-    return <></>
-  }
-  const addToDownloadListV2 = async () => {
-    try {
-      await addFileToDownloadListV2(entityId, entityVersionNumber, accessToken)
-      // PORTALS-2222: Invalidate to load the accurate results
-      queryClient.invalidateQueries(['downloadliststatsv2'])
-      const entity = await getEntity(
-        accessToken,
-        entityId,
-        entityVersionNumber ? entityVersionNumber?.toString() : undefined,
-      )
+  const isLoggedIn = !!accessToken
+
+  const { data: entity } = useGetEntity(entityId, entityVersionNumber)
+
+  const { mutate: addToDownloadList } = useAddFileToDownloadList({
+    onSuccess: () => {
       displayToast(
-        `${entity.name} was successfully added to your Download Cart.`,
+        `${
+          entity?.name ?? entityId
+        } was successfully added to your Download Cart.`,
         'success',
       )
-    } catch (e) {
+    },
+    onError: e => {
       displayToast(
-        `Unable to add the file to your Download Cart. ${e}`,
+        `Unable to add the file to your Download Cart. ${e.reason}`,
         'danger',
       )
-    }
+    },
+  })
+
+  if (!isLoggedIn) {
+    return <></>
   }
 
   return (
@@ -51,7 +50,9 @@ const AddToDownloadListV2: React.FunctionComponent<
       >
         <a
           data-testid="AddToDownloadListV2"
-          onClick={addToDownloadListV2}
+          onClick={() => {
+            addToDownloadList({ entityId, entityVersionNumber })
+          }}
           className="ignoreLink"
         >
           <IconSvg icon={'addToCart'} />

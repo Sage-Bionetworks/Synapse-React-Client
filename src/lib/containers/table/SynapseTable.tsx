@@ -30,7 +30,7 @@ import {
 import AddToDownloadListV2 from '../AddToDownloadListV2'
 import { LabelLinkConfig } from '../CardContainerLogic'
 import DirectDownload from '../DirectDownload'
-import { HasAccessV2 } from '../HasAccessV2'
+import { HasAccessV2 } from '../access_requirements/HasAccessV2'
 import loadingScreen from '../LoadingScreen'
 import ModalDownload from '../ModalDownload'
 import { QueryVisualizationContextType } from '../QueryVisualizationWrapper'
