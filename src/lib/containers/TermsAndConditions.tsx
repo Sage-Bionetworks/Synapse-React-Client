@@ -168,7 +168,7 @@ const TermsAndConditions: React.FunctionComponent<TermsAndConditionsProps> = ({
             })}
         </ul>
         <div className="view-terms">
-          <Button href={tcAgreement} target="_blank">
+          <Button variant={'contained'} href={tcAgreement} target="_blank">
             View Complete Terms and Conditions for Use
           </Button>
         </div>
