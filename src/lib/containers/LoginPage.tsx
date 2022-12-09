@@ -1,5 +1,7 @@
 import * as React from 'react'
 import Login from './Login'
+import IconSvg from './IconSvg'
+import { IconButton } from '@mui/material'
 
 export type LoginPageProps = {
   ssoRedirectUrl?: string
@@ -9,11 +11,21 @@ export type LoginPageProps = {
 
 const LoginPage: React.FunctionComponent<LoginPageProps> = props => {
   const { ssoRedirectUrl, redirectUrl, sessionCallback } = props
+  const [isOnUsernameOrPasswordScreen, setIsOnUsernameOrPasswordScreen] =
+    React.useState<boolean | undefined>()
   const thisClass = 'login-panel-wrapper'
 
   return (
     <div className={'login-panel-wrapper-bg'}>
       <div id={thisClass} className={thisClass}>
+        {isOnUsernameOrPasswordScreen && (
+          <IconButton
+            className="back-button"
+            onClick={() => setIsOnUsernameOrPasswordScreen(false)}
+          >
+            <IconSvg icon="arrowBack" />
+          </IconButton>
+        )}
         <div className={'login-panel panel-left'}>
           <div className={'panel-logo'}>
             <img
@@ -30,6 +42,9 @@ const LoginPage: React.FunctionComponent<LoginPageProps> = props => {
             ssoRedirectUrl={ssoRedirectUrl}
             redirectUrl={redirectUrl}
             sessionCallback={sessionCallback}
+            renderBackButton={false}
+            handleIsOnUsernameOrPasswordScreen={setIsOnUsernameOrPasswordScreen}
+            showUsernameOrPassword={isOnUsernameOrPasswordScreen}
           />
         </div>
         <div className={'login-panel panel-right'}>

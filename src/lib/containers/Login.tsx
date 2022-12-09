@@ -7,7 +7,8 @@ import {
   BackendDestinationEnum,
 } from '../utils/functions/getEndpoint'
 import { GoogleIcon24 } from '../assets/GoogleIcon24'
-import { Button, Link } from '@mui/material'
+import { Button, IconButton, Link } from '@mui/material'
+import IconSvg from './IconSvg'
 
 export const PROVIDERS = {
   GOOGLE: 'GOOGLE_OAUTH_2_0',
@@ -21,6 +22,8 @@ type State = {
   isSignedIn: boolean
   hasLoginInFailed: boolean
   errorMessage: string
+  /* Only used if props.showUsernameOrPassword is undefined */
+  showUsernameOrPasswordLocalState: boolean
 }
 
 type Props = {
@@ -29,6 +32,11 @@ type Props = {
   sessionCallback: () => void // Callback is invoked after login
   registerAccountUrl?: string
   resetPasswordUrl?: string
+  handleIsOnUsernameOrPasswordScreen?: React.Dispatch<
+    React.SetStateAction<boolean | undefined>
+  >
+  showUsernameOrPassword?: boolean | undefined
+  renderBackButton?: boolean
 }
 
 /**
@@ -59,11 +67,13 @@ class Login extends React.Component<Props, State> {
       isSignedIn: false,
       password: '',
       username: '',
+      showUsernameOrPasswordLocalState: false,
     }
     this.handleChange = this.handleChange.bind(this)
     this.handleLogin = this.handleLogin.bind(this)
     this.getLoginFailureView = this.getLoginFailureView.bind(this)
     this.onGoogleSignIn = this.onGoogleSignIn.bind(this)
+    this.handleShowEmailLogin = this.handleShowEmailLogin.bind(this)
   }
   /**
    * Updates internal state with the event that was triggered
@@ -114,6 +124,13 @@ class Login extends React.Component<Props, State> {
     }
   }
 
+  public handleShowEmailLogin(boolean: boolean) {
+    if (this.props.handleIsOnUsernameOrPasswordScreen) {
+      this.props.handleIsOnUsernameOrPasswordScreen(boolean)
+    } else {
+      this.setState({ showUsernameOrPasswordLocalState: boolean })
+    }
+  }
   /**
    * Shows user login failure view on login failure
    *
@@ -158,25 +175,46 @@ class Login extends React.Component<Props, State> {
     const resetPasswordUrl =
       this.props.resetPasswordUrl ??
       `${getEndpoint(BackendDestinationEnum.PORTAL_ENDPOINT)}#!PasswordReset:0`
+    const showUsernameOrPassword =
+      this.props.showUsernameOrPassword ??
+      this.state.showUsernameOrPasswordLocalState
     return (
       <div
         id="loginPage"
         className="container LoginComponent SRC-syn-border-spacing bootstrap-4-backport"
       >
-        <form>
+        <div className={!showUsernameOrPassword ? '' : 'hide-component'}>
+          <form>
+            <ButtonWithIcon
+              variant="white"
+              onClick={this.onGoogleSignIn}
+              className={`SRC-signin-button`}
+              icon={<GoogleIcon24 />}
+            >
+              Sign in with Google
+            </ButtonWithIcon>
+          </form>
           <ButtonWithIcon
             variant="white"
-            onClick={this.onGoogleSignIn}
-            className={`SRC-google-button`}
-            icon={<GoogleIcon24 />}
+            className={`SRC-signin-button`}
+            icon={<IconSvg icon="email" />}
+            onClick={() => this.handleShowEmailLogin(true)}
           >
-            Sign in with Google
+            Sign in with your email
           </ButtonWithIcon>
-        </form>
-        <div className="SRC-center-text SRC-deemphasized-text SRC-marginBottomTen bg-strike">
-          or
         </div>
-        <Form onSubmit={this.handleLogin}>
+        <Form
+          className={showUsernameOrPassword ? '' : 'hide-component'}
+          onSubmit={this.handleLogin}
+        >
+          {this.props.renderBackButton && (
+            <IconButton
+              type="button"
+              onClick={() => this.handleShowEmailLogin(false)}
+            >
+              <IconSvg icon="arrowBack" />
+            </IconButton>
+          )}
           <label htmlFor={'username'}>Username or Email Address</label>
           <Form.Control
             required

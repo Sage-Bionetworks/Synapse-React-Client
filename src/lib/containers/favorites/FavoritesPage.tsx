@@ -1,20 +1,22 @@
 import React, { useState, useEffect } from 'react'
 import * as ReactBootstrap from 'react-bootstrap'
-import { SynapseClient } from '../utils'
-import SortIcon from '../assets/icons/Sort'
-import { Direction, EntityHeader } from '../utils/synapseTypes'
-import { useSynapseContext } from '../utils/SynapseContext'
-import { SynapseSpinner } from './LoadingScreen'
-import { useGetFavorites } from '../utils/hooks/SynapseAPI/user/useFavorites'
-import IconSvg from './IconSvg'
+import SortIcon from '../../assets/icons/Sort'
+import { Direction, EntityHeader } from '../../utils/synapseTypes'
+import { useSynapseContext } from '../../utils/SynapseContext'
+import { SynapseSpinner } from '../LoadingScreen'
+import {
+  useGetFavorites,
+  useRemoveFavorite,
+} from '../../utils/hooks/SynapseAPI/user/useFavorites'
+import IconSvg from '../IconSvg'
 import {
   convertToEntityType,
   entityTypeToFriendlyName,
-} from '../utils/functions/EntityTypeUtils'
-import { PRODUCTION_ENDPOINT_CONFIG } from '../utils/functions/getEndpoint'
-import { EntityTypeIcon } from './EntityIcon'
+} from '../../utils/functions/EntityTypeUtils'
+import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
+import { EntityTypeIcon } from '../EntityIcon'
 import { Form } from 'react-bootstrap'
-import { ErrorBanner } from './ErrorBanner'
+import { ErrorBanner } from '../ErrorBanner'
 import { Tooltip } from '@mui/material'
 
 // Local types used for client-side sorting
@@ -33,13 +35,7 @@ export default function FavoritesPage() {
     undefined,
   )
   const [error, setError] = useState<Error>()
-  const {
-    data,
-    isFetching,
-    isError,
-    error: newError,
-    refetch,
-  } = useGetFavorites()
+  const { data, isFetching, isError, error: newError } = useGetFavorites()
 
   useEffect(() => {
     if (isError && newError) {
@@ -85,14 +81,7 @@ export default function FavoritesPage() {
     }
   }, [data, searchText, sort])
 
-  const removeFavorite = async (item: EntityHeader) => {
-    try {
-      await SynapseClient.removeUserFavorite(item.id, accessToken)
-      refetch()
-    } catch (err) {
-      console.error(err)
-    }
-  }
+  const { mutate: removeFavorite } = useRemoveFavorite()
 
   const showInteractiveSortIcon = (columnSortBy: SortField) => {
     return (
@@ -178,7 +167,7 @@ export default function FavoritesPage() {
                         >
                           <a
                             onClick={() => {
-                              removeFavorite(item)
+                              removeFavorite(item.id)
                             }}
                             className="ignoreLink"
                           >

@@ -6,10 +6,10 @@ import {
   AddShoppingCart,
   AddTwoTone,
   AlternateEmail,
-  ArrowBackIos,
+  ArrowBack,
   ArrowDropDownTwoTone,
   ArrowDropUpTwoTone,
-  ArrowForwardIos,
+  ArrowForward,
   ArticleTwoTone,
   AssessmentTwoTone,
   AssignmentTurnedInTwoTone,
@@ -54,6 +54,7 @@ import {
   ListTwoTone,
   LockOpenTwoTone,
   Login,
+  MailOutlineTwoTone,
   MoreVertTwoTone,
   OpenInNewTwoTone,
   PeopleTwoTone,
@@ -226,6 +227,7 @@ export const IconStrings = [
   'flag',
   'newFolder',
   'createVersion',
+  'email',
 ] as const
 
 export type Icon = typeof IconStrings[number]
@@ -255,9 +257,9 @@ function IconMapping(props: { icon: string; sx?: SxProps }) {
     case 'add':
       return <AddTwoTone sx={sx} />
     case 'arrowBack':
-      return <ArrowBackIos sx={sx} />
+      return <ArrowBack sx={sx} />
     case 'arrowForward':
-      return <ArrowForwardIos sx={sx} />
+      return <ArrowForward sx={sx} />
     case 'arrowDropUp':
       return <ArrowDropUpTwoTone sx={sx} />
     case 'arrowDropDown':
@@ -472,6 +474,8 @@ function IconMapping(props: { icon: string; sx?: SxProps }) {
       return <UploadTwoTone sx={sx} />
     case 'flag':
       return <FlagTwoTone sx={sx} />
+    case 'email':
+      return <MailOutlineTwoTone sx={sx} />
     default:
       return <></>
   }

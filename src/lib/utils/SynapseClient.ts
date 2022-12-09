@@ -57,7 +57,6 @@ import {
 import { dispatchDownloadListChangeEvent } from './functions/dispatchDownloadListChangeEvent'
 import {
   BackendDestinationEnum,
-  EndpointObject,
   getEndpoint,
   PRODUCTION_ENDPOINT_CONFIG,
 } from './functions/getEndpoint'
@@ -1234,6 +1233,22 @@ export function getUserFavorites(
 }
 
 /**
+ * Add an Entity as a Favorite of the caller.
+ * http://rest-docs.synapse.org/rest/POST/favorite/id.html
+ */
+export function addUserFavorite(
+  entityId: string,
+  accessToken: string | undefined,
+): Promise<EntityHeader> {
+  return doPost(
+    `/repo/v1/favorite/${entityId}`,
+    null,
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
  * Remove a favorite
  * http://rest-docs.synapse.org/rest/DELETE/favorite/id.html
  */
@@ -1385,14 +1400,6 @@ export const getPresignedUrlForWikiAttachment = (
 export const isInSynapseExperimentalMode = (): boolean => {
   // bang bang, you're a boolean!
   return !!cookies.get(SynapseConstants.EXPERIMENTAL_MODE_COOKIE)
-}
-
-export const getStyleguideStack = (): EndpointObject | null => {
-  return JSON.parse(
-    window.localStorage.getItem(
-      SynapseConstants.STYLEGUIDE_STACK_LOCAL_STORAGE_KEY,
-    ) ?? 'null',
-  )
 }
 
 /**
@@ -2747,6 +2754,26 @@ export const getAllAccessRequirements = (
     )
   }
   return getAllOfPaginatedService(fn)
+}
+
+/**
+ * Add a temporary access restriction that prevents access pending review by the Synapse Access and Compliance Team.
+ * This service may be used only by an administrator of the specified entity.
+ *
+ * https://rest-docs.synapse.org/rest/POST/entity/id/lockAccessRequirement.html
+ * @param entityId
+ * @param accessToken
+ */
+export function createLockAccessRequirement(
+  entityId: string,
+  accessToken: string | undefined,
+): Promise<AccessRequirement> {
+  return doPost(
+    `/repo/v1/entity/${entityId}/lockAccessRequirement`,
+    null,
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
 }
 
 /**

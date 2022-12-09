@@ -12,6 +12,27 @@ module.exports = {
   core: {
     builder: '@storybook/builder-vite',
   },
+  typescript: {
+    // These options are from https://storybook.js.org/blog/material-ui-in-storybook/
+    check: false,
+    checkOptions: {},
+    reactDocgen: 'react-docgen-typescript',
+    reactDocgenTypescriptOptions: {
+      // speeds up storybook build time
+      allowSyntheticDefaultImports: false,
+      // speeds up storybook build time
+      esModuleInterop: false,
+      // makes union prop types like variant and size appear as select controls
+      shouldExtractLiteralValuesFromEnum: true,
+      // makes string and boolean types that can be undefined appear as inputs and switches
+      shouldRemoveUndefinedFromOptional: true,
+      // Filter out third-party props from node_modules except @mui packages
+      propFilter: prop =>
+        prop.parent
+          ? !/node_modules\/(?!@mui)/.test(prop.parent.fileName)
+          : true,
+    },
+  },
   features: {
     storyStoreV7: true,
   },

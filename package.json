@@ -1,6 +1,6 @@
 {
   "name": "synapse-react-client",
-  "version": "3.1.15",
+  "version": "3.1.16",
   "private": false,
   "main": "dist/index.js",
   "types": "./dist/index.d.ts",
@@ -182,6 +182,7 @@
     "identity-obj-proxy": "^3.0.0",
     "jest": "^28.1.3",
     "jest-environment-jsdom": "^28.1.1",
+    "jest-fail-on-console": "^3.0.2",
     "jest-mock-promise": "^1.1.10",
     "jest-when": "^3.5.1",
     "jsdom": "^20.0.0",

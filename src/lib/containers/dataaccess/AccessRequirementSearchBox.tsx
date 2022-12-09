@@ -3,7 +3,7 @@ import React from 'react'
 import { components, GroupBase, SelectComponentsConfig } from 'react-select'
 import AsyncSelect from 'react-select/async'
 import { SynapseClient } from '../../utils'
-import useGetAccessRequirement from '../../utils/hooks/SynapseAPI/dataaccess/useGetAccessRequirement'
+import { useGetAccessRequirements } from '../../utils/hooks/SynapseAPI/dataaccess/useAccessRequirements'
 import { useSynapseContext } from '../../utils/SynapseContext'
 
 export type AccessRequirementSearchBoxProps = {
@@ -53,7 +53,7 @@ export default function AccessRequirementSearchBox(
   const { inputId, initialId, onChange, placeholder } = props
   const { accessToken } = useSynapseContext()
   const { data: initialAccessRequirement, isLoading: isLoadingInitialAR } =
-    useGetAccessRequirement(initialId!, {
+    useGetAccessRequirements(initialId!, {
       enabled: !!initialId,
     })
 

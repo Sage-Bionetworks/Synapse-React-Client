@@ -30,6 +30,8 @@ export const MarkdownEditor: React.FunctionComponent<MarkdownEditorProps> = ({
   )
   const [selectionStart, setSelectionStart] = useState<number>(0)
   const [isShowingTagModal, setIsShowingTagModal] = useState<boolean>(false)
+  const [tagModalWithKeyboard, setTagModalWithKeyboard] =
+    useState<boolean>(false)
   const textAreaRef = useRef<HTMLTextAreaElement>(null)
 
   /**
@@ -55,13 +57,19 @@ export const MarkdownEditor: React.FunctionComponent<MarkdownEditorProps> = ({
       const textBeforeTag = text.substring(0, start)
       const textAfterTag = text.substring(start, text.length)
       setSelectionStart(start + user.length + 1)
-      newText.push(textBeforeTag, `@${user.replace(/\s/g, '')}`, textAfterTag)
+      newText.push(
+        textBeforeTag,
+        `${tagModalWithKeyboard ? '' : '@'}${user.replace(/\s/g, '')}`,
+        textAfterTag,
+      )
     }
     setText(newText.join(''))
+    setTagModalWithKeyboard(false)
   }
 
   const handleTagModal = (e: KeyboardEvent) => {
     if (e.key == '@') {
+      setTagModalWithKeyboard(true)
       setIsShowingTagModal(true)
     }
   }

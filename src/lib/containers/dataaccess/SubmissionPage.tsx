@@ -8,10 +8,11 @@ import { formatDate } from '../../utils/functions/DateFormatter'
 import useGetDataAccessSubmission, {
   useUpdateDataAccessSubmissionState,
 } from '../../utils/hooks/SynapseAPI/dataaccess/useDataAccessSubmission'
-import useGetAccessRequirement, {
+import {
+  useGetAccessRequirements,
   useGetAccessRequirementACL,
   useGetAccessRequirementWikiPageKey,
-} from '../../utils/hooks/SynapseAPI/dataaccess/useGetAccessRequirement'
+} from '../../utils/hooks/SynapseAPI/dataaccess/useAccessRequirements'
 import { ACT_TEAM_ID } from '../../utils/SynapseConstants'
 import {
   FileHandleAssociateType,
@@ -131,7 +132,7 @@ export default function SubmissionPage(props: SubmissionPageProps) {
   const { mutateAsync } = useUpdateDataAccessSubmissionState()
 
   const { data: accessRequirement } =
-    useGetAccessRequirement<ManagedACTAccessRequirement>(
+    useGetAccessRequirements<ManagedACTAccessRequirement>(
       parseInt(submission?.accessRequirementId!),
       { enabled: !!submission },
     )
