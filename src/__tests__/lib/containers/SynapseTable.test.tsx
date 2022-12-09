@@ -6,6 +6,7 @@ import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
 import { SynapseConstants } from '../../../lib/utils'
 import { QueryVisualizationContextType } from '../../../lib/containers/QueryVisualizationWrapper'
 import {
+  PaginatedQueryContextType,
   QueryContextProvider,
   QueryContextType,
 } from '../../../lib/containers/QueryContext'
@@ -19,7 +20,10 @@ import SynapseTable, {
 } from '../../../lib/containers/table/SynapseTable'
 import { NOT_SET_DISPLAY_VALUE } from '../../../lib/containers/table/SynapseTableConstants'
 import { createWrapper } from '../../../lib/testutils/TestingLibraryUtils'
-import { ENTITY_HEADERS } from '../../../lib/utils/APIConstants'
+import {
+  ENTITY_HEADERS,
+  ENTITY_ID_VERSION,
+} from '../../../lib/utils/APIConstants'
 import {
   BackendDestinationEnum,
   getEndpoint,
@@ -37,6 +41,7 @@ import {
   ReferenceList,
   UserGroupHeader,
   UserProfile,
+  Entity,
 } from '../../../lib/utils/synapseTypes/'
 import { MOCK_CONTEXT_VALUE } from '../../../mocks/MockSynapseContext'
 import { rest, server } from '../../../mocks/msw/server'
@@ -44,6 +49,11 @@ import queryResultBundleJson from '../../../mocks/query/syn16787123.json'
 import fileViewQueryResultBundleJson from '../../../mocks/query/syn20337467.json'
 import dayjs from 'dayjs'
 import { formatDate } from '../../../lib/utils/functions/DateFormatter'
+import {
+  MOCK_USER_ID,
+  MOCK_USER_ID_2,
+} from '../../../mocks/user/mock_user_profile'
+import failOnConsole from 'jest-fail-on-console'
 
 const queryResultBundle: QueryResultBundle =
   queryResultBundleJson as QueryResultBundle
@@ -94,11 +104,12 @@ const lastQueryRequest: QueryBundleRequest = {
 const getLastQueryRequest = jest.fn(() => cloneDeep(lastQueryRequest))
 const executeQueryRequest = jest.fn()
 
-const queryContext: Partial<QueryContextType> = {
+const queryContext: Partial<PaginatedQueryContextType> = {
   data: queryResultBundle,
   entity: {
     concreteType: 'org.sagebionetworks.repo.model.table.EntityView',
   },
+  pageSize: 25,
   getLastQueryRequest: getLastQueryRequest,
   executeQueryRequest,
 }
@@ -168,7 +179,7 @@ jest.mock('../../../lib/containers/access_requirements/HasAccessV2', () => ({
 jest.mock('../../../lib/containers/EntityLink', () => {
   return {
     EntityLink: function MockEntityLink() {
-      return <div data-testid="EntityLink"></div>
+      return <span data-testid="EntityLink"></span>
     },
   }
 })
@@ -183,7 +194,8 @@ server.use(
   rest.post(
     `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY_HEADERS}`,
     async (req, res, ctx) => {
-      const requestBody: ReferenceList = JSON.parse(req.body!).references
+      const requestBody: ReferenceList = (await req.json())
+        .references as ReferenceList
       const responseBody: PaginatedResults<EntityHeader> = {
         results: requestBody.map((reference: Reference) => {
           return {
@@ -196,10 +208,35 @@ server.use(
       return res(ctx.status(200), ctx.json(responseBody))
     },
   ),
+  rest.get(
+    `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY_ID_VERSION(
+      ':id',
+      ':version',
+    )}`,
+    async (req, res, ctx) => {
+      const responseBody: Entity = {
+        id: req.params.id!,
+        name: `Mock Entity with Id ${req.params.id}`,
+        versionNumber: req.params.version,
+        versionLabel: `v${req.params.version}`,
+        versionComment: 'test',
+        modifiedOn: '2021-03-31T18:30:00.000Z',
+        modifiedBy: MOCK_USER_ID.toString(),
+        modifiedByPrincipalId: MOCK_USER_ID_2.toString(),
+        etag: 'etag',
+        concreteType: 'org.sagebionetworks.repo.model.FileEntity',
+      }
+      return res(ctx.status(200), ctx.json(responseBody))
+    },
+  ),
 )
 
 describe('SynapseTable tests', () => {
-  beforeAll(() => server.listen())
+  // failOnConsole()
+
+  beforeAll(() => {
+    server.listen()
+  })
   afterEach(() => server.restoreHandlers())
   afterAll(() => server.close())
 
