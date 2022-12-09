@@ -232,7 +232,7 @@ server.use(
 )
 
 describe('SynapseTable tests', () => {
-  // failOnConsole()
+  failOnConsole()
 
   beforeAll(() => {
     server.listen()
