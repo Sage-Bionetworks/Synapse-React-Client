@@ -72,6 +72,7 @@ import {
   SearchTwoTone,
   ShoppingCartOutlined,
   Star,
+  StarOutline,
   StarTwoTone,
   StorageTwoTone,
   StrikethroughS,
@@ -141,6 +142,7 @@ export const IconStrings = [
   'photoCamera',
   'info',
   'favTwoTone',
+  'favOutline',
   'fav',
   'peopleTwoTone',
   'challengesTwoTone',
@@ -324,6 +326,8 @@ function IconMapping(props: { icon: string; sx?: SxProps }) {
       return <InfoOutlined sx={sx}></InfoOutlined>
     case 'favTwoTone':
       return <StarTwoTone sx={sx}></StarTwoTone>
+    case 'favOutline':
+      return <StarOutline sx={sx}></StarOutline>
     case 'fav':
       return <Star sx={sx}></Star>
     case 'github':

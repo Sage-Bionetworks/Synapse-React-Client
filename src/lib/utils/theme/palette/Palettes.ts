@@ -3,6 +3,7 @@ import tinycolor from 'tinycolor2'
 
 const generatePalette = (
   mainColor: tinycolor.ColorInput,
+  specificColors?: PaletteColorOptions,
 ): PaletteColorOptions => {
   return {
     100: tinycolor(mainColor).desaturate(25).lighten(50).toString(),
@@ -14,9 +15,14 @@ const generatePalette = (
     700: tinycolor(mainColor).saturate(11).darken(8).toString(),
     800: tinycolor(mainColor).saturate(18).darken(10).toString(),
     900: tinycolor(mainColor).saturate(24).darken(18).toString(),
-    light: tinycolor(mainColor).desaturate(1).lighten(5).toString(), // 400
+    light:
+      (specificColors && specificColors[400]) ||
+      tinycolor(mainColor).desaturate(1).lighten(5).toString(), // 400
     main: tinycolor(mainColor).toString(), // 500
-    dark: tinycolor(mainColor).saturate(5).darken(4).toString(), // 600
+    dark:
+      (specificColors && specificColors[600]) ||
+      tinycolor(mainColor).saturate(5).darken(4).toString(), // 600
+    ...specificColors,
   }
 }
 
@@ -24,8 +30,39 @@ const generatePalette = (
  * Default colors here match the default colors in _variables.scss.  We now have a single point of control
  */
 export const palette: PaletteOptions = {
-  primary: generatePalette('#395979'),
-  secondary: generatePalette('#469285'),
+  primary: generatePalette('#395979', {
+    100: '#d7dee4',
+    200: '#b0bdc9',
+    300: '#889baf',
+    400: '#617a94',
+    500: '#395979',
+    600: '#2e4761',
+    700: '#223549',
+    800: '#172430',
+    900: '#0b1218',
+  }),
+  secondary: generatePalette('#469285', {
+    100: '#dae9e7',
+    200: '#b5d3ce',
+    300: '#90beb6',
+    400: '#6ba89d',
+    500: '#469285',
+    600: '#38756a',
+    700: '#2a6960',
+    800: '#1c3a35',
+    900: '#0e1d1b',
+  }),
+  tertiary: generatePalette('#EDC766', {
+    100: '#fbf4e0',
+    200: '#f8e9c2',
+    300: '#f4dda3',
+    400: '#f1d285',
+    500: '#edc766',
+    600: '#be9f52',
+    700: '#8e773d',
+    800: '#5f5029',
+    900: '#2f2814',
+  }),
   grey: {
     1000: '#22252a',
     900: '#353a3f',
@@ -55,6 +92,7 @@ export const mtbPalette: PaletteOptions = {
 }
 
 export const arkPortalPalette: PaletteOptions = {
+  ...palette,
   primary: generatePalette('#e79776'),
   secondary: generatePalette('#e79776'),
 }

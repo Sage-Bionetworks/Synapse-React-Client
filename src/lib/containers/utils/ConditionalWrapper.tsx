@@ -1,10 +1,11 @@
 import React from 'react'
 
-// TODO: Strong typing for the generic
-type ConditionalWrapperProps<T extends Record<string, unknown> = any> = {
+type ConditionalWrapperProps<
+  TWrapper extends React.ComponentType<React.PropsWithChildren> = React.ComponentType<React.PropsWithChildren>,
+> = {
   condition: boolean
-  wrapper: React.ComponentType<React.PropsWithChildren<T>>
-  wrapperProps?: T
+  wrapper: TWrapper
+  wrapperProps?: Omit<React.ComponentProps<TWrapper>, 'children'>
   children: React.ReactNode
 }
 
