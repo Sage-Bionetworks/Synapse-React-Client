@@ -37,6 +37,13 @@ declare module '@mui/material/styles' {
   // allow configuration using `createTheme`
   interface TypographyVariantsOptions
     extends RecordWithCustomVariantKeys<React.CSSProperties | undefined> {}
+
+  interface Palette {
+    tertiary: Palette['primary']
+  }
+  interface PaletteOptions {
+    tertiary: PaletteOptions['primary']
+  }
 }
 
 declare module '@mui/material' {
