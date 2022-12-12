@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { tcItem } from './TermsAndConditionsItem'
+import { Link } from '@mui/material'
 import TermsAndConditionsItem from './TermsAndConditionsItem'
 import { Button } from '@mui/material'
 import { ChatBubblesIcon } from '../assets/icons/terms/ChatBubblesIcon'
@@ -13,6 +14,7 @@ import { FlagIcon } from '../assets/icons/terms/FlagIcon'
 
 export type TermsAndConditionsProps = {
   onFormChange: (formComplete: boolean) => void
+  showTcTerm?: boolean
 }
 
 const dataUseLink =
@@ -94,6 +96,7 @@ Please refer to our full <a target="_blank" href="https://help.synapse.org/docs/
 
 const TermsAndConditions: React.FunctionComponent<TermsAndConditionsProps> = ({
   onFormChange,
+  showTcTerm = true,
 }) => {
   const checkboxCount = tcList.length
   const tcAgreement =
@@ -145,8 +148,8 @@ const TermsAndConditions: React.FunctionComponent<TermsAndConditionsProps> = ({
       <h3 className="page-header">Synapse Pledge</h3>
       <form>
         <label>
-          I affirm my commitment to all Synapse Governance policies for
-          responsible research and data handling (linked below), including:
+          I affirm my commitment to all <Link>Synapse Governance policies</Link>{' '}
+          for responsible research and data handling (linked below), including:
         </label>
         <ul className="term-list">
           {tcList.length &&
@@ -167,11 +170,13 @@ const TermsAndConditions: React.FunctionComponent<TermsAndConditionsProps> = ({
               )
             })}
         </ul>
-        <div className="view-terms">
-          <Button href={tcAgreement} target="_blank">
-            View Complete Terms and Conditions for Use
-          </Button>
-        </div>
+        {showTcTerm && (
+          <div className="view-terms">
+            <Button href={tcAgreement} variant="text" target="_blank">
+              View Complete Terms and Conditions for Use
+            </Button>
+          </div>
+        )}
       </form>
     </section>
   )
