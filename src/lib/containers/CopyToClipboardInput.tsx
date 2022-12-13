@@ -10,10 +10,10 @@ export type CopyToClipboardInputProps = {
 
 /**
  * Component that holds a large string in a readonly <input> to be copied to the user's clipboard when clicked.
- * This component should only be used when the value to copy is not very long AND the full length of the string
- * does not necessarily need to be seen by the user. This component was adapted from the email address copy to
- * clipboard functionality in UserCardMedium. For smaller/inline strings, look at UserCardMedium functionality
- * for displaying the value in a <p> tag instead of a readonly <input> tag.
+ * This component should only be used when the full length of the string value to copy does not necessarily need to be
+ * seen by the user. This component was adapted from the email address copy to clipboard functionality in UserCardMedium.
+ * For smaller/inline strings, look at UserCardMedium functionality for displaying the value in a <p> tag instead of a
+ * readonly <input> tag.
  */
 export const CopyToClipboardInput: React.FunctionComponent<
   CopyToClipboardInputProps

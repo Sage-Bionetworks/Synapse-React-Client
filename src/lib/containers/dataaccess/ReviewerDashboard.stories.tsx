@@ -5,7 +5,7 @@ import ReviewerDashboard from './ReviewerDashboard'
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {
-  title: 'Synapse/Governance/ReviewerDashboard',
+  title: 'Governance/ReviewerDashboard',
   component: ReviewerDashboard,
   // More on argTypes: https://storybook.js.org/docs/react/api/argtypes
   argTypes: {},
