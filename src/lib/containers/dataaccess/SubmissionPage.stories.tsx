@@ -14,7 +14,7 @@ import { MOCK_REPO_ORIGIN } from '../../utils/functions/getEndpoint'
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {
-  title: 'Synapse/Governance/SubmissionPage',
+  title: 'Governance/SubmissionPage',
   component: SubmissionPage,
   // More on argTypes: https://storybook.js.org/docs/react/api/argtypes
   argTypes: {},

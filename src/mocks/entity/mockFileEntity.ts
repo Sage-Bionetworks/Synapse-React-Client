@@ -7,12 +7,13 @@ import {
   EntityPath,
   EntityType,
   FileEntity,
+  RestrictionLevel,
 } from '../../lib/utils/synapseTypes'
 import { VersionInfo } from '../../lib/utils/synapseTypes/VersionInfo'
 import {
+  MOCK_FILE_HANDLE_ID,
   mockFileHandle,
   mockPreviewFileHandle,
-  MOCK_FILE_HANDLE_ID,
 } from '../mock_file_handle'
 import { MOCK_USER_ID, MOCK_USER_ID_2 } from '../user/mock_user_profile'
 import { MockEntityData } from './MockEntityData'
@@ -37,7 +38,7 @@ const mockFileEntity: FileEntity = {
   modifiedBy: MOCK_USER_ID.toString(),
   etag: '00000000-0000-0000-0000-000000000000',
   versionNumber: 3,
-  versionLabel: '3',
+  versionLabel: 'a label for version 3',
   isLatestVersion: true,
   createdOn: '2021-03-02T15:05:34.973Z',
   modifiedOn: '2021-03-05T11:31:24.521Z',
@@ -48,7 +49,7 @@ const mockFileEntityVersionInfo: VersionInfo[] = [
     id: MOCK_FILE_ENTITY_ID,
     modifiedBy: MOCK_USER_ID.toString(),
     versionNumber: 1,
-    versionLabel: '1',
+    versionLabel: 'a label for version 1',
     versionComment: 'a comment',
     contentSize: '100',
     contentMd5: 'd836adae5632872014783b05cd2f76d7',
@@ -60,7 +61,7 @@ const mockFileEntityVersionInfo: VersionInfo[] = [
     id: MOCK_FILE_ENTITY_ID,
     modifiedBy: MOCK_USER_ID.toString(),
     versionNumber: 3,
-    versionLabel: '3',
+    versionLabel: 'a label for version 3',
     versionComment: 'a comment about version 3',
     contentSize: '100',
     contentMd5: 'bc91a4a16ccb21944fcee55275dc4574',
@@ -81,7 +82,7 @@ const mockFileEntityVersions: Record<number, FileEntity> = {
     modifiedBy: MOCK_USER_ID.toString(),
     etag: '00000000-0000-0000-0000-000000000000',
     versionNumber: 3,
-    versionLabel: '3',
+    versionLabel: 'a label for version 3',
     isLatestVersion: true,
   },
   1: {
@@ -94,7 +95,7 @@ const mockFileEntityVersions: Record<number, FileEntity> = {
     modifiedBy: MOCK_USER_ID.toString(),
     etag: '00000000-0000-0000-0000-000000000000',
     versionNumber: 1,
-    versionLabel: '1',
+    versionLabel: 'a label for version 1',
     isLatestVersion: false,
   },
 }
@@ -192,6 +193,10 @@ const mockFileEntityBundle: EntityBundle = {
   },
   threadCount: 5,
   path: filePath,
+  restrictionInformation: {
+    restrictionLevel: RestrictionLevel.OPEN,
+    hasUnmetAccessRequirement: false,
+  },
 }
 
 const mockFileEntityJson: EntityJson = {
@@ -214,7 +219,7 @@ const mockFileEntityHeader: EntityHeader = {
   name: mockFileEntity.name,
   type: mockFileEntity.concreteType,
   versionNumber: 3,
-  versionLabel: 'Version label',
+  versionLabel: 'a label for version 3',
   benefactorId: 123,
   createdOn: mockFileEntity.createdOn!,
   modifiedOn: mockFileEntity.modifiedOn!,

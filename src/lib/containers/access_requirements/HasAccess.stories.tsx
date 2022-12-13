@@ -4,7 +4,7 @@ import { HasAccessV2 } from './HasAccessV2'
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {
-  title: 'Components/HasAccess',
+  title: 'Governance/HasAccess',
   component: HasAccessV2,
   // More on argTypes: https://storybook.js.org/docs/react/api/argtypes
   argTypes: {},

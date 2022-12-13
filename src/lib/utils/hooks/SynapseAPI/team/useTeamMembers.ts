@@ -4,6 +4,8 @@ import { SynapseClientError } from '../../../SynapseClientError'
 import { useSynapseContext } from '../../../SynapseContext'
 import { PaginatedResults } from '../../../synapseTypes'
 import { TeamMember } from '../../../synapseTypes/TeamMember'
+import { ACT_TEAM_ID } from '../../../SynapseConstants'
+import { useGetCurrentUserProfile } from '../user'
 
 export function useGetTeamMembers(
   teamId: string | number,
@@ -29,5 +31,23 @@ export function useGetIsUserMemberOfTeam(
     ['team', teamId, 'member', userId],
     () => SynapseClient.getIsUserMemberOfTeam(teamId, userId, accessToken),
     options,
+  )
+}
+
+export function useIsCurrentUserACTMember() {
+  const { accessToken } = useSynapseContext()
+  const { data: currentProfile } = useGetCurrentUserProfile()
+  return useQuery<TeamMember | null, SynapseClientError>(
+    ['isCurrentUserActMember'],
+    () => {
+      return SynapseClient.getIsUserMemberOfTeam(
+        ACT_TEAM_ID.toString(),
+        currentProfile?.ownerId ?? '',
+        accessToken,
+      )
+    },
+    {
+      enabled: !!currentProfile,
+    },
   )
 }

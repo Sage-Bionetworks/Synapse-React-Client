@@ -28,8 +28,6 @@ export type HasAccessProps = {
   className?: string
 }
 
-export const GIGABYTE_SIZE = 2 ** 30
-
 export enum FileHandleDownloadTypeEnum {
   Accessible = 'Accessible',
   AccessBlockedByRestriction = 'AccessBlockedByRestriction',
@@ -165,14 +163,8 @@ export function useGetFileHandleDownloadType(
 }
 
 /**
- * HasAccess shows if the user has access to the file or not.
- *
- * The component's behavior changes whether it's passed in a FileHandle or not.
- * If passed a file handle then it will give more detailed information about the download.
- *
- * @export
- * @class HasAccess
- * @extends {React.Component<HasAccessProps, HasAccessState>}
+ * HasAccess shows if the user has access to the file or not. If the user doesn't have access due to a restriction,
+ * then a link will be shown that opens a modal with steps to request access.
  */
 export function HasAccessV2(props: HasAccessProps) {
   const [displayAccessRequirement, setDisplayAccessRequirement] =
