@@ -2,13 +2,15 @@ import React, { useState } from 'react'
 import { Button } from '@mui/material'
 import IconSvg from '../IconSvg'
 import ImposeRestrictionDialog from './ImposeRestrictionDialog'
-import { useGetEntityBundle } from '../../utils/hooks/SynapseAPI'
+import {
+  useGetEntityBundle,
+  useIsCurrentUserACTMember,
+} from '../../utils/hooks/SynapseAPI'
 import { RestrictionLevel } from '../../utils/synapseTypes'
 import {
   isEntityRefCollectionView,
   isEntityView,
 } from '../../utils/functions/EntityTypeUtils'
-import { useIsCurrentUserACTMember } from '../../utils/hooks/SynapseAPI/team/useTeamMembers'
 
 export type AddConditionsForUseButtonProps = {
   entityId: string

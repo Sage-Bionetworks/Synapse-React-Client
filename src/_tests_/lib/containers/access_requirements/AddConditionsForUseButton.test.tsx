@@ -1,5 +1,5 @@
 import React from 'react'
-import { EntityBundle } from '../../../../lib/utils/synapseTypes'
+import { EntityBundle, UserBundle } from '../../../../lib/utils/synapseTypes'
 import AddConditionsForUseButton, {
   AddConditionsForUseButtonProps,
 } from '../../../../lib/containers/access_requirements/AddConditionsForUseButton'
@@ -12,12 +12,12 @@ import {
 } from '../../../../lib/utils/functions/getEndpoint'
 import {
   ENTITY_BUNDLE_V2,
-  TEAM_ID_MEMBER_ID,
+  USER_BUNDLE,
 } from '../../../../lib/utils/APIConstants'
-import { TeamMember } from '../../../../lib/utils/synapseTypes/TeamMember'
 import mockFileEntity from '../../../../mocks/entity/mockFileEntity'
 import userEvent from '@testing-library/user-event'
 import { mockUnmetControlledDataRestrictionInformationACT } from '../../../../mocks/mock_has_access_data'
+import { mockUserBundle } from '../../../../mocks/user/mock_user_profile'
 
 function renderComponent(props: AddConditionsForUseButtonProps) {
   return render(<AddConditionsForUseButton {...props} />, {
@@ -28,36 +28,16 @@ function renderComponent(props: AddConditionsForUseButtonProps) {
 const mockCallback = jest.fn()
 
 // Adding this mock service worker handler will make the component recognize the caller as an ACT member
-function useTeamMemberExists() {
+function setIsCurrentUserMemberOfACT(isActMember: boolean) {
   server.use(
     rest.get(
-      `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${TEAM_ID_MEMBER_ID(
-        ':id',
-        ':userId',
-      )}`,
+      `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${USER_BUNDLE}`,
       async (req, res, ctx) => {
-        const result: TeamMember = {
-          teamId: req.id,
-          member: {
-            ownerId: req.userId,
-          },
-          isAdmin: false,
+        const result: UserBundle = {
+          ...mockUserBundle,
+          isACTMember: isActMember,
         }
         return res(ctx.status(200), ctx.json(result))
-      },
-    ),
-  )
-}
-
-function useTeamMemberNotFound() {
-  server.use(
-    rest.get(
-      `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${TEAM_ID_MEMBER_ID(
-        ':id',
-        ':userId',
-      )}`,
-      async (req, res, ctx) => {
-        return res(ctx.status(404), ctx.json({}))
       },
     ),
   )
@@ -66,7 +46,7 @@ function useTeamMemberNotFound() {
 describe('AddConditionsForUseButton', () => {
   beforeAll(() => {
     server.listen()
-    useTeamMemberNotFound()
+    setIsCurrentUserMemberOfACT(false)
   })
 
   afterEach(() => server.restoreHandlers())
@@ -89,7 +69,7 @@ describe('AddConditionsForUseButton', () => {
   })
 
   it('Invoked callback on click if the user is an ACT member', async () => {
-    useTeamMemberExists()
+    setIsCurrentUserMemberOfACT(true)
 
     renderComponent({
       entityId: mockFileEntity.id,

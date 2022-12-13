@@ -71,27 +71,25 @@ export function useGetUserBundle(
   )
 }
 
-export function useGetCurrentUserBundle(
-  mask?: number,
-  options?: UseQueryOptions<UserBundle, SynapseClientError>,
+const ALL_USER_BUNDLE_FIELDS =
+  USER_BUNDLE_MASK_USER_PROFILE |
+  USER_BUNDLE_MASK_ORCID |
+  USER_BUNDLE_MASK_VERIFICATION_SUBMISSION |
+  USER_BUNDLE_MASK_IS_CERTIFIED |
+  USER_BUNDLE_MASK_IS_VERIFIED |
+  USER_BUNDLE_MASK_IS_ACT_MEMBER |
+  USER_BUNDLE_MASK_IS_AR_REVIEWER
+
+export function useGetCurrentUserBundle<TData = UserBundle>(
+  mask: number = ALL_USER_BUNDLE_FIELDS,
+  options?: UseQueryOptions<UserBundle, SynapseClientError, TData>,
 ) {
-  const ALL_USER_BUNDLE_FIELDS =
-    USER_BUNDLE_MASK_USER_PROFILE |
-    USER_BUNDLE_MASK_ORCID |
-    USER_BUNDLE_MASK_VERIFICATION_SUBMISSION |
-    USER_BUNDLE_MASK_IS_CERTIFIED |
-    USER_BUNDLE_MASK_IS_VERIFIED |
-    USER_BUNDLE_MASK_IS_ACT_MEMBER |
-    USER_BUNDLE_MASK_IS_AR_REVIEWER
-
-  const requestMask = mask ?? ALL_USER_BUNDLE_FIELDS
-
   const { accessToken } = useSynapseContext()
-  const queryKey = ['user', 'current', 'bundle', requestMask, accessToken]
+  const queryKey = ['user', 'current', 'bundle', mask, accessToken]
 
-  return useQuery<UserBundle, SynapseClientError>(
+  return useQuery<UserBundle, SynapseClientError, TData>(
     queryKey,
-    () => SynapseClient.getMyUserBundle(requestMask, accessToken),
+    () => SynapseClient.getMyUserBundle(mask, accessToken),
     options,
   )
 }
@@ -144,4 +142,10 @@ export function useGetPrincipalIdForAlias(
     },
     options,
   )
+}
+
+export function useIsCurrentUserACTMember() {
+  return useGetCurrentUserBundle<boolean>(undefined, {
+    select: data => data.isACTMember!,
+  })
 }
