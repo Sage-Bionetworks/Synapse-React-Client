@@ -8,11 +8,7 @@ export type CopyToClipboardStringProps = {
 }
 
 /**
- * Component that holds a large string in a readonly <input> to be copied to the user's clipboard when clicked.
- * This component should only be used when the full length of the string value to copy does not necessarily need to be
- * seen by the user. This component was adapted from the email address copy to clipboard functionality in UserCardMedium.
- * For smaller/inline strings, look at UserCardMedium functionality for displaying the value in a <p> tag instead of a
- * readonly <input> tag.
+ * Displays a string and a "Copy to Clipboard" icon, that, when clicked, will copy the contents of the string to the clipboard.
  */
 export function CopyToClipboardString(props: CopyToClipboardStringProps) {
   const { value, typographyVariant = 'smallText1' } = props

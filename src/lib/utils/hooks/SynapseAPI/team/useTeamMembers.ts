@@ -35,19 +35,11 @@ export function useGetIsUserMemberOfTeam(
 }
 
 export function useIsCurrentUserACTMember() {
-  const { accessToken } = useSynapseContext()
   const { data: currentProfile } = useGetCurrentUserProfile()
-  return useQuery<TeamMember | null, SynapseClientError>(
-    ['isCurrentUserActMember'],
-    () => {
-      return SynapseClient.getIsUserMemberOfTeam(
-        ACT_TEAM_ID.toString(),
-        currentProfile?.ownerId ?? '',
-        accessToken,
-      )
-    },
-    {
-      enabled: !!currentProfile,
-    },
-  )
+  const currentUserId = currentProfile?.ownerId
+    ? currentProfile.ownerId.toString()
+    : ''
+  return useGetIsUserMemberOfTeam(ACT_TEAM_ID.toString(), currentUserId, {
+    enabled: !!currentUserId,
+  })
 }
