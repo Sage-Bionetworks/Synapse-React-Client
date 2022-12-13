@@ -1241,7 +1241,7 @@ export function addUserFavorite(
   accessToken: string | undefined,
 ): Promise<EntityHeader> {
   return doPost(
-    `/repo/v1/favorite/${entityId}`,
+    `${FAVORITES}/${entityId}`,
     null,
     accessToken,
     BackendDestinationEnum.REPO_ENDPOINT,
@@ -1257,7 +1257,7 @@ export const removeUserFavorite = (
   accessToken: string | undefined,
 ): Promise<void> => {
   return doDelete(
-    `/repo/v1/favorite/${entityId}`,
+    `${FAVORITES}/${entityId}`,
     accessToken,
     BackendDestinationEnum.REPO_ENDPOINT,
   )

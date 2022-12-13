@@ -32,6 +32,7 @@ import {
   ErrorOutlined,
   ExpandLess,
   ExpandMore,
+  FactCheckTwoTone,
   FlagTwoTone,
   FolderTwoTone,
   FormatBold,
@@ -230,6 +231,7 @@ export const IconStrings = [
   'newFolder',
   'createVersion',
   'email',
+  'addConditions',
 ] as const
 
 export type Icon = typeof IconStrings[number]
@@ -258,6 +260,8 @@ function IconMapping(props: { icon: string; sx?: SxProps }) {
       return <VpnKeyTwoTone sx={sx} />
     case 'add':
       return <AddTwoTone sx={sx} />
+    case 'addConditions':
+      return <FactCheckTwoTone sx={sx} />
     case 'arrowBack':
       return <ArrowBack sx={sx} />
     case 'arrowForward':

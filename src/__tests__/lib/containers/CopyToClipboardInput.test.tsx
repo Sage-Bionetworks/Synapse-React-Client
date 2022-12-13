@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event'
 import * as React from 'react'
 import CopyToClipboardInput from '../../../lib/containers/CopyToClipboardInput'
 
-describe('basic functionality', () => {
+describe('CopyToClipboardInput', () => {
   const props = {
     value: 'some value to be copied',
     inputWidth: '500px',
