@@ -3,6 +3,7 @@ import {
   FAVORITES,
   NOTIFICATION_EMAIL,
   PROFILE_IMAGE_PREVIEW,
+  USER_BUNDLE,
   USER_GROUP_HEADERS,
   USER_GROUP_HEADERS_BATCH,
   USER_ID_BUNDLE,
@@ -58,6 +59,17 @@ export const getUserProfileHandlers = (backendOrigin: string) => [
     const status = 200
     return res(ctx.status(status), ctx.json(response))
   }),
+
+  /**
+   * Get the caller's user bundle
+   */
+  rest.get(
+    `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${USER_BUNDLE}`,
+    async (req, res, ctx) => {
+      const result: UserBundle = mockUserBundle
+      return res(ctx.status(200), ctx.json(result))
+    },
+  ),
 
   /**
    * Get a user bundle by ID

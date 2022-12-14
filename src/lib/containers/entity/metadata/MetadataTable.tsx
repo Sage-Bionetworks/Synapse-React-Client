@@ -1,14 +1,16 @@
 import dayjs from 'dayjs'
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { formatDate } from '../../../utils/functions/DateFormatter'
 import {
   entityTypeToFriendlyName,
   getVersionDisplay,
   isVersionableEntity,
 } from '../../../utils/functions/EntityTypeUtils'
-import { getLocationName } from '../../../utils/functions/FileHandleUtils'
+import {
+  getDataFileHandle,
+  getStorageLocationName,
+} from '../../../utils/functions/FileHandleUtils'
 import useGetEntityBundle from '../../../utils/hooks/SynapseAPI/entity/useEntityBundle'
-import { EntityType, FileEntity } from '../../../utils/synapseTypes'
 import UserCard from '../../UserCard'
 
 export type MetadataTableProps = {
@@ -24,19 +26,14 @@ export const MetadataTable = ({
 
   const isVersionable = entityBundle && isVersionableEntity(entityBundle.entity)
 
-  const [fileLocationName, setFileLocationName] = useState<string>()
+  const dataFileHandle = entityBundle
+    ? getDataFileHandle(entityBundle)
+    : undefined
 
-  useEffect(() => {
-    if (entityBundle?.entityType === EntityType.FILE) {
-      const dataFileHandle = entityBundle.fileHandles.filter(
-        fh => fh.id === (entityBundle.entity as FileEntity).dataFileHandleId,
-      )[0]
-
-      if (dataFileHandle) {
-        setFileLocationName(getLocationName(dataFileHandle))
-      }
-    }
-  }, [entityBundle])
+  let fileLocationName = undefined
+  if (dataFileHandle) {
+    fileLocationName = getStorageLocationName(dataFileHandle)
+  }
 
   return entityBundle ? (
     <table className="MetadataTable">

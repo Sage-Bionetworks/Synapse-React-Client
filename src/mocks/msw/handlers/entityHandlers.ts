@@ -28,6 +28,10 @@ import mockEntities from '../../entity'
 import { MOCK_INVALID_PROJECT_NAME } from '../../entity/mockEntity'
 import { mockSchemaBinding } from '../../mockSchema'
 import { SynapseApiResponse } from '../handlers'
+import {
+  UploadDestination,
+  UploadType,
+} from '../../../lib/utils/synapseTypes/File/UploadDestination'
 
 export const getEntityHandlers = (backendOrigin: string) => [
   /**
@@ -240,6 +244,21 @@ export const getEntityHandlers = (backendOrigin: string) => [
       }
 
       return res(ctx.status(status), ctx.json(response))
+    },
+  ),
+
+  rest.get(
+    `${getEndpoint(
+      BackendDestinationEnum.REPO_ENDPOINT,
+    )}/file/v1/entity/:id/uploadDestination`,
+    async (req, res, ctx) => {
+      const response: UploadDestination = {
+        banner: '',
+        storageLocationId: 1,
+        uploadType: UploadType.S3,
+        concreteType: 'org.sagebionetworks.repo.model.file.S3UploadDestination',
+      }
+      return res(ctx.status(200), ctx.json(response))
     },
   ),
 ]

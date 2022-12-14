@@ -269,6 +269,7 @@ import {
 } from './synapseTypes/Subscription'
 import { calculateFriendlyFileSize } from './functions/calculateFriendlyFileSize'
 import { PaginatedIds } from './synapseTypes/PaginatedIds'
+import { UploadDestination } from './synapseTypes/File/UploadDestination'
 
 const cookies = new UniversalCookies()
 
@@ -4254,6 +4255,29 @@ export function postSubscriptionList(
   return doPost<SubscriptionPagedResults>(
     '/repo/v1/subscription/list',
     request,
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ * Get the default upload destination for the entity with the given id. The id might refer to the parent container
+ * (e.g. a folder or a project) where a file needs to be uploaded.
+ *
+ * The upload destination is generated according to the default StorageLocationSetting for the project where the entity
+ * resides. If the project does not contain any custom StorageLocationSetting the default synapse storage location is
+ * used to generate an upload destination.
+ *
+ * https://rest-docs.synapse.org/rest/GET/entity/id/uploadDestination.html
+ * @param containerEntityId
+ * @param accessToken
+ */
+export function getDefaultUploadDestination(
+  containerEntityId: string,
+  accessToken: string | undefined,
+): Promise<UploadDestination> {
+  return doGet<UploadDestination>(
+    `/file/v1/entity/${containerEntityId}/uploadDestination`,
     accessToken,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
