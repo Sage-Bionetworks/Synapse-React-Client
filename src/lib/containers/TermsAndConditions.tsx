@@ -100,6 +100,8 @@ const TermsAndConditions: React.FunctionComponent<TermsAndConditionsProps> = ({
   const checkboxCount = tcList.length
   const tcAgreement =
     'https://s3.amazonaws.com/static.synapse.org/governance/SageBionetworksSynapseTermsandConditionsofUse.pdf'
+  const governancePolicy =
+    'https://help.synapse.org/docs/Synapse-Governance.2004255211.html'
   const getInitialCheckboxState = () =>
     Array.from(Array(checkboxCount).fill(false))
   let mounted = true
@@ -147,7 +149,10 @@ const TermsAndConditions: React.FunctionComponent<TermsAndConditionsProps> = ({
       <h3 className="page-header">Synapse Pledge</h3>
       <form>
         <label>
-          I affirm my commitment to all <Link>Synapse Governance policies</Link>{' '}
+          I affirm my commitment to all{' '}
+          <Link target="_blank" href={governancePolicy}>
+            Sage Governance policies
+          </Link>{' '}
           for responsible research and data handling (linked below), including:
         </label>
         <ul className="term-list">
