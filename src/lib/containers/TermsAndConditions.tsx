@@ -13,7 +13,7 @@ import { FlagIcon } from '../assets/icons/terms/FlagIcon'
 
 export type TermsAndConditionsProps = {
   onFormChange: (formComplete: boolean) => void
-  showTcTerm?: boolean
+  hideLinkToFullTC?: boolean
 }
 
 const dataUseLink =
@@ -95,7 +95,7 @@ Please refer to our full <a target="_blank" href="https://help.synapse.org/docs/
 
 const TermsAndConditions: React.FunctionComponent<TermsAndConditionsProps> = ({
   onFormChange,
-  showTcTerm = true,
+  hideLinkToFullTC = false,
 }) => {
   const checkboxCount = tcList.length
   const tcAgreement =
@@ -174,7 +174,7 @@ const TermsAndConditions: React.FunctionComponent<TermsAndConditionsProps> = ({
               )
             })}
         </ul>
-        {showTcTerm && (
+        {!hideLinkToFullTC && (
           <div className="view-terms">
             <Button variant={'contained'} href={tcAgreement} target="_blank">
               View Complete Terms and Conditions for Use
