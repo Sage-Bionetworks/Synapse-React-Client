@@ -71,6 +71,11 @@ const defaultMuiTheme: ThemeOptions = {
         }),
       },
     },
+    MuiRadio: {
+      defaultProps: {
+        color: 'secondary',
+      },
+    },
     MuiTooltip: {
       defaultProps: {
         arrow: true,

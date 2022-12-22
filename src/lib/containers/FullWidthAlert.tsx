@@ -27,7 +27,7 @@ export type AlertButtonConfig = {
 export interface FullWidthAlertProps extends AlertProps {
   variant: string
   title?: string
-  description?: string
+  description?: React.ReactNode
   primaryButtonConfig?: AlertButtonConfig
   secondaryButtonConfig?: AlertButtonConfig
   onClose?: () => void

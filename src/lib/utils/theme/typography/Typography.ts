@@ -63,13 +63,13 @@ export const typographyOptions: (
     ...defaultStyles,
     fontSize: '14px',
     fontWeight: 400,
-    lineHeight: '16px',
+    lineHeight: '20px',
   },
   smallText2: {
     ...defaultStyles,
     fontSize: '14px',
     fontWeight: 700,
-    lineHeight: '16px',
+    lineHeight: '20px',
   },
   smallLink: {
     ...defaultStyles,
