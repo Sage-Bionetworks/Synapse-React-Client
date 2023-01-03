@@ -10,6 +10,7 @@ import {
 import {
   isContainerType,
   isEntityRefCollectionView,
+  isVersionableEntity,
 } from '../../../../utils/functions/EntityTypeUtils'
 import { useGetDefaultUploadDestination } from '../../../../utils/hooks/SynapseAPI/file/useUploadDestination'
 import {
@@ -21,6 +22,7 @@ import { calculateFriendlyFileSize } from '../../../../utils/functions/calculate
 import { Box, Link } from '@mui/material'
 import { HasAccessV2 } from '../../../access_requirements/HasAccessV2'
 import CopyToClipboardString from '../../../CopyToClipboardString'
+import { useGetDOIAssociation } from '../../../../utils/hooks/SynapseAPI/doi/useDOI'
 
 export type EntityProperty = {
   key: string
@@ -47,6 +49,21 @@ export function useGetEntityTitleBarProperties(
     enabled: !!(bundle?.entityType && isContainerType(bundle.entityType)),
   })
 
+  // If this is the latest entity version, show the "versionless" DOI if it exists.
+  const useFallbackVersionlessDOI =
+    bundle &&
+    !bundle.doiAssociation &&
+    isVersionableEntity(bundle.entity) &&
+    bundle.entity.isLatestVersion
+  const { data: versionlessDOIAssociation } = useGetDOIAssociation(
+    entityId,
+    undefined,
+    'ENTITY',
+    {
+      enabled: useFallbackVersionlessDOI,
+    },
+  )
+
   const dataFileHandle = bundle && getDataFileHandle(bundle)
 
   const size =
@@ -70,6 +87,10 @@ export function useGetEntityTitleBarProperties(
     fileHandleStorageInfo &&
     'fileKey' in fileHandleStorageInfo &&
     fileHandleStorageInfo.fileKey
+  const externalUrl =
+    fileHandleStorageInfo &&
+    'url' in fileHandleStorageInfo &&
+    fileHandleStorageInfo.url
 
   const md5 = dataFileHandle?.contentMd5
   const downloadAlias =
@@ -78,9 +99,11 @@ export function useGetEntityTitleBarProperties(
   const uploadDestinationString =
     uploadDestination && getUploadDestinationString(uploadDestination)
 
-  const doi =
-    bundle?.doiAssociation?.doiUri &&
-    `https://doi.org/${bundle?.doiAssociation?.doiUri}`
+  // If there is no version-specific DOI, fall back to the versionless DOI
+  const doiAssociation = useFallbackVersionlessDOI
+    ? versionlessDOIAssociation
+    : bundle?.doiAssociation
+  const doi = doiAssociation && `https://doi.org/${doiAssociation?.doiUri}`
 
   const containerItems = entityChildrenResponse?.totalChildCount
 
@@ -139,6 +162,11 @@ export function useGetEntityTitleBarProperties(
       key: 'externalFileEndpoint',
       title: 'Endpoint',
       value: endpoint,
+    },
+    externalUrl && {
+      key: 'externalUrl',
+      title: 'URL',
+      value: externalUrl,
     },
     bucket && { key: 'externalFileBucket', title: 'Bucket', value: bucket },
     fileKey && { key: 'externalFileKey', title: 'File Key', value: fileKey },

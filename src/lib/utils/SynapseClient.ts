@@ -53,6 +53,7 @@ import {
   FORUM,
   THREAD,
   THREAD_ID,
+  DOI_ASSOCIATION,
 } from './APIConstants'
 import { dispatchDownloadListChangeEvent } from './functions/dispatchDownloadListChangeEvent'
 import {
@@ -134,6 +135,7 @@ import {
   VerificationSubmission,
   WikiPage,
   WikiPageKey,
+  DoiAssociation,
 } from './synapseTypes/'
 import {
   CreateSubmissionRequest,
@@ -4280,5 +4282,33 @@ export function getDefaultUploadDestination(
     `/file/v1/entity/${containerEntityId}/uploadDestination`,
     accessToken,
     BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ * Retrieves the DOI for the object. Note: this call only retrieves the DOI association, if it exists.
+ * To retrieve the metadata for the object, see GET /doi
+ *
+ * https://rest-docs.synapse.org/rest/GET/doi/association.html
+ */
+export function getDOIAssociation(
+  accessToken: string | undefined,
+  objectId: string,
+  objectVersion?: number,
+  objectType = 'ENTITY',
+): Promise<DoiAssociation | null> {
+  const params = new URLSearchParams()
+  params.set('type', objectType)
+  params.set('id', objectId)
+  if (objectVersion) {
+    params.set('type', objectVersion.toString())
+  }
+
+  return allowNotFoundError(() =>
+    doGet<DoiAssociation>(
+      `${DOI_ASSOCIATION}?${params.toString()}`,
+      accessToken,
+      BackendDestinationEnum.REPO_ENDPOINT,
+    ),
   )
 }

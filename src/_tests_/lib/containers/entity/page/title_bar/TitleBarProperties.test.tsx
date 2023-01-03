@@ -15,15 +15,20 @@ import {
   BackendDestinationEnum,
   getEndpoint,
 } from '../../../../../../lib/utils/functions/getEndpoint'
-import { ENTITY_BUNDLE_V2 } from '../../../../../../lib/utils/APIConstants'
 import {
+  DOI_ASSOCIATION,
+  ENTITY_BUNDLE_V2,
+} from '../../../../../../lib/utils/APIConstants'
+import {
+  DoiAssociation,
   EntityBundle,
   EntityChildrenResponse,
   EntityType,
+  ExternalFileHandle,
 } from '../../../../../../lib/utils/synapseTypes'
 import mockDataset from '../../../../../../mocks/entity/mockDataset'
 import { mockFolderEntity } from '../../../../../../mocks/entity/mockEntity'
-import failOnConsole from 'jest-fail-on-console'
+import failOnConsoleError from 'jest-fail-on-console'
 
 const HAS_ACCESS_V2_DATA_TEST_ID = 'mock-has-access-v2'
 
@@ -49,6 +54,21 @@ function useEntityBundleOverride(bundle: EntityBundle) {
   )
 }
 
+function useDoiAssociationOverride(doiAssociation: DoiAssociation | null) {
+  server.use(
+    rest.get(
+      `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${DOI_ASSOCIATION}`,
+
+      async (req, res, ctx) => {
+        if (doiAssociation == null) {
+          return res(ctx.status(404), ctx.json({}))
+        }
+        return res(ctx.status(200), ctx.json(doiAssociation))
+      },
+    ),
+  )
+}
+
 function renderComponent(propOverrides?: Partial<TitleBarPropertiesProps>) {
   return render(
     <TitleBarProperties
@@ -67,8 +87,11 @@ async function expandPropertiesIfPossible() {
 }
 
 describe('TitleBarProperties', () => {
-  failOnConsole()
+  failOnConsoleError()
   beforeAll(() => server.listen())
+  beforeEach(() => {
+    useDoiAssociationOverride(null)
+  })
   afterEach(() => server.restoreHandlers())
   afterAll(() => server.close())
 
@@ -217,6 +240,28 @@ describe('TitleBarProperties', () => {
       await screen.findByText(fileKey)
       expect(screen.queryByText(`Storage Location`)).not.toBeInTheDocument()
     })
+    it('External URL', async () => {
+      const externalUrl = 'https://some-external-url.net/path-to-file.jpg'
+      const fileHandle: ExternalFileHandle = {
+        ...mockFileHandle,
+        concreteType: 'org.sagebionetworks.repo.model.file.ExternalFileHandle',
+        externalURL: externalUrl,
+      }
+      useEntityBundleOverride({
+        ...mockFileEntity.bundle,
+        fileHandles: [fileHandle],
+      })
+      renderComponent()
+      await expandPropertiesIfPossible()
+
+      await screen.findByText('URL')
+      await screen.findByText(externalUrl)
+      expect(screen.queryByText('Endpoint')).not.toBeInTheDocument()
+      expect(screen.queryByText('Bucket')).not.toBeInTheDocument()
+      expect(screen.queryByText('File Key')).not.toBeInTheDocument()
+      expect(screen.queryByText(`Storage Location`)).not.toBeInTheDocument()
+    })
+
     it('File handle md5', async () => {
       renderComponent()
       await expandPropertiesIfPossible()
@@ -248,7 +293,7 @@ describe('TitleBarProperties', () => {
       expect(screen.queryByText(`Alias`)).not.toBeInTheDocument()
     })
     it('DOI', async () => {
-      const doiUri = '10.7303/syn12345678'
+      const doiUri = '10.7303/syn12345678.3'
       useEntityBundleOverride({
         ...mockFileEntity.bundle,
         doiAssociation: {
@@ -259,7 +304,52 @@ describe('TitleBarProperties', () => {
       await expandPropertiesIfPossible()
 
       await screen.findByText(`DOI`)
+      await screen.findByText('https://doi.org/10.7303/syn12345678.3')
+    })
+    it('Unversioned DOI fallback for latest version of versionable entity', async () => {
+      const doiUri = '10.7303/syn12345678'
+      // The bundle does not provide a version-specific DOI, and the entity is the latest version
+      useEntityBundleOverride({
+        ...mockFileEntity.bundle,
+        entity: {
+          ...mockFileEntity.entity,
+          isLatestVersion: true,
+        },
+        doiAssociation: undefined,
+      })
+      // A non-version-specific DOI exists
+      useDoiAssociationOverride({
+        doiUri,
+      })
+      renderComponent()
+      await expandPropertiesIfPossible()
+
+      await screen.findByText(`DOI`)
       await screen.findByText('https://doi.org/10.7303/syn12345678')
+    })
+
+    it('Unversioned DOI fallback is not shown if not latest version', async () => {
+      const doiUri = '10.7303/syn12345678'
+      // The bundle does not provide a version-specific DOI, but this is not the latest version
+      useEntityBundleOverride({
+        ...mockFileEntity.bundle,
+        entity: {
+          ...mockFileEntity.entity,
+          isLatestVersion: false,
+        },
+        doiAssociation: undefined,
+      })
+      // A non-version-specific DOI exists
+      useDoiAssociationOverride({
+        doiUri,
+      })
+      renderComponent()
+      await expandPropertiesIfPossible()
+
+      expect(screen.queryByText(`DOI`)).not.toBeInTheDocument()
+      expect(
+        screen.queryByText(`https://doi.org/10.7303/syn12345678`),
+      ).not.toBeInTheDocument()
     })
     it('Container fields (Child count, upload destination)', async () => {
       useEntityBundleOverride({

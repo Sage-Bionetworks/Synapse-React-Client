@@ -20,7 +20,7 @@ function Property(props: PropertyProps) {
   const { title, value } = props
   return (
     <tr>
-      <td style={{ paddingRight: '5px' }}>
+      <td style={{ paddingRight: '1em' }}>
         <Typography
           component={'span'}
           variant={'smallText1'}
