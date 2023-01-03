@@ -1,22 +1,25 @@
 import React from 'react'
 import EntityPageTitleBar, {
   EntityPageTitleBarProps,
-} from './EntityPageTitleBar'
+} from '../../../../../../lib/containers/entity/page/title_bar/EntityPageTitleBar'
 import { render, screen } from '@testing-library/react'
-import { createWrapper } from '../../../../testutils/TestingLibraryUtils'
-import mockFileEntity from '../../../../../mocks/entity/mockFileEntity'
-import { EntityActionMenuProps } from '../action_menu/EntityActionMenu'
-import { EntityBundle, EntityType } from '../../../../utils/synapseTypes'
-import { rest, server } from '../../../../../mocks/msw/server'
+import { createWrapper } from '../../../../../../lib/testutils/TestingLibraryUtils'
+import mockFileEntity from '../../../../../../mocks/entity/mockFileEntity'
+import { EntityActionMenuProps } from '../../../../../../lib/containers/entity/page/action_menu/EntityActionMenu'
+import {
+  EntityBundle,
+  EntityType,
+} from '../../../../../../lib/utils/synapseTypes'
+import { rest, server } from '../../../../../../mocks/msw/server'
 import {
   BackendDestinationEnum,
   getEndpoint,
-} from '../../../../utils/functions/getEndpoint'
-import { ENTITY_BUNDLE_V2 } from '../../../../utils/APIConstants'
-import * as FavoriteButtonModule from '../../../favorites/FavoriteButton'
-import * as EntityActionMenuModule from '../action_menu/EntityActionMenu'
-import * as TitleBarPropertiesModule from './TitleBarProperties'
-import * as TitleBarVersionInfoModule from './EntityTitleBarVersionInfo'
+} from '../../../../../../lib/utils/functions/getEndpoint'
+import { ENTITY_BUNDLE_V2 } from '../../../../../../lib/utils/APIConstants'
+import * as FavoriteButtonModule from '../../../../../../lib/containers/favorites/FavoriteButton'
+import * as EntityActionMenuModule from '../../../../../../lib/containers/entity/page/action_menu/EntityActionMenu'
+import * as TitleBarPropertiesModule from '../../../../../../lib/containers/entity/page/title_bar/TitleBarProperties'
+import * as TitleBarVersionInfoModule from '../../../../../../lib/containers/entity/page/title_bar/EntityTitleBarVersionInfo'
 import failOnConsoleError from 'jest-fail-on-console'
 
 const TITLE_BAR_PROPERTIES_TEST_ID = 'title-bar-properties'
