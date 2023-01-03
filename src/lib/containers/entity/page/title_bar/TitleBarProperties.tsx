@@ -40,14 +40,21 @@ function Property(props: PropertyProps) {
   )
 }
 
+/**
+ * The TitleBarProperties component displays a tabular view of the entity metadata on the Entity page.
+ */
 export default function TitleBarProperties(props: TitleBarPropertiesProps) {
   const { entityId, versionNumber, onActMemberClickAddConditionsForUse } = props
   const { isInExperimentalMode } = useSynapseContext()
-  // We already fetch the bundle for the rest of the title bar and useGetEntityTitleBarProperties below, so the cache will be hot.
+
+  // We don't need the entire bundle, but it's fetched for the rest of the title bar and useGetEntityTitleBarProperties below, so the cache will be hot.
   const { data: bundle } = useGetEntityBundle(entityId, versionNumber)
 
-  const [showAllProperties, setShowAllProperties] = useState(false)
+  // Actual entity data is fetched and transformed in this custom hook
   const properties = useGetEntityTitleBarProperties(entityId, versionNumber)
+
+  const [showAllProperties, setShowAllProperties] = useState(false)
+
   return (
     <Box sx={{ padding: '20px 40px' }}>
       <Stack

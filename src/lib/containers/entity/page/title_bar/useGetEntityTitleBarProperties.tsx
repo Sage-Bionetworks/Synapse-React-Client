@@ -30,6 +30,12 @@ export type EntityProperty = {
   value: React.ReactNode
 }
 
+/**
+ * This hook fetches all the entity metadata shown on the Entity page, and transforms the data into an ordered list of
+ * render-able key-value pairs.
+ * @param entityId
+ * @param versionNumber
+ */
 export function useGetEntityTitleBarProperties(
   entityId: string,
   versionNumber?: number,
