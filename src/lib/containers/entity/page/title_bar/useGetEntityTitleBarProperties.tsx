@@ -140,11 +140,6 @@ export function useGetEntityTitleBarProperties(
       title: 'Items',
       value: datasetItems.toLocaleString(),
     },
-    md5 && {
-      key: 'fileMd5',
-      title: 'MD5',
-      value: <CopyToClipboardString value={md5} />,
-    },
     doi && {
       key: 'doi',
       title: 'DOI',
@@ -153,6 +148,11 @@ export function useGetEntityTitleBarProperties(
           {doi}
         </Link>
       ),
+    },
+    md5 && {
+      key: 'fileMd5',
+      title: 'MD5',
+      value: <CopyToClipboardString value={md5} />,
     },
     storageLocation && {
       key: 'fileStorageLocation',
