@@ -143,6 +143,7 @@ const mockFileEntityBundle: EntityBundle = {
     },
   },
   rootWikiId: MOCK_WIKI_ID,
+  fileName: mockFileEntity.name,
   benefactorAcl: {
     id: parentId,
     creationDate: '2020-11-18T20:05:06.540Z',

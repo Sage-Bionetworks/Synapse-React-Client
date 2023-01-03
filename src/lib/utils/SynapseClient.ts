@@ -53,6 +53,7 @@ import {
   FORUM,
   THREAD,
   THREAD_ID,
+  DOI_ASSOCIATION,
 } from './APIConstants'
 import { dispatchDownloadListChangeEvent } from './functions/dispatchDownloadListChangeEvent'
 import {
@@ -134,6 +135,7 @@ import {
   VerificationSubmission,
   WikiPage,
   WikiPageKey,
+  DoiAssociation,
 } from './synapseTypes/'
 import {
   CreateSubmissionRequest,
@@ -269,6 +271,7 @@ import {
 } from './synapseTypes/Subscription'
 import { calculateFriendlyFileSize } from './functions/calculateFriendlyFileSize'
 import { PaginatedIds } from './synapseTypes/PaginatedIds'
+import { UploadDestination } from './synapseTypes/File/UploadDestination'
 
 const cookies = new UniversalCookies()
 
@@ -4256,5 +4259,56 @@ export function postSubscriptionList(
     request,
     accessToken,
     BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ * Get the default upload destination for the entity with the given id. The id might refer to the parent container
+ * (e.g. a folder or a project) where a file needs to be uploaded.
+ *
+ * The upload destination is generated according to the default StorageLocationSetting for the project where the entity
+ * resides. If the project does not contain any custom StorageLocationSetting the default synapse storage location is
+ * used to generate an upload destination.
+ *
+ * https://rest-docs.synapse.org/rest/GET/entity/id/uploadDestination.html
+ * @param containerEntityId
+ * @param accessToken
+ */
+export function getDefaultUploadDestination(
+  containerEntityId: string,
+  accessToken: string | undefined,
+): Promise<UploadDestination> {
+  return doGet<UploadDestination>(
+    `/file/v1/entity/${containerEntityId}/uploadDestination`,
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ * Retrieves the DOI for the object. Note: this call only retrieves the DOI association, if it exists.
+ * To retrieve the metadata for the object, see GET /doi
+ *
+ * https://rest-docs.synapse.org/rest/GET/doi/association.html
+ */
+export function getDOIAssociation(
+  accessToken: string | undefined,
+  objectId: string,
+  objectVersion?: number,
+  objectType = 'ENTITY',
+): Promise<DoiAssociation | null> {
+  const params = new URLSearchParams()
+  params.set('type', objectType)
+  params.set('id', objectId)
+  if (objectVersion) {
+    params.set('type', objectVersion.toString())
+  }
+
+  return allowNotFoundError(() =>
+    doGet<DoiAssociation>(
+      `${DOI_ASSOCIATION}?${params.toString()}`,
+      accessToken,
+      BackendDestinationEnum.REPO_ENDPOINT,
+    ),
   )
 }
