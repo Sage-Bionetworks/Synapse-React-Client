@@ -4,7 +4,7 @@ import { xssOptions } from '../../../utils/functions/SanitizeHtmlUtils'
 import { useGetIsUserMemberOfTeam } from '../../../utils/hooks/SynapseAPI/team/useTeamMembers'
 import { TRUSTED_HTML_USERS_TEAM_ID } from '../../../utils/SynapseConstants'
 import { SynapseSpinner } from '../../LoadingScreen'
-import { SanitizedWarning } from './SanitizedWarning'
+import { Alert } from 'react-bootstrap'
 
 /**
  * @param options
@@ -60,7 +60,16 @@ export default function HtmlPreview(props: HtmlPreviewProps) {
 
   return (
     <>
-      {rawHtml !== cleanHtml && <SanitizedWarning rawHtml={rawHtml} />}
+      {rawHtml !== cleanHtml && (
+        <Alert
+          variant="info"
+          dismissible={false}
+          show={true}
+          transition={false}
+        >
+          Limited rendering only.
+        </Alert>
+      )}
       <iframe srcDoc={cleanHtml} style={{ border: 0, width: '100%' }} />
     </>
   )
