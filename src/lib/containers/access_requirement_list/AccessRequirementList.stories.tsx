@@ -268,5 +268,3 @@ HasUnmetRequirements.args = {
   entityId: mockFileEntity.id,
   renderAsModal: true,
 }
-
-export const Renewal = Template.bind({})
