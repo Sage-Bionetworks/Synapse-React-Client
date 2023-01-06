@@ -1,6 +1,5 @@
 import { sortBy } from 'lodash-es'
 import React, { useEffect, useState } from 'react'
-import * as ReactBootstrap from 'react-bootstrap'
 import { SynapseClient, SynapseConstants } from '../../utils/'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
 import { useGetCurrentUserProfile } from '../../utils/hooks/SynapseAPI/user/useUserBundle'
@@ -18,6 +17,7 @@ import {
   RequestInterface,
   SelfSignAccessRequirement,
   TermsOfUseAccessRequirement,
+  UserProfile,
 } from '../../utils/synapseTypes'
 import { AccessRequirement } from '../../utils/synapseTypes/AccessRequirement/AccessRequirement'
 import { ManagedACTAccessRequirementStatus } from '../../utils/synapseTypes/AccessRequirement/ManagedACTAccessRequirementStatus'
@@ -32,6 +32,15 @@ import RequestDataAccessStep2 from './managedACTAccess/RequestDataAccessStep2'
 import RequestDataAccessSuccess from './managedACTAccess/RequestDataAccessSuccess'
 import SelfSignAccessRequirementComponent from './SelfSignAccessRequirement'
 import TermsOfUseAccessRequirementComponent from './TermsOfUseAccessRequirement'
+import {
+  Box,
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  IconButton,
+  Stack,
+} from '@mui/material'
+import { useGetEntity } from '../../utils/hooks/SynapseAPI'
 
 type AccessRequirementAndStatus = {
   accessRequirement: AccessRequirement
@@ -108,9 +117,80 @@ export const sortAccessRequirementByCompletion = async (
   return sortedRequirementsAndStatuses
 }
 
+/**
+ * Renders an individual access requirement in the list
+ *
+ * @param {AccessRequirement} accessRequirement accessRequirement being rendered
+ */
+function AccessRequirementComponent(props: {
+  accessRequirement: AccessRequirement
+  accessRequirementStatus: AccessRequirementStatus
+  entityId: string
+  user?: UserProfile
+  onHide: () => void
+  requestDataStepCallback: any
+}) {
+  const {
+    accessRequirement,
+    accessRequirementStatus,
+    entityId,
+    user,
+    onHide,
+    requestDataStepCallback,
+  } = props
+  switch (accessRequirement.concreteType) {
+    case SUPPORTED_ACCESS_REQUIREMENTS.SelfSignAccessRequirement:
+      return (
+        <SelfSignAccessRequirementComponent
+          accessRequirement={accessRequirement as SelfSignAccessRequirement}
+          accessRequirementStatus={accessRequirementStatus}
+          user={user}
+          onHide={onHide}
+          entityId={entityId}
+        />
+      )
+    case SUPPORTED_ACCESS_REQUIREMENTS.TermsOfUseAccessRequirement:
+      return (
+        <TermsOfUseAccessRequirementComponent
+          accessRequirement={accessRequirement as TermsOfUseAccessRequirement}
+          accessRequirementStatus={accessRequirementStatus}
+          user={user}
+          onHide={onHide}
+          entityId={entityId}
+        />
+      )
+    case SUPPORTED_ACCESS_REQUIREMENTS.ManagedACTAccessRequirement:
+      return (
+        <ManagedACTAccessRequirementComponentNew
+          accessRequirement={accessRequirement as ManagedACTAccessRequirement}
+          accessRequirementStatus={
+            accessRequirementStatus as ManagedACTAccessRequirementStatus
+          }
+          user={user}
+          onHide={onHide}
+          entityId={entityId}
+          requestDataStepCallback={requestDataStepCallback}
+        />
+      )
+    case SUPPORTED_ACCESS_REQUIREMENTS.ACTAccessRequirement:
+      return (
+        <ACTAccessRequirementComponent
+          accessRequirement={accessRequirement as ACTAccessRequirement}
+          accessRequirementStatus={accessRequirementStatus}
+          user={user}
+          onHide={onHide}
+          entityId={entityId}
+        />
+      )
+    // case not supported yet
+    default:
+      return <></>
+  }
+}
+
 export default function AccessRequirementList({
   entityId,
-  onHide,
+  onHide = () => {},
   accessRequirementFromProps,
   renderAsModal,
   numberOfFilesAffected,
@@ -183,71 +263,7 @@ export default function AccessRequirementList({
     }
   }, [accessToken, entityId, accessRequirementFromProps, shouldUpdateData])
 
-  // Using Boolean(value) converts undefined,null, 0,'',false -> false
-  // one alternative to using Boolean(value) is the double bang operator !!value,
-  // but doesn't ready well
   const isSignedIn: boolean = Boolean(accessToken)
-
-  /**
-   * Returns rendering for the access requirement.
-   *
-   * Only supports SelfSignAccessRequirement and TermsOfUseAccessRequirement
-   *
-   * @param {AccessRequirement} accessRequirement accessRequirement being rendered
-   */
-  const renderAccessRequirement = (
-    accessRequirement: AccessRequirement,
-    accessRequirementStatus: AccessRequirementStatus,
-  ) => {
-    switch (accessRequirement.concreteType) {
-      case SUPPORTED_ACCESS_REQUIREMENTS.SelfSignAccessRequirement:
-        return (
-          <SelfSignAccessRequirementComponent
-            accessRequirement={accessRequirement as SelfSignAccessRequirement}
-            accessRequirementStatus={accessRequirementStatus}
-            user={user}
-            onHide={onHide}
-            entityId={entityId}
-          />
-        )
-      case SUPPORTED_ACCESS_REQUIREMENTS.TermsOfUseAccessRequirement:
-        return (
-          <TermsOfUseAccessRequirementComponent
-            accessRequirement={accessRequirement as TermsOfUseAccessRequirement}
-            accessRequirementStatus={accessRequirementStatus}
-            user={user}
-            onHide={onHide}
-            entityId={entityId}
-          />
-        )
-      case SUPPORTED_ACCESS_REQUIREMENTS.ManagedACTAccessRequirement:
-        return (
-          <ManagedACTAccessRequirementComponentNew
-            accessRequirement={accessRequirement as ManagedACTAccessRequirement}
-            accessRequirementStatus={
-              accessRequirementStatus as ManagedACTAccessRequirementStatus
-            }
-            user={user}
-            onHide={onHide}
-            entityId={entityId}
-            requestDataStepCallback={requestDataStepCallback}
-          />
-        )
-      case SUPPORTED_ACCESS_REQUIREMENTS.ACTAccessRequirement:
-        return (
-          <ACTAccessRequirementComponent
-            accessRequirement={accessRequirement as ACTAccessRequirement}
-            accessRequirementStatus={accessRequirementStatus}
-            user={user}
-            onHide={onHide}
-            entityId={entityId}
-          />
-        )
-      // case not supported yet
-      default:
-        return undefined
-    }
-  }
 
   const requestDataStepCallback = (props: requestDataStepCallbackProps) => {
     const {
@@ -271,16 +287,18 @@ export default function AccessRequirementList({
 
   const content = (
     <>
-      <ReactBootstrap.Modal.Header closeButton={true}>
-        <ReactBootstrap.Modal.Title className="AccessRequirementList__title">
+      <DialogTitle>
+        <Stack direction="row" alignItems={'center'} gap={'5px'}>
           Data Access Request
-        </ReactBootstrap.Modal.Title>
-      </ReactBootstrap.Modal.Header>
-      <ReactBootstrap.Modal.Body>
+          <Box sx={{ flexGrow: 1 }} />
+          <IconButton onClick={onHide}>
+            <IconSvg icon={'close'} wrap={false} sx={{ color: 'grey.700' }} />
+          </IconButton>
+        </Stack>
+      </DialogTitle>
+      <DialogContent>
         <div>
-          <h4 className="AccessRequirementList__instruction AccessRequirementList__access">
-            Access For:
-          </h4>
+          <h4 className="AccessRequirementList__instruction">Access For:</h4>
           <span className="AccessRequirementList__file-icon-container">
             <IconSvg icon="file" sx={{ width: '30px' }} />
           </span>
@@ -337,17 +355,20 @@ export default function AccessRequirementList({
           {accessRequirements?.map(
             ({ accessRequirement, accessRequirementStatus }) => {
               return (
-                <React.Fragment key={accessRequirement.id}>
-                  {renderAccessRequirement(
-                    accessRequirement,
-                    accessRequirementStatus,
-                  )}
-                </React.Fragment>
+                <AccessRequirementComponent
+                  key={accessRequirement.id}
+                  accessRequirement={accessRequirement}
+                  accessRequirementStatus={accessRequirementStatus}
+                  user={user}
+                  onHide={onHide}
+                  entityId={entityId}
+                  requestDataStepCallback={requestDataStepCallback}
+                />
               )
             },
           )}
         </div>
-      </ReactBootstrap.Modal.Body>
+      </DialogContent>
     </>
   )
 
@@ -386,20 +407,14 @@ export default function AccessRequirementList({
       case 4:
         renderContent = (
           <>
-            <ReactBootstrap.Modal.Header closeButton={false}>
-              <ReactBootstrap.Modal.Title className="AccessRequirementList__title">
-                Please Log In
-              </ReactBootstrap.Modal.Title>
-            </ReactBootstrap.Modal.Header>
-            <ReactBootstrap.Modal.Body
-              className={'AccessRequirementList login-modal '}
-            >
+            <DialogTitle>Please Log In</DialogTitle>
+            <DialogContent className={'AccessRequirementList login-modal '}>
               <Login
                 sessionCallback={() => {
                   window.location.reload()
                 }}
               />
-            </ReactBootstrap.Modal.Body>
+            </DialogContent>
           </>
         )
         break
@@ -410,21 +425,19 @@ export default function AccessRequirementList({
         renderContent = content
     }
     return (
-      <ReactBootstrap.Modal
+      <Dialog
         className={
           !requestDataStep
-            ? 'bootstrap-4-backport AccessRequirementList'
-            : 'bootstrap-4-backport AccessRequirementList modal-auto-height'
+            ? 'AccessRequirementList'
+            : 'AccessRequirementList modal-auto-height'
         }
-        onHide={() => onHide?.()}
-        show={true}
-        animation={false}
-        centered={true}
-        scrollable={true}
-        size="lg"
+        onClose={() => onHide?.()}
+        open={true}
+        maxWidth="sm"
+        fullWidth
       >
         {renderContent}
-      </ReactBootstrap.Modal>
+      </Dialog>
     )
   }
   return <div className="AccessRequirementList">{renderContent}</div>
