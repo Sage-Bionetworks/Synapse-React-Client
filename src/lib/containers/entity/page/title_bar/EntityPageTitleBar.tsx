@@ -81,7 +81,7 @@ export default function EntityPageTitleBar(props: EntityPageTitleBarProps) {
               <Stack direction={'row'} alignItems={'center'} gap={'3px'}>
                 <ConditionalWrapper condition={isLoading} wrapper={Skeleton}>
                   <Typography variant={'headline2'}>
-                    {name ?? 'Placeholder Name'}
+                    {name ?? 'Name not set'}
                   </Typography>
                 </ConditionalWrapper>
                 {bundle?.entity?.id && (
