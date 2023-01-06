@@ -1,14 +1,22 @@
 import {
-  TermsOfUseAccessRequirement,
-  SelfSignAccessRequirement,
-  ManagedACTAccessRequirement,
-  ACTAccessRequirement,
-  RestrictableObjectType,
   ACCESS_TYPE,
+  AccessRequirement,
+  ACTAccessRequirement,
+  ManagedACTAccessRequirement,
+  ObjectType,
+  RestrictableObjectType,
+  SelfSignAccessRequirement,
+  TermsOfUseAccessRequirement,
+  WikiPageKey,
 } from '../lib/utils/synapseTypes'
 import { AccessRequirementSearchResponse } from '../lib/utils/synapseTypes/AccessRequirement/AccessRequirementSearch'
 import mockProjectData from './entity/mockProject'
 import { MOCK_USER_ID } from './user/mock_user_profile'
+import {
+  mockManagedACTAccessRequirementWikiPage,
+  mockSelfSignAccessRequirementWikiPage,
+} from './mockWiki'
+import { mockFileHandle } from './mock_file_handle'
 
 const MOCK_PROJECT_ID = mockProjectData.id
 
@@ -29,35 +37,52 @@ const defaultAccessRequirement = {
   modifiedBy: '1981374',
   accessType: ACCESS_TYPE.DOWNLOAD,
 }
+
+export const mockManagedACTAccessRequirement: ManagedACTAccessRequirement = {
+  ...defaultAccessRequirement,
+  id: 1,
+  concreteType: 'org.sagebionetworks.repo.model.ManagedACTAccessRequirement',
+  areOtherAttachmentsRequired: true,
+  isCertifiedUserRequired: true,
+  isDUCRequired: true,
+  isIDUPublic: true,
+  isIDURequired: true,
+  ducTemplateFileHandleId: mockFileHandle.id,
+  expirationPeriod: 1000 * 60 * 60 * 24, // 1 day
+  isIRBApprovalRequired: true,
+  isValidatedProfileRequired: true,
+}
+
+export const mockManagedACTAccessRequirementWikiPageKey: WikiPageKey = {
+  wikiPageId: mockManagedACTAccessRequirementWikiPage.id,
+  ownerObjectId: mockManagedACTAccessRequirement.id.toString(),
+  ownerObjectType: ObjectType.ACCESS_REQUIREMENT,
+}
+
 export const mockToUAccessRequirement: TermsOfUseAccessRequirement = {
   ...defaultAccessRequirement,
+  id: 2,
   concreteType: 'org.sagebionetworks.repo.model.TermsOfUseAccessRequirement',
   termsOfUse: '',
 }
 
 export const mockSelfSignAccessRequirement: SelfSignAccessRequirement = {
   ...defaultAccessRequirement,
+  id: 3,
   concreteType: 'org.sagebionetworks.repo.model.SelfSignAccessRequirement',
   isCertifiedUserRequired: false,
   isValidatedProfileRequired: false,
 }
 
-export const mockManagedACTAccessRequirement: ManagedACTAccessRequirement = {
-  ...defaultAccessRequirement,
-  concreteType: 'org.sagebionetworks.repo.model.ManagedACTAccessRequirement',
-  areOtherAttachmentsRequired: false,
-  isCertifiedUserRequired: false,
-  isDUCRequired: false,
-  isIDUPublic: false,
-  isIDURequired: false,
-  ducTemplateFileHandleId: '11111',
-  expirationPeriod: 1000 * 60 * 60 * 24, // 1 day
-  isIRBApprovalRequired: false,
-  isValidatedProfileRequired: false,
+export const mockSelfSignAccessRequirementWikiPageKey: WikiPageKey = {
+  wikiPageId: mockSelfSignAccessRequirementWikiPage.id,
+  ownerObjectId: mockSelfSignAccessRequirement.id.toString(),
+  ownerObjectType: ObjectType.ACCESS_REQUIREMENT,
 }
 
 export const mockACTAccessRequirement: ACTAccessRequirement = {
   ...defaultAccessRequirement,
+  id: 4,
   concreteType: 'org.sagebionetworks.repo.model.ACTAccessRequirement',
   actContactInfo: 'not web engineering',
   openJiraIssue: true,
@@ -65,6 +90,7 @@ export const mockACTAccessRequirement: ACTAccessRequirement = {
 
 export const mockLockAccessRequirement = {
   ...defaultAccessRequirement,
+  id: 5,
   concreteType: 'org.sagebionetworks.repo.model.LockAccessRequirement',
 }
 
@@ -108,3 +134,16 @@ export const mockSearchResults: AccessRequirementSearchResponse = {
     },
   ],
 }
+
+export const mockAccessRequirements: AccessRequirement[] = [
+  mockManagedACTAccessRequirement,
+  mockToUAccessRequirement,
+  mockSelfSignAccessRequirement,
+  mockACTAccessRequirement,
+  mockLockAccessRequirement,
+]
+
+export const mockAccessRequirementWikiPageKeys: WikiPageKey[] = [
+  mockManagedACTAccessRequirementWikiPageKey,
+  mockSelfSignAccessRequirementWikiPageKey,
+]

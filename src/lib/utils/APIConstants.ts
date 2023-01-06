@@ -44,6 +44,9 @@ export const ENTITY_SCHEMA_BINDING = (id: string | number) =>
 export const ENTITY_SCHEMA_VALIDATION = (id: string | number) =>
   `${ENTITY_SCHEMA(id)}/validation`
 
+export const ENTITY_ACCESS_REQUIREMENTS = (entityId: string | number) =>
+  `${ENTITY_ID(entityId)}/accessRequirement`
+
 export const TABLE_QUERY_ASYNC_START = (id: string | number) =>
   `${ENTITY_ID(id)}/table/query/async/start`
 
@@ -97,6 +100,13 @@ export const ACCESS_REQUIREMENT_WIKI_PAGE_KEY = (id: string | number) =>
   // Note that this is `access_requirement` not `accessRequirement`!
   `${REPO}/access_requirement/${id}/wikikey`
 
+export const ACCESS_REQUIREMENT_WIKI_PAGE = (
+  accessRequirementId: string | number,
+  wikiId: string | number,
+) =>
+  // Note that this is `access_requirement` not `accessRequirement`!
+  `${REPO}/access_requirement/${accessRequirementId}/wiki/${wikiId}`
+
 export const FAVORITES = `${REPO}/favorite`
 
 export const USER_GROUP_HEADERS = `${REPO}/userGroupHeaders`
@@ -144,3 +154,23 @@ export const THREAD_REPLIES = (id: string) => `${THREAD_ID(id)}/replies`
 
 export const DOI = `${REPO}/doi`
 export const DOI_ASSOCIATION = `${DOI}/association`
+
+export const ACCESS_APPROVAL = `${REPO}/accessApproval`
+export const ACCESS_APPROVAL_BY_ID = (id: string | number) =>
+  `${ACCESS_APPROVAL}/${id}`
+
+export const DATA_ACCESS_REQUEST = `${REPO}/dataAccessRequest`
+export const DATA_ACCESS_REQUEST_SUBMISSION = (id: string | number) =>
+  `${DATA_ACCESS_REQUEST}/${id}/submission`
+export const ACCESS_REQUIREMENT_DATA_ACCESS_REQUEST_FOR_UPDATE = (
+  accessRequirementId: string | number,
+) =>
+  `${ACCESS_REQUIREMENT_BY_ID(accessRequirementId)}/dataAccessRequestForUpdate`
+
+export const RESEARCH_PROJECT = `${REPO}/researchProject`
+export const ACCESS_REQUIREMENT_RESEARCH_PROJECT_FOR_UPDATE = (
+  accessRequirementId: string | number,
+) => `${ACCESS_REQUIREMENT_BY_ID(accessRequirementId)}/researchProjectForUpdate`
+
+export const FILE_HANDLE = `${FILE}/fileHandle`
+export const FILE_HANDLE_BATCH = `${FILE_HANDLE}/batch`
