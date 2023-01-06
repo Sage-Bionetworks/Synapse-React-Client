@@ -1,11 +1,4 @@
-import {
-  render,
-  renderHook,
-  screen,
-  waitFor,
-  within,
-} from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
+import { render, renderHook, screen, waitFor } from '@testing-library/react'
 import React from 'react'
 import HtmlPreview, {
   EXPORTED_FOR_UNIT_TESTING,
@@ -138,31 +131,8 @@ describe('HTML Preview tests', () => {
       expect(frame).toHaveAttribute('srcdoc', '')
     })
 
-    // An alert should be shown to open the unsanitized content in a new window
-    const alert = await screen.findByRole('alert')
-    const openInNewWindowLink = within(alert).getByText(
-      'External view available.',
-    )
-
-    // Mock the window.open function to validate that we pass unsanitized HTML
-    const mockDocumentWrite = jest.fn()
-    const mockDocumentClose = jest.fn()
-    jest.spyOn(window, 'open').mockImplementation(() => ({
-      document: { write: mockDocumentWrite, close: mockDocumentClose },
-    }))
-
-    await userEvent.click(openInNewWindowLink)
-    const modalConfirmation = await screen.findByRole('dialog')
-    await userEvent.click(
-      within(modalConfirmation).getByRole('button', { name: 'OK' }),
-    )
-
-    await waitFor(() => {
-      expect(window.open).toHaveBeenCalled()
-      // Unsanitized HTML passed to new window
-      expect(mockDocumentWrite).toHaveBeenCalledWith(rawHtml)
-      expect(mockDocumentClose).toHaveBeenCalled()
-    })
+    // An alert should be shown to inform the user that the rendering is limited
+    expect(screen.queryByRole('alert')).toBeInTheDocument()
   })
 
   it('Shows no alert if sanitized HTML is identical to unsanitized HTML', async () => {

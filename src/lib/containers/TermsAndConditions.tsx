@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { tcItem } from './TermsAndConditionsItem'
 import TermsAndConditionsItem from './TermsAndConditionsItem'
-import { Button } from '@mui/material'
+import { Button, Link } from '@mui/material'
 import { ChatBubblesIcon } from '../assets/icons/terms/ChatBubblesIcon'
 import { LockIcon } from '../assets/icons/terms/LockIcon'
 import { ScaleIcon } from '../assets/icons/terms/ScaleIcon'
@@ -13,6 +13,7 @@ import { FlagIcon } from '../assets/icons/terms/FlagIcon'
 
 export type TermsAndConditionsProps = {
   onFormChange: (formComplete: boolean) => void
+  hideLinkToFullTC?: boolean
 }
 
 const dataUseLink =
@@ -94,10 +95,13 @@ Please refer to our full <a target="_blank" href="https://help.synapse.org/docs/
 
 const TermsAndConditions: React.FunctionComponent<TermsAndConditionsProps> = ({
   onFormChange,
+  hideLinkToFullTC = false,
 }) => {
   const checkboxCount = tcList.length
   const tcAgreement =
     'https://s3.amazonaws.com/static.synapse.org/governance/SageBionetworksSynapseTermsandConditionsofUse.pdf'
+  const governancePolicy =
+    'https://help.synapse.org/docs/Synapse-Governance.2004255211.html'
   const getInitialCheckboxState = () =>
     Array.from(Array(checkboxCount).fill(false))
   let mounted = true
@@ -145,8 +149,11 @@ const TermsAndConditions: React.FunctionComponent<TermsAndConditionsProps> = ({
       <h3 className="page-header">Synapse Pledge</h3>
       <form>
         <label>
-          I affirm my commitment to all Synapse Governance policies for
-          responsible research and data handling (linked below), including:
+          I affirm my commitment to all{' '}
+          <Link target="_blank" href={governancePolicy}>
+            Sage Governance policies
+          </Link>{' '}
+          for responsible research and data handling (linked below), including:
         </label>
         <ul className="term-list">
           {tcList.length &&
@@ -167,11 +174,13 @@ const TermsAndConditions: React.FunctionComponent<TermsAndConditionsProps> = ({
               )
             })}
         </ul>
-        <div className="view-terms">
-          <Button variant={'contained'} href={tcAgreement} target="_blank">
-            View Complete Terms and Conditions for Use
-          </Button>
-        </div>
+        {!hideLinkToFullTC && (
+          <div className="view-terms">
+            <Button variant={'contained'} href={tcAgreement} target="_blank">
+              View Complete Terms and Conditions for Use
+            </Button>
+          </div>
+        )}
       </form>
     </section>
   )

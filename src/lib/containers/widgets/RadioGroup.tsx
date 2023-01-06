@@ -1,27 +1,27 @@
 import React, { useState } from 'react'
 import { uniqueId as _uniqueId } from 'lodash-es'
 
-export type RadioGroupProps = {
-  options: { label: string; value: string }[]
+export type RadioGroupProps<T extends string | boolean | number = string> = {
+  options: { label: string; value: T }[]
   id: string
   className?: string
-  value?: string
-  onChange: (value: string) => void
+  value?: T
+  onChange: (value: T) => void
 }
 
-export const RadioGroup: React.FunctionComponent<RadioGroupProps> = (
-  props: RadioGroupProps,
-) => {
+export function RadioGroup<T extends string | boolean | number = string>(
+  props: RadioGroupProps<T>,
+) {
   const className = props.className
     ? `radiogroup ${props.className}`
     : `radiogroup`
 
   return (
     <div className={className} role="radiogroup">
-      {props.options.map(option => (
-        <RadioOption
+      {props.options.map((option, index) => (
+        <RadioOption<T>
+          key={index.toString()}
           groupId={props.id}
-          key={option.value}
           label={option.label}
           value={option.value}
           currentValue={props.value}
@@ -32,17 +32,17 @@ export const RadioGroup: React.FunctionComponent<RadioGroupProps> = (
   )
 }
 
-type RadioOptionProps = {
+type RadioOptionProps<T extends string | boolean | number = string> = {
   groupId: string
   label: string
-  value: string
-  currentValue?: string
-  onChange: (value: string) => void
+  value: T
+  currentValue?: T
+  onChange: (value: T) => void
 }
 
-const RadioOption: React.FunctionComponent<RadioOptionProps> = (
-  props: RadioOptionProps,
-) => {
+function RadioOption<T extends string | boolean | number = string>(
+  props: RadioOptionProps<T>,
+) {
   const [uniqueId] = useState(_uniqueId('src-radio-'))
   return (
     <div onClick={() => props.onChange(props.value)}>
@@ -53,7 +53,7 @@ const RadioOption: React.FunctionComponent<RadioOptionProps> = (
           // no-op -- change is handled by the div
         }}
         checked={props.currentValue === props.value}
-        value={props.value}
+        value={props.value.toString()}
       />
       <label htmlFor={uniqueId}>{props.label}</label>
     </div>
