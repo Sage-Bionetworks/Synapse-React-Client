@@ -7,12 +7,7 @@
     font-size: 18px;
     font-weight: bold;
     text-transform: uppercase;
-    padding-left: 15px;
     padding-bottom: 20px;
-  }
-
-  &__access {
-    margin-top: -10px;
   }
 
   &__title {
@@ -115,80 +110,78 @@
   }
 }
 
-.bootstrap-4-backport {
-  &.AccessRequirementList {
-    .terms-of-use-content {
-      flex-grow: 1;
+.AccessRequirementList {
+  .terms-of-use-content {
+    flex-grow: 1;
+  }
+  .modal-dialog {
+    .modal-content {
+      padding: 0;
+      .modal-header {
+        padding: 10px;
+      }
     }
+    .access-requirement-list-alert.alert {
+      margin-top: 0;
+    }
+  }
+  &.cancel-modal {
     .modal-dialog {
-      .modal-content {
-        padding: 0;
-        .modal-header {
-          padding: 10px;
-        }
-      }
-      .access-requirement-list-alert.alert {
-        margin-top: 0;
-      }
+      transform: none;
+      min-height: calc(100% - 3.5rem);
     }
-    &.cancel-modal {
-      .modal-dialog {
-        transform: none;
-        min-height: calc(100% - 3.5rem);
-      }
-    }
-    .LoginComponent {
-      width: 350px;
-    }
+  }
+  .LoginComponent {
+    width: 350px;
+  }
 
-    .access-request-form2 {
-      .form-group {
-        margin-bottom: 2rem;
+  .access-request-form2 {
+    .form-group {
+      margin-bottom: 2rem;
+    }
+    .btn-light-primary-base {
+      margin-top: 0.5rem;
+    }
+    .list-items {
+      display: flex;
+      align-items: center;
+      .account-level-icon svg {
+        width: 30px;
+        height: auto;
       }
-      .btn-light-primary-base {
-        margin-top: 0.5rem;
-      }
-      .list-items {
-        display: flex;
-        align-items: center;
-        .account-level-icon svg {
-          width: 30px;
-          height: auto;
-        }
-        .clear-x {
-          padding: 0;
-          margin-left: 1rem;
-          .styled-svg-wrapper {
-            display: inline-block;
-            line-height: 1rem;
-          }
-        }
-      }
-      .requester-label {
-        margin-bottom: 0.5rem;
-        display: inline-block;
-      }
-      .SRC-userCard {
-        svg {
-          margin-top: 8px;
-        }
-      }
-      .radiogroup {
-        flex: auto;
-        text-align: right;
-        > div {
+      .clear-x {
+        padding: 0;
+        margin-left: 1rem;
+        .styled-svg-wrapper {
           display: inline-block;
-          margin: 0;
-          margin-left: 1rem;
-        }
-        label {
-          margin-bottom: 0;
+          line-height: 1rem;
         }
       }
-      .user-fullname {
-        font-weight: bold;
-        color: SRC.$gray-regular;
+    }
+    .requester-label {
+      margin-bottom: 0.5rem;
+      display: inline-block;
+    }
+    .SRC-userCard {
+      svg {
+        margin-top: 8px;
       }
+    }
+    .radiogroup {
+      flex: auto;
+      text-align: right;
+      > div {
+        display: inline-block;
+        margin: 0;
+        margin-left: 1rem;
+      }
+      label {
+        margin-bottom: 0;
+      }
+    }
+    .user-fullname {
+      font-weight: bold;
+      color: SRC.$gray-regular;
     }
   }
 }
