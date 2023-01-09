@@ -135,11 +135,23 @@ export const getUserProfileHandlers = (backendOrigin: string) => [
    * Get userGroupHeaders by prefix
    */
   rest.get(`${backendOrigin}${USER_GROUP_HEADERS}`, async (req, res, ctx) => {
-    const prefix = req.url.searchParams.get('prefix')
+    const prefix = req.url.searchParams.get('prefix') as string
     const responsePage: UserGroupHeaderResponsePage = {
       children: mockUserData
-        .filter(userData =>
-          userData.userGroupHeader.userName.startsWith(prefix ?? ''),
+        .filter(
+          userData =>
+            userData.userGroupHeader.userName
+              .toLowerCase()
+              .startsWith(prefix.toLowerCase() ?? '') ||
+            (userData.userGroupHeader.firstName || '')
+              .toLowerCase()
+              .startsWith(prefix.toLowerCase() ?? '') ||
+            (userData.userGroupHeader.displayName || '')
+              .toLowerCase()
+              .startsWith(prefix.toLowerCase() ?? '') ||
+            (userData.userGroupHeader.lastName || '')
+              .toLowerCase()
+              .startsWith(prefix.toLowerCase() ?? ''),
         )
         .map(userData => userData.userGroupHeader),
     }
@@ -166,7 +178,3 @@ export const getUserProfileHandlers = (backendOrigin: string) => [
     )
   }),
 ]
-
-export const userProfileHandlers = getUserProfileHandlers(
-  getEndpoint(BackendDestinationEnum.REPO_ENDPOINT),
-)

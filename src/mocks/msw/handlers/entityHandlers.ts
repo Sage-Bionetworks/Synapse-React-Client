@@ -262,7 +262,3 @@ export const getEntityHandlers = (backendOrigin: string) => [
     },
   ),
 ]
-
-export const entityHandlers = getEntityHandlers(
-  getEndpoint(BackendDestinationEnum.REPO_ENDPOINT),
-)

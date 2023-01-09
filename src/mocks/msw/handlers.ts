@@ -1,14 +1,13 @@
 import { rest } from 'msw'
 import { SynapseError } from '../../lib/utils/SynapseClient'
-import { entityHandlers, getEntityHandlers } from './handlers/entityHandlers'
-import {
-  getUserProfileHandlers,
-  userProfileHandlers,
-} from './handlers/userProfileHandlers'
+import { getEntityHandlers } from './handlers/entityHandlers'
+import { getUserProfileHandlers } from './handlers/userProfileHandlers'
 import {
   BackendDestinationEnum,
   getEndpoint,
 } from '../../lib/utils/functions/getEndpoint'
+import { getAccessRequirementHandlers } from './handlers/accessRequirementHandlers'
+import { getWikiHandlers } from './handlers/wikiHandlers'
 
 // Simple utility type that just indicates that the response body could be an error like the Synapse backend may send.
 export type SynapseApiResponse<T> = T | SynapseError
@@ -28,6 +27,8 @@ const getHandlers = (backendOrigin: string) => [
   ),
   ...getEntityHandlers(backendOrigin),
   ...getUserProfileHandlers(backendOrigin),
+  ...getWikiHandlers(backendOrigin),
+  ...getAccessRequirementHandlers(backendOrigin),
 ]
 
 const handlers = getHandlers(getEndpoint(BackendDestinationEnum.REPO_ENDPOINT))
