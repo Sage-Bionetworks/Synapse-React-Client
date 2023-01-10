@@ -203,8 +203,8 @@ describe('SynapseClient tests', () => {
         ).rejects.toEqual(expected)
       })
     })
-    describe('fetch test', () => {
-      it('fetch results in a network error', async () => {
+    describe('fetch tests', () => {
+      it('fetch error results in a nice network unavailable message', async () => {
         const expected = new SynapseClientError(0, NETWORK_UNAVAILABLE_MESSAGE)
         jest.spyOn(global, 'fetch').mockRejectedValue(new Error())
         await expect(() => SynapseClient.getVersion()).rejects.toEqual(expected)
