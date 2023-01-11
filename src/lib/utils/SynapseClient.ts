@@ -71,7 +71,10 @@ import {
   PRODUCTION_ENDPOINT_CONFIG,
 } from './functions/getEndpoint'
 import { removeUndefined } from './functions/ObjectUtils'
-import { DATETIME_UTC_COOKIE_KEY } from './SynapseConstants'
+import {
+  DATETIME_UTC_COOKIE_KEY,
+  NETWORK_UNAVAILABLE_MESSAGE,
+} from './SynapseConstants'
 import {
   AccessApproval,
   AccessCodeResponse,
@@ -364,7 +367,13 @@ const fetchWithExponentialTimeout = async <TResponse>(
   options: RequestInit,
   delayMs = 1000,
 ): Promise<TResponse> => {
-  let response = await fetch(url, options)
+  let response
+  try {
+    response = await fetch(url, options)
+  } catch (err) {
+    throw new SynapseClientError(0, NETWORK_UNAVAILABLE_MESSAGE, url.toString())
+  }
+
   let numOfTry = 1
   while (response.status && RETRY_STATUS_CODES.includes(response.status)) {
     await delay(delayMs)
