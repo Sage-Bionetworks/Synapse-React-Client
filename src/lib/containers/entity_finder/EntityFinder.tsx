@@ -16,7 +16,7 @@ import { useSynapseContext } from '../../utils/SynapseContext'
 import { Reference } from '../../utils/synapseTypes'
 import { EntityType } from '../../utils/synapseTypes/EntityType'
 import { KeyValue } from '../../utils/synapseTypes/Search'
-import { SynapseErrorBoundary } from '../ErrorBanner'
+import { SynapseErrorBoundary } from '../error/ErrorBanner'
 import IconSvg from '../IconSvg'
 import { BreadcrumbItem, Breadcrumbs, BreadcrumbsProps } from './Breadcrumbs'
 import {

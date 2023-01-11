@@ -1,7 +1,7 @@
 import React from 'react'
 import { QueryBundleRequest } from '../../../utils/synapseTypes'
 import { SynapseConstants } from '../../../utils'
-import { ErrorBanner } from '../../ErrorBanner'
+import { ErrorBanner } from '../../error/ErrorBanner'
 import useGetQueryResultBundle from '../../../utils/hooks/SynapseAPI/entity/useGetQueryResultBundle'
 import ResourcesDesktop from './Resources.Desktop'
 import ResourcesMobile from './Resources.Mobile'

@@ -5,7 +5,7 @@ import { QueryBundleRequest } from '../../../utils/synapseTypes'
 import React, { useState, useEffect } from 'react'
 import Carousel from '../../Carousel'
 import { ProjectViewCard } from './ProjectViewCard'
-import { ErrorBanner } from '../../ErrorBanner'
+import { ErrorBanner } from '../../error/ErrorBanner'
 import { useSynapseContext } from '../../../utils/SynapseContext'
 
 export type ProjectViewCarouselProps = {

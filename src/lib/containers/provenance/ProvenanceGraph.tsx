@@ -29,7 +29,7 @@ import { ExpandGraphNodeDataProps } from './ExpandGraphNodeLabel'
 import { useGetEntityHeaders } from '../../utils/hooks/SynapseAPI'
 import { CircularProgress } from '@mui/material'
 import { displayToast } from '../ToastMessage'
-import { SynapseErrorBoundary } from '../ErrorBanner'
+import { SynapseErrorBoundary } from '../error/ErrorBanner'
 import { useErrorHandler } from 'react-error-boundary'
 import {
   addActivityNode,

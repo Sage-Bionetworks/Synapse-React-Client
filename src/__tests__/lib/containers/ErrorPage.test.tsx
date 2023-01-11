@@ -1,6 +1,8 @@
 import * as React from 'react'
 import { render, screen } from '@testing-library/react'
-import ErrorPage, { ErrorPageProps } from '../../../lib/containers/ErrorPage'
+import ErrorPage, {
+  ErrorPageProps,
+} from '../../../lib/containers/error/ErrorPage'
 
 describe('DirectDownload: basic functionality', () => {
   const propsNoAccess: ErrorPageProps = {

@@ -16,7 +16,7 @@ import {
 import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
 import { EntityTypeIcon } from '../EntityIcon'
 import { Form } from 'react-bootstrap'
-import { ErrorBanner } from '../ErrorBanner'
+import { ErrorBanner } from '../error/ErrorBanner'
 import { Tooltip } from '@mui/material'
 
 // Local types used for client-side sorting

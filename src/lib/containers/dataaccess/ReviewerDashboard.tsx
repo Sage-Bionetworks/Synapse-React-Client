@@ -11,7 +11,7 @@ import {
 } from 'react-router-dom'
 import { useGetCurrentUserBundle } from '../../utils/hooks/SynapseAPI/user/useUserBundle'
 import { Typography } from '@mui/material'
-import { SynapseErrorBoundary } from '../ErrorBanner'
+import { SynapseErrorBoundary } from '../error/ErrorBanner'
 import IconSvg, { Icon } from '../IconSvg'
 import { SynapseSpinner } from '../LoadingScreen'
 import { UserHistoryDashboard } from './AccessHistoryDashboard'
