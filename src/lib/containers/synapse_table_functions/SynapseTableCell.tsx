@@ -252,6 +252,7 @@ export const SynapseTableCell: React.FC<SynapseTableCellProps> = ({
     case ColumnType.DOUBLE:
     case ColumnType.INTEGER:
     case ColumnType.BOOLEAN:
+    case ColumnType.MEDIUMTEXT:
     case ColumnType.LARGETEXT: {
       return <p className={isBold}>{columnValue}</p>
     }
