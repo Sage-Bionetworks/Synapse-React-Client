@@ -94,6 +94,14 @@ export const entityQueryKeys = {
     },
   ],
 
+  fullTableQueryResult: (queryBundleRequest: QueryBundleRequest) => [
+    {
+      ...entityQueryKeys.entity(queryBundleRequest.entityId)[0],
+      scope: 'fullTableQueryResult',
+      tableQueryBundleRequest: queryBundleRequest,
+    },
+  ],
+
   boundJSONSchema: (id: string) => [
     {
       ...entityQueryKeys.entity(id)[0],

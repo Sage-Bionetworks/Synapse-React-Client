@@ -29,14 +29,13 @@ import UserCard from '../UserCard'
 import UserOrTeamBadge from '../UserOrTeamBadge'
 import { FileHandleLink } from '../widgets/FileHandleLink'
 import duration from 'dayjs/plugin/duration'
+import RejectDataAccessRequestModal from './RejectDataAccessRequestModal'
 
 dayjs.extend(duration)
 
 export type SubmissionPageProps = {
   /** The ID of the submission to view */
   submissionId: string | number
-  /** Invoked when a reviewer clicks "Reject". Provides a parameter for an external component to provide a reason for rejection, which will reject the submission when invoked. */
-  onRejectClicked: (onReject: (rejectedReason: string) => void) => void
 }
 
 function DataAccessSubmissionFileHandleLink(props: {
@@ -121,7 +120,8 @@ function AccessRequirementWiki(props: AccessRequirementWikiType) {
  * Page for a Data Access Submission that a designated reviewer can view, and choose to approve or reject.
  */
 export default function SubmissionPage(props: SubmissionPageProps) {
-  const { submissionId, onRejectClicked } = props
+  const { submissionId } = props
+  const [showRejectionDialog, setShowRejectionDialog] = useState(false)
 
   const handleError = useErrorHandler()
   const { data: submission, refetch } = useGetDataAccessSubmission(
@@ -152,14 +152,6 @@ export default function SubmissionPage(props: SubmissionPageProps) {
     })
   }
 
-  function rejectSubmission(reason: string) {
-    return mutateAsync({
-      submissionId: submission?.id ?? '',
-      newState: SubmissionState.REJECTED,
-      rejectedReason: reason,
-    })
-  }
-
   return (
     <div className="SubmissionPage">
       <ApproveConfirmationModal
@@ -176,6 +168,13 @@ export default function SubmissionPage(props: SubmissionPageProps) {
           setShowApprovalConfirmation(false)
           refetch()
         }}
+      />
+      <RejectDataAccessRequestModal
+        // Use the submission ID as a key so that the modal form is reset for a new submission
+        key={submissionId}
+        submissionId={submissionId}
+        open={showRejectionDialog}
+        onClose={() => setShowRejectionDialog(false)}
       />
       <div className="SubmissionSummary">
         <Typography variant="dataFieldKey">Status</Typography>
@@ -196,9 +195,7 @@ export default function SubmissionPage(props: SubmissionPageProps) {
               </Button>
               <Button
                 onClick={() => {
-                  onRejectClicked(reason => {
-                    rejectSubmission(reason)
-                  })
+                  setShowRejectionDialog(true)
                 }}
                 variant="danger"
               >
@@ -236,7 +233,7 @@ export default function SubmissionPage(props: SubmissionPageProps) {
         <br />
         <Typography variant="dataFieldKey">Conditions</Typography>
         {accessRequirement ? (
-          <Typography variant="smallText1">
+          <Typography variant="smallText1" component={'div'}>
             <ul>
               <li>
                 Expiration period:{' '}

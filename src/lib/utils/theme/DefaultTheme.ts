@@ -35,6 +35,11 @@ const defaultMuiTheme: ThemeOptions = {
         }),
       },
     },
+    MuiCheckbox: {
+      defaultProps: {
+        color: 'secondary',
+      },
+    },
     MuiDialog: {
       defaultProps: {
         PaperProps: {
