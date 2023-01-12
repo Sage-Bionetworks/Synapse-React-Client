@@ -35,6 +35,7 @@ import { SynapseClientError } from '../../utils/SynapseClientError'
 import FullWidthAlert from '../FullWidthAlert'
 import { UseQueryResult } from 'react-query'
 import { ErrorBanner } from '../error/ErrorBanner'
+import { displayToast } from '../ToastMessage'
 
 const CATEGORY_COLUMN_NAME = 'category'
 const CATEGORY_SECTION_EMAIL_TEXT_COLUMN_NAME = 'category email prompt'
@@ -343,6 +344,10 @@ export default function RejectDataAccessRequestModal(
       {
         onSuccess: () => {
           setError(null)
+          displayToast(
+            'Submission rejected and message sent to requester',
+            'info',
+          )
           onClose()
         },
         onError: e => {
