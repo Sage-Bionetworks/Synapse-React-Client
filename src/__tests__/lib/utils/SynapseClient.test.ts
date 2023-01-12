@@ -6,6 +6,7 @@ import {
 } from '../../../lib/utils/functions/getEndpoint'
 import { FunctionReturningPaginatedResults } from '../../../lib/utils/SynapseClient'
 import { SynapseClientError } from '../../../lib/utils/SynapseClientError'
+import { NETWORK_UNAVAILABLE_MESSAGE } from '../../../lib/utils/SynapseConstants'
 import {
   AsynchronousJobStatus,
   PaginatedResults,
@@ -202,7 +203,13 @@ describe('SynapseClient tests', () => {
         ).rejects.toEqual(expected)
       })
     })
-
+    describe('fetch tests', () => {
+      it('fetch error results in a nice network unavailable message', async () => {
+        const expected = new SynapseClientError(0, NETWORK_UNAVAILABLE_MESSAGE)
+        jest.spyOn(global, 'fetch').mockRejectedValue(new Error())
+        await expect(() => SynapseClient.getVersion()).rejects.toEqual(expected)
+      })
+    })
     describe('getAllOfPaginatedService', () => {
       it('works with < 50 results', async () => {
         const results = ['a']

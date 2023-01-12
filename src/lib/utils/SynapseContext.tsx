@@ -4,7 +4,7 @@ import {
   QueryClientConfig,
   QueryClientProvider,
 } from 'react-query'
-import { SynapseErrorBoundary } from '../containers/ErrorBanner'
+import { SynapseErrorBoundary } from '../containers/error/ErrorBanner'
 import { ThemeProvider } from './theme/useTheme'
 import { ThemeOptions } from '@mui/material'
 

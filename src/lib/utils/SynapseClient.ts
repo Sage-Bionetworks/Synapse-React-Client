@@ -54,6 +54,15 @@ import {
   THREAD,
   THREAD_ID,
   DOI_ASSOCIATION,
+  ENTITY_ACCESS_REQUIREMENTS,
+  ACCESS_APPROVAL_BY_ID,
+  ACCESS_APPROVAL,
+  ACCESS_REQUIREMENT_RESEARCH_PROJECT_FOR_UPDATE,
+  RESEARCH_PROJECT,
+  DATA_ACCESS_REQUEST,
+  ACCESS_REQUIREMENT_DATA_ACCESS_REQUEST_FOR_UPDATE,
+  DATA_ACCESS_REQUEST_SUBMISSION,
+  FILE_HANDLE_BATCH,
 } from './APIConstants'
 import { dispatchDownloadListChangeEvent } from './functions/dispatchDownloadListChangeEvent'
 import {
@@ -62,7 +71,10 @@ import {
   PRODUCTION_ENDPOINT_CONFIG,
 } from './functions/getEndpoint'
 import { removeUndefined } from './functions/ObjectUtils'
-import { DATETIME_UTC_COOKIE_KEY } from './SynapseConstants'
+import {
+  DATETIME_UTC_COOKIE_KEY,
+  NETWORK_UNAVAILABLE_MESSAGE,
+} from './SynapseConstants'
 import {
   AccessApproval,
   AccessCodeResponse,
@@ -355,7 +367,13 @@ const fetchWithExponentialTimeout = async <TResponse>(
   options: RequestInit,
   delayMs = 1000,
 ): Promise<TResponse> => {
-  let response = await fetch(url, options)
+  let response
+  try {
+    response = await fetch(url, options)
+  } catch (err) {
+    throw new SynapseClientError(0, NETWORK_UNAVAILABLE_MESSAGE, url.toString())
+  }
+
   let numOfTry = 1
   while (response.status && RETRY_STATUS_CODES.includes(response.status)) {
     await delay(delayMs)
@@ -711,8 +729,6 @@ export const getQueryTableResults = async (
  *     }
  * @param {*} queryBundleRequest
  * @param {*} [accessToken=undefined]
- * @param {boolean} [onlyGetFacets=false] Specify if the query only needs facets and no
- * data-- (internally this limits the row count to 1 on the request)
  * @returns Full dataset from synapse table query
  */
 
@@ -1047,7 +1063,7 @@ export const getFiles = (
   accessToken: string | undefined = undefined,
 ): Promise<BatchFileResult> => {
   return doPost(
-    '/file/v1/fileHandle/batch',
+    FILE_HANDLE_BATCH,
     request,
     accessToken,
     BackendDestinationEnum.REPO_ENDPOINT,
@@ -2653,7 +2669,9 @@ export const getAccessRequirement = (
   limit: number = 50,
   offset: number = 0,
 ): Promise<PaginatedResults<AccessRequirement>> => {
-  const url = `/repo/v1/entity/${id}/accessRequirement?limit=${limit}&offset=${offset}`
+  const url = `${ENTITY_ACCESS_REQUIREMENTS(
+    id,
+  )}?limit=${limit}&offset=${offset}`
   return doGet<PaginatedResults<AccessRequirement>>(
     url,
     accessToken,
@@ -2788,9 +2806,9 @@ export function createLockAccessRequirement(
  */
 export const getAccessApproval = async (
   accessToken: string | undefined,
-  approvalId: number | undefined,
+  approvalId: number,
 ): Promise<AccessApproval> => {
-  const url = `/repo/v1/accessApproval/${approvalId}`
+  const url = `${ACCESS_APPROVAL_BY_ID(approvalId)}`
   return doGet<AccessApproval>(
     url,
     accessToken,
@@ -2810,7 +2828,7 @@ export const postAccessApproval = async (
   accessApproval: AccessApproval,
 ): Promise<AccessApproval> => {
   return doPost<AccessApproval>(
-    '/repo/v1/accessApproval',
+    ACCESS_APPROVAL,
     accessApproval,
     accessToken,
     BackendDestinationEnum.REPO_ENDPOINT,
@@ -3144,7 +3162,7 @@ export const updateResearchProject = (
   accessToken: string,
 ) => {
   return doPost<ResearchProject>(
-    '/repo/v1/researchProject',
+    RESEARCH_PROJECT,
     requestObj,
     accessToken,
     BackendDestinationEnum.REPO_ENDPOINT,
@@ -3157,7 +3175,7 @@ export const getResearchProject = (
   accessToken: string,
 ) => {
   return doGet<ResearchProject>(
-    `/repo/v1/accessRequirement/${requirementId}/researchProjectForUpdate`,
+    ACCESS_REQUIREMENT_RESEARCH_PROJECT_FOR_UPDATE(requirementId),
     accessToken,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
@@ -3169,7 +3187,7 @@ export const getDataAccessRequestForUpdate = (
   accessToken: string,
 ) => {
   return doGet<RequestInterface | RenewalInterface>(
-    `/repo/v1/accessRequirement/${requirementId}/dataAccessRequestForUpdate`,
+    ACCESS_REQUIREMENT_DATA_ACCESS_REQUEST_FOR_UPDATE(requirementId),
     accessToken,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
@@ -3181,7 +3199,7 @@ export const updateDataAccessRequest = (
   accessToken: string,
 ) => {
   return doPost<RequestInterface>(
-    `/repo/v1/dataAccessRequest`,
+    DATA_ACCESS_REQUEST,
     requestObj,
     accessToken,
     BackendDestinationEnum.REPO_ENDPOINT,
@@ -3194,7 +3212,7 @@ export const submitDataAccessRequest = (
   accessToken: string,
 ) => {
   return doPost<ACTSubmissionStatus>(
-    `/repo/v1/dataAccessRequest/${requestObj.requestId}/submission`,
+    DATA_ACCESS_REQUEST_SUBMISSION(requestObj.requestId),
     requestObj,
     accessToken,
     BackendDestinationEnum.REPO_ENDPOINT,

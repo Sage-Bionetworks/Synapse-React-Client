@@ -1,5 +1,5 @@
 import React from 'react'
-import { SynapseErrorBoundary } from '../ErrorBanner'
+import { SynapseErrorBoundary } from '../error/ErrorBanner'
 import MarkdownButton, { ButtonLinkWidgetParams } from './widget/MarkdownButton'
 import MarkdownEntityPreview, {
   MarkdownEntityPreviewProps,

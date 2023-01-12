@@ -1,7 +1,7 @@
 import React from 'react'
 import { ComponentStory, ComponentMeta } from '@storybook/react'
 import { ErrorBanner } from './ErrorBanner'
-import { SynapseClientError } from '../utils/SynapseClientError'
+import { SynapseClientError } from '../../utils/SynapseClientError'
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {

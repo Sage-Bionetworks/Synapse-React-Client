@@ -43,6 +43,18 @@ export const parameters = {
 }
 
 export const globalTypes = {
+  showReactQueryDevtools: {
+    name: 'React Query Devtools',
+    defaultValue: false,
+    toolbar: {
+      icon: 'wrench',
+      showName: true,
+      items: [
+        { value: false, title: 'Hide React Query Devtools' },
+        { value: true, title: 'Show React Query Devtools' },
+      ],
+    },
+  },
   stack: {
     name: 'Stack',
     title: 'Stack Changer',

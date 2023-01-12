@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Button } from 'react-bootstrap'
 import { useGetPersonalAccessTokensInfinite } from '../../utils/hooks/SynapseAPI/user/usePersonalAccessToken'
-import { ErrorBanner, SynapseErrorBoundary } from '../ErrorBanner'
+import { ErrorBanner, SynapseErrorBoundary } from '../error/ErrorBanner'
 import loadingScreen from '../LoadingScreen'
 import { AccessTokenCard } from './AccessTokenCard'
 import { CreateAccessTokenModal } from './CreateAccessTokenModal'

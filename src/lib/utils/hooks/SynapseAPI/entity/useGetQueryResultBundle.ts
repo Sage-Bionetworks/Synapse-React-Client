@@ -7,6 +7,7 @@ import {
   UseInfiniteQueryOptions,
   useQuery,
   UseQueryOptions,
+  UseQueryResult,
 } from 'react-query'
 import { SynapseClient } from '../../..'
 import { SynapseClientError } from '../../../SynapseClientError'
@@ -292,6 +293,26 @@ export function useInfiniteQueryResultBundle(
           ? (request.query.offset ?? 0) + pageSize
           : undefined
       },
+    },
+  )
+}
+
+/**
+ * Fetches all rows for a table query. Only use this request if you require all rows in a table at once.
+ */
+export function useGetFullTableQueryResults(
+  queryBundleRequest: QueryBundleRequest,
+  options?: UseQueryOptions<QueryResultBundle, SynapseClientError>,
+): UseQueryResult<QueryResultBundle, SynapseClientError> {
+  const { accessToken } = useSynapseContext()
+
+  return useQuery<QueryResultBundle, SynapseClientError>(
+    entityQueryKeys.fullTableQueryResult(queryBundleRequest),
+    () =>
+      SynapseClient.getFullQueryTableResults(queryBundleRequest, accessToken),
+    {
+      ...sharedQueryDefaults,
+      ...options,
     },
   )
 }

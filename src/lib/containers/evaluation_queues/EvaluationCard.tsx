@@ -6,7 +6,7 @@ import {
 import { SynapseClientError } from '../../utils/SynapseClientError'
 import { Evaluation } from '../../utils/synapseTypes'
 import { Button, Card, Col, Dropdown, Row } from 'react-bootstrap'
-import { ErrorBanner } from '../ErrorBanner'
+import { ErrorBanner } from '../error/ErrorBanner'
 import { CreatedOnByUserDiv } from './CreatedOnByUserDiv'
 import { UserEvaluationPermissions } from '../../utils/synapseTypes/Evaluation/UserEvaluationPermissions'
 import { RequiredProperties } from '../../utils'

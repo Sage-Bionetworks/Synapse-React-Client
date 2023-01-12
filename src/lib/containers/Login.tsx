@@ -9,6 +9,7 @@ import {
 import { GoogleIcon24 } from '../assets/GoogleIcon24'
 import { Button, IconButton, Link } from '@mui/material'
 import IconSvg from './IconSvg'
+import FullWidthAlert from './FullWidthAlert'
 
 export const PROVIDERS = {
   GOOGLE: 'GOOGLE_OAUTH_2_0',
@@ -139,12 +140,11 @@ class Login extends React.Component<Props, State> {
   public getLoginFailureView(): JSX.Element | boolean {
     if (this.state.hasLoginInFailed) {
       return (
-        <div>
-          <small className="form-text text-danger">
-            {this.state.errorMessage}
-          </small>
-          <div className="invalid-feedback" />
-        </div>
+        <FullWidthAlert
+          variant={'warning'}
+          isGlobal={false}
+          description={this.state.errorMessage}
+        />
       )
     }
     return false
@@ -239,7 +239,6 @@ class Login extends React.Component<Props, State> {
             value={this.state.password}
             onChange={this.handleChange}
           />
-          {this.getLoginFailureView()}
           <Link href={resetPasswordUrl}>Forgot password?</Link>
           <Button
             onClick={this.handleLogin}
@@ -256,6 +255,7 @@ class Login extends React.Component<Props, State> {
             Don&apos;t have an account? Create one now
           </Link>
         </div>
+        {this.getLoginFailureView()}
       </div>
     )
   }

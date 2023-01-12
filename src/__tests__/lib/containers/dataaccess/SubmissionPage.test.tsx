@@ -19,6 +19,7 @@ import {
   AccessControlList,
   ACCESS_TYPE,
   SubmissionState,
+  FileHandleAssociation,
 } from '../../../../lib/utils/synapseTypes'
 import {
   mockApprovedSubmission,
@@ -33,6 +34,8 @@ import {
   MOCK_USER_NAME,
   MOCK_USER_NAME_2,
 } from '../../../../mocks/user/mock_user_profile'
+import * as RejectDataAccessRequestModalModule from '../../../../lib/containers/dataaccess/RejectDataAccessRequestModal'
+import failOnConsoleError from 'jest-fail-on-console'
 
 function renderComponent(props: SubmissionPageProps) {
   render(<SubmissionPage {...props} />, {
@@ -44,12 +47,15 @@ const SUBMITTED_SUBMISSION_ID = mockSubmittedSubmission.id
 const APPROVED_SUBMISSION_ID = mockApprovedSubmission.id
 const REJECTED_SUBMISSION_ID = mockRejectedSubmission.id
 
-const onServerRecievedUpdate = jest.fn()
-const onRejectCallbackFn = jest.fn()
+const onServerReceivedUpdate = jest.fn()
 
 // Mock links to file handles
 jest.mock('../../../../lib/containers/widgets/FileHandleLink', () => ({
-  FileHandleLink: ({ fileHandleAssociation }) => (
+  FileHandleLink: ({
+    fileHandleAssociation,
+  }: {
+    fileHandleAssociation: FileHandleAssociation
+  }) => (
     <div data-testid="FileHandleLink">
       {JSON.stringify(fileHandleAssociation)}
     </div>
@@ -62,7 +68,13 @@ jest.mock('../../../../lib/containers/markdown/MarkdownSynapse', () => ({
   default: () => <div>Wiki Contents...</div>,
 }))
 
+// Mock the reject submission modal
+const mockRejectDataAccessRequestModal = jest
+  .spyOn(RejectDataAccessRequestModalModule, 'default')
+  .mockImplementation(() => <div data-testid="RejectDataAccessRequestModal" />)
+
 describe('Submission Page tests', () => {
+  failOnConsoleError()
   beforeAll(() => {
     server.listen()
 
@@ -124,7 +136,7 @@ describe('Submission Page tests', () => {
           BackendDestinationEnum.REPO_ENDPOINT,
         )}${DATA_ACCESS_SUBMISSION_BY_ID(':id')}`,
         async (req, res, ctx) => {
-          onServerRecievedUpdate(req.body)
+          onServerReceivedUpdate(await req.json())
           return res(ctx.status(200))
         },
       ),
@@ -139,7 +151,6 @@ describe('Submission Page tests', () => {
   it('Renders all fields', async () => {
     renderComponent({
       submissionId: SUBMITTED_SUBMISSION_ID,
-      onRejectClicked: onRejectCallbackFn,
     })
 
     await screen.findByText('Status')
@@ -194,7 +205,6 @@ describe('Submission Page tests', () => {
   it('Allows approving a SUBMITTED submission', async () => {
     renderComponent({
       submissionId: SUBMITTED_SUBMISSION_ID,
-      onRejectClicked: onRejectCallbackFn,
     })
 
     const approveButton = await screen.findByRole('button', { name: 'Approve' })
@@ -210,7 +220,7 @@ describe('Submission Page tests', () => {
     await userEvent.click(approveConfirmButton)
 
     await waitFor(() =>
-      expect(onServerRecievedUpdate).toBeCalledWith(
+      expect(onServerReceivedUpdate).toBeCalledWith(
         expect.objectContaining({
           newState: SubmissionState.APPROVED,
         }),
@@ -218,24 +228,42 @@ describe('Submission Page tests', () => {
     )
   })
 
-  it('Invokes a callback when rejecting a SUBMITTED submission', async () => {
+  it('Shows the rejection modal', async () => {
     renderComponent({
       submissionId: SUBMITTED_SUBMISSION_ID,
-      onRejectClicked: onRejectCallbackFn,
     })
 
-    const approveButton = await screen.findByRole('button', { name: 'Reject' })
+    // The modal is rendered but not shown
+    expect(
+      screen.queryByTestId('RejectDataAccessRequestModal'),
+    ).toBeInTheDocument()
+    expect(mockRejectDataAccessRequestModal).toHaveBeenLastCalledWith(
+      {
+        open: false,
+        submissionId: SUBMITTED_SUBMISSION_ID,
+        onClose: expect.anything(),
+      },
+      expect.anything(),
+    )
 
-    await userEvent.click(approveButton)
+    // Click the reject button
+    const rejectButton = await screen.findByRole('button', { name: 'Reject' })
+    await userEvent.click(rejectButton)
 
-    await waitFor(() => expect(onRejectCallbackFn).toBeCalled())
-    expect(onServerRecievedUpdate).not.toHaveBeenCalled()
+    // The modal should be shown
+    expect(mockRejectDataAccessRequestModal).toHaveBeenLastCalledWith(
+      {
+        open: true, // !
+        submissionId: SUBMITTED_SUBMISSION_ID,
+        onClose: expect.anything(),
+      },
+      expect.anything(),
+    )
   })
 
   it('Does not render action buttons for an APPROVED submission', () => {
     renderComponent({
       submissionId: APPROVED_SUBMISSION_ID,
-      onRejectClicked: onRejectCallbackFn,
     })
 
     expect(
@@ -249,7 +277,6 @@ describe('Submission Page tests', () => {
   it('Does not render action buttons for a REJECTED submission', () => {
     renderComponent({
       submissionId: REJECTED_SUBMISSION_ID,
-      onRejectClicked: onRejectCallbackFn,
     })
 
     expect(
@@ -286,7 +313,6 @@ describe('Submission Page tests', () => {
 
     renderComponent({
       submissionId: SUBMITTED_SUBMISSION_ID,
-      onRejectClicked: onRejectCallbackFn,
     })
 
     // When an ACL exists, don't show the ACT as the reviewer

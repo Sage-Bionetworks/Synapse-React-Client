@@ -10,7 +10,7 @@ import { getEvaluationRoundsList } from '../../utils/SynapseClient'
 import { SynapseClientError } from '../../utils/SynapseClientError'
 import shortid from 'shortid'
 import { EvaluationRoundListResponse } from '../../utils/synapseTypes/Evaluation/EvaluationRoundListResponse'
-import { ErrorBanner } from '../ErrorBanner'
+import { ErrorBanner } from '../error/ErrorBanner'
 import { useSynapseContext } from '../../utils/SynapseContext'
 
 export type EvaluationRoundEditorListProps = {

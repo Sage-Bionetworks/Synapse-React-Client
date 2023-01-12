@@ -1,5 +1,5 @@
 import React from 'react'
-import { ErrorBanner } from './ErrorBanner'
+import { ErrorBanner } from './error/ErrorBanner'
 import { useQueryContext } from './QueryContext'
 
 /**

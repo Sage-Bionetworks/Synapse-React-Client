@@ -13,7 +13,7 @@ import {
 } from './PreviewUtils'
 import { useSynapseContext } from '../../utils/SynapseContext'
 import { Alert } from 'react-bootstrap'
-import { SignInPrompt } from '../ErrorBanner'
+import { SignInPrompt } from '../error/ErrorBanner'
 
 export type FileEntityPreviewProps = {
   /** An entity bundle containing a FileEntity, and its fileHandles */

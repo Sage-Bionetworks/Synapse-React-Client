@@ -12,7 +12,7 @@ import { useSynapseContext } from '../../utils/SynapseContext'
 import { AccessTokenGenerationRequest } from '../../utils/synapseTypes/AccessToken/AccessTokenGenerationRequest'
 import { scopeDescriptions } from '../../utils/synapseTypes/AccessToken/ScopeDescriptions'
 import { CopyToClipboardInput } from '../CopyToClipboardInput'
-import { ErrorBanner } from '../ErrorBanner'
+import { ErrorBanner } from '../error/ErrorBanner'
 import loadingScreen from '../LoadingScreen'
 import { Checkbox } from '../widgets/Checkbox'
 

@@ -5,17 +5,20 @@ import {
   ErrorBoundaryPropsWithComponent,
   FallbackProps,
 } from 'react-error-boundary'
-import { SynapseClientError } from '../utils/SynapseClientError'
-import { useSynapseContext } from '../utils/SynapseContext'
-import { Optional } from '../utils/types/Optional'
-import { useJiraIssueCollector } from './JiraIssueCollector'
-import SignInButton from './SignInButton'
+import { SynapseClientError } from '../../utils/SynapseClientError'
+import { useSynapseContext } from '../../utils/SynapseContext'
+import { Optional } from '../../utils/types/Optional'
+import { useJiraIssueCollector } from '../JiraIssueCollector'
+import SignInButton from '../SignInButton'
 import { Collapse } from '@mui/material'
 
 type ErrorBannerProps = {
   error?: string | Error | SynapseClientError | null
   reloadButtonFn?: () => void
 }
+
+export const YOU_ARE_NOT_AUTHORIZED_MESSAGE =
+  'You are not authorized to access this resource.'
 
 export const SignInPrompt = () => {
   return (
@@ -46,7 +49,7 @@ export const ClientError = (props: { error: SynapseClientError }) => {
   } else if (accessDenied) {
     return (
       <>
-        <div>You are not authorized to access this resource.</div>
+        <div>{YOU_ARE_NOT_AUTHORIZED_MESSAGE}</div>
         <Button
           variant={'tertiary'}
           style={{ fontSize: '12px' }}

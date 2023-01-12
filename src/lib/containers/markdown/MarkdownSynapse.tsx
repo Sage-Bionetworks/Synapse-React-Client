@@ -10,7 +10,7 @@ import {
   ObjectType,
   WikiPage,
 } from '../../utils/synapseTypes/'
-import { ErrorBanner } from '../ErrorBanner'
+import { ErrorBanner } from '../error/ErrorBanner'
 import MarkdownWidget from './MarkdownWidget'
 import {
   SynapseWikiContextProvider,
