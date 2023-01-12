@@ -241,7 +241,6 @@ describe('Submission Page tests', () => {
       {
         open: false,
         submissionId: SUBMITTED_SUBMISSION_ID,
-        tableId: 'syn50683097',
         onClose: expect.anything(),
       },
       expect.anything(),
@@ -256,7 +255,6 @@ describe('Submission Page tests', () => {
       {
         open: true, // !
         submissionId: SUBMITTED_SUBMISSION_ID,
-        tableId: 'syn50683097',
         onClose: expect.anything(),
       },
       expect.anything(),
