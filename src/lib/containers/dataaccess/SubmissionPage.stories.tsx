@@ -11,6 +11,8 @@ import { mockSubmissions } from '../../../mocks/dataaccess/MockSubmission'
 import { mockManagedACTAccessRequirement } from '../../../mocks/mockAccessRequirements'
 import { SynapseErrorBoundary } from '../error/ErrorBanner'
 import { MOCK_REPO_ORIGIN } from '../../utils/functions/getEndpoint'
+import { getHandlersForTableQuery } from '../../../mocks/msw/handlers/tableQueryHandlers'
+import mockRejectionReasonsTableQueryResultBundle from '../../../mocks/query/mockRejectionReasonsTableQueryResultBundle'
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {
@@ -87,6 +89,14 @@ Demo.parameters = {
               ],
             }),
           )
+        },
+      ),
+      ...getHandlersForTableQuery(mockRejectionReasonsTableQueryResultBundle),
+      rest.put(
+        `${MOCK_REPO_ORIGIN}${DATA_ACCESS_SUBMISSION_BY_ID(':id')}`,
+
+        async (req, res, ctx) => {
+          return res(ctx.status(201), ctx.json(await req.json()))
         },
       ),
     ],

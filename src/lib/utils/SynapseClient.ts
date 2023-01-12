@@ -729,8 +729,6 @@ export const getQueryTableResults = async (
  *     }
  * @param {*} queryBundleRequest
  * @param {*} [accessToken=undefined]
- * @param {boolean} [onlyGetFacets=false] Specify if the query only needs facets and no
- * data-- (internally this limits the row count to 1 on the request)
  * @returns Full dataset from synapse table query
  */
 

@@ -50,18 +50,16 @@ function removeBundleFieldsUsingMask(
   return result
 }
 
-export function getHandlersForTableQuery(response: QueryResultBundle) {
+export function getHandlersForTableQuery(
+  response: QueryResultBundle,
+  backendOrigin = getEndpoint(BackendDestinationEnum.REPO_ENDPOINT),
+) {
   const asyncJobId = uniqueId()
   let queryBundleRequest: QueryBundleRequest | undefined
 
   return [
-    /**
-     * Create a new entity
-     */
     rest.post(
-      `${getEndpoint(
-        BackendDestinationEnum.REPO_ENDPOINT,
-      )}${TABLE_QUERY_ASYNC_START(':id')}`,
+      `${backendOrigin}${TABLE_QUERY_ASYNC_START(':id')}`,
       async (req, res, ctx) => {
         queryBundleRequest = req.body as QueryBundleRequest
         return res(
@@ -74,9 +72,7 @@ export function getHandlersForTableQuery(response: QueryResultBundle) {
     ),
 
     rest.get(
-      `${getEndpoint(
-        BackendDestinationEnum.REPO_ENDPOINT,
-      )}${ASYNCHRONOUS_JOB_TOKEN(asyncJobId)}`,
+      `${backendOrigin}${ASYNCHRONOUS_JOB_TOKEN(asyncJobId)}`,
       async (req, res, ctx) => {
         const resultBundle = removeBundleFieldsUsingMask(
           response,
@@ -110,9 +106,7 @@ export function getHandlersForTableQuery(response: QueryResultBundle) {
     ),
 
     rest.get(
-      `${getEndpoint(
-        BackendDestinationEnum.REPO_ENDPOINT,
-      )}${TABLE_QUERY_ASYNC_GET(':id', asyncJobId)}`,
+      `${backendOrigin}${TABLE_QUERY_ASYNC_GET(':id', asyncJobId)}`,
       async (req, res, ctx) => {
         const resultBundle = removeBundleFieldsUsingMask(
           response,
