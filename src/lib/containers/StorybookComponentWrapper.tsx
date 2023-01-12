@@ -143,7 +143,9 @@ export function StorybookComponentWrapper(props: {
       }}
     >
       <MemoryRouter>
-        <ReactQueryDevtools />
+        {storybookContext.globals.showReactQueryDevtools && (
+          <ReactQueryDevtools />
+        )}
         <SynapseToastContainer />
         <main>{props.children}</main>
       </MemoryRouter>
