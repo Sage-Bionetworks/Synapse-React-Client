@@ -8,7 +8,8 @@ import { PRODUCTION_ENDPOINT_CONFIG } from '../utils/functions/getEndpoint'
 import { useGetEntity } from '../utils/hooks/SynapseAPI/entity/useEntity'
 import { Entity, EntityHeader } from '../utils/synapseTypes/'
 import { EntityTypeIcon } from './EntityIcon'
-import { ErrorBanner } from './ErrorBanner'
+import { ErrorBanner } from './error/ErrorBanner'
+import ErrorChip from './error/ErrorChip'
 
 type EntityLinkProps = {
   entity: string | EntityHeader | Entity
@@ -75,6 +76,9 @@ export const EntityLink = (props: EntityLinkProps) => {
       )
     }
   } else if (error) {
+    if (entityId) {
+      return <ErrorChip chipText={entityId} error={error} />
+    }
     return <ErrorBanner error={error} />
   } else {
     return <Skeleton variant="rectangular" width="100" />

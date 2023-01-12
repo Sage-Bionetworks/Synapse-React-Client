@@ -9,7 +9,7 @@ import {
 } from '../../utils/APIConstants'
 import { mockSubmissions } from '../../../mocks/dataaccess/MockSubmission'
 import { mockManagedACTAccessRequirement } from '../../../mocks/mockAccessRequirements'
-import { SynapseErrorBoundary } from '../ErrorBanner'
+import { SynapseErrorBoundary } from '../error/ErrorBanner'
 import { MOCK_REPO_ORIGIN } from '../../utils/functions/getEndpoint'
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export

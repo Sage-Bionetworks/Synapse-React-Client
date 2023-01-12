@@ -26,7 +26,7 @@ import {
 } from '../../utils/SynapseClient'
 import { SynapseClientError } from '../../utils/SynapseClientError'
 import { EvaluationRoundEditorDropdown } from './EvaluationRoundEditorDropdown'
-import { ErrorBanner } from '../ErrorBanner'
+import { ErrorBanner } from '../error/ErrorBanner'
 import { useSynapseContext } from '../../utils/SynapseContext'
 import IconSvg, { IconSvgProps } from '../IconSvg'
 import utc from 'dayjs/plugin/utc'

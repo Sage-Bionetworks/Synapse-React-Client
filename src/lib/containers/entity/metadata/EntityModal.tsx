@@ -12,7 +12,7 @@ import {
 } from '../../../utils/functions/getEndpoint'
 import useGetEntityBundle from '../../../utils/hooks/SynapseAPI/entity/useEntityBundle'
 import { VersionableEntity } from '../../../utils/synapseTypes'
-import { SynapseErrorBoundary } from '../../ErrorBanner'
+import { SynapseErrorBoundary } from '../../error/ErrorBanner'
 import { FluidModal } from '../../FluidModal'
 import { displayToast } from '../../ToastMessage'
 import { SchemaDrivenAnnotationEditor } from '../annotations/SchemaDrivenAnnotationEditor'

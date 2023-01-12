@@ -4,7 +4,7 @@ import useGetQueryResultBundle from '../../../utils/hooks/SynapseAPI/entity/useG
 import { QueryBundleRequest } from '../../../utils/synapseTypes'
 import React, { useState, useEffect } from 'react'
 import { FeaturedToolCard } from './FeaturedToolCard'
-import { ErrorBanner } from '../../ErrorBanner'
+import { ErrorBanner } from '../../error/ErrorBanner'
 import { useSynapseContext } from '../../../utils/SynapseContext'
 
 export type FeaturedToolsListProps = {

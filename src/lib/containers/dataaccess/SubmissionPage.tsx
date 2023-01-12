@@ -20,7 +20,7 @@ import {
   SubmissionState,
 } from '../../utils/synapseTypes'
 import { Typography } from '@mui/material'
-import { SynapseErrorBoundary } from '../ErrorBanner'
+import { SynapseErrorBoundary } from '../error/ErrorBanner'
 import MarkdownSynapse from '../markdown/MarkdownSynapse'
 import WarningModal, {
   WarningModalProps,

@@ -5,7 +5,7 @@ import { getIsAllSelectedFromInfiniteList } from '../../../utils/hooks/useGetIsA
 import { EntityType, Reference } from '../../../utils/synapseTypes'
 import { GetProjectsParameters } from '../../../utils/synapseTypes/GetProjectsParams'
 import { SearchQuery } from '../../../utils/synapseTypes/Search'
-import { SynapseErrorBoundary } from '../../ErrorBanner'
+import { SynapseErrorBoundary } from '../../error/ErrorBanner'
 import { EntityFinderHeader } from '../EntityFinderHeader'
 import { EntityTreeContainer } from '../tree/EntityTree'
 import { VersionSelectionType } from '../VersionSelectionType'
