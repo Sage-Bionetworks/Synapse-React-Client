@@ -43,15 +43,12 @@ type ReviewerDashboardProps = {
   routerBaseName?: string
   /** If true use a MemoryRouter, which prevents the browser URL from updating. For demo purposes only. */
   useMemoryRouter?: boolean
-  /** Used to show the reject submission dialog */
-  onRejectSubmissionClicked: (onReject: (reason: string) => void) => void
 }
 
 export function ReviewerDashboard(props: ReviewerDashboardProps) {
   const {
     routerBaseName = '#!DataAccessManagement:default',
     useMemoryRouter = false,
-    onRejectSubmissionClicked,
   } = props
 
   const { data: userBundle, isLoading } = useGetCurrentUserBundle()
@@ -109,9 +106,7 @@ export function ReviewerDashboard(props: ReviewerDashboardProps) {
                 </Route>,
 
                 <Route path="/Submissions/:id" key="/Submissions/:id">
-                  <SubmissionPageRouteRenderer
-                    onRejectSubmissionClicked={onRejectSubmissionClicked}
-                  />
+                  <SubmissionPageRouteRenderer />
                 </Route>,
               ]}
               {
@@ -127,16 +122,9 @@ export function ReviewerDashboard(props: ReviewerDashboardProps) {
   )
 }
 
-function SubmissionPageRouteRenderer(props: {
-  onRejectSubmissionClicked: (onReject: (reason: string) => void) => void
-}) {
+function SubmissionPageRouteRenderer() {
   const { id } = useParams<{ id: string }>()
-  return (
-    <SubmissionPage
-      submissionId={id}
-      onRejectClicked={props.onRejectSubmissionClicked}
-    />
-  )
+  return <SubmissionPage submissionId={id} />
 }
 
 export default ReviewerDashboard
