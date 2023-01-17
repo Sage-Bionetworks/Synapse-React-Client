@@ -207,13 +207,19 @@ export function DropdownMenu(props: DropdownMenuProps) {
                                 }
                               }}
                             >
-                              <ListItemIcon>
+                              <ListItemIcon
+                                style={{
+                                  // MUI has specified a more specific minWidth for ListItemIcon inside a MenuList than
+                                  // we can create with sx, so apply an inline style for this property only.
+                                  minWidth: '30px',
+                                }}
+                              >
                                 {item.icon && (
                                   <IconSvg
                                     icon={item.icon}
                                     sx={{
-                                      width: '16px',
-                                      height: '16px',
+                                      width: '17px',
+                                      height: '17px',
                                       ...item.iconSx,
                                     }}
                                     wrap={false}

@@ -76,6 +76,14 @@ const defaultMuiTheme: ThemeOptions = {
         }),
       },
     },
+    MuiMenuItem: {
+      styleOverrides: {
+        root: {
+          height: '38px',
+          px: '12px',
+        },
+      },
+    },
     MuiTooltip: {
       defaultProps: {
         arrow: true,

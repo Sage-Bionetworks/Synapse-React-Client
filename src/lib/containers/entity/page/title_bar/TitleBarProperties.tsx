@@ -114,14 +114,16 @@ export default function TitleBarProperties(props: TitleBarPropertiesProps) {
         />
       </Stack>
       {showAllProperties && (
-        <table>
-          <tbody>
-            {/* Show the remaining properties. */}
-            {properties.slice(4, Infinity).map(p => {
-              return <Property key={p.key} title={p.title} value={p.value} />
-            })}
-          </tbody>
-        </table>
+        <Box sx={{ pt: '20px' }}>
+          <table>
+            <tbody>
+              {/* Show the remaining properties. */}
+              {properties.slice(4, Infinity).map(p => {
+                return <Property key={p.key} title={p.title} value={p.value} />
+              })}
+            </tbody>
+          </table>
+        </Box>
       )}
       {bundle?.entity?.description && isInExperimentalMode && (
         <Box sx={{ marginTop: '10px', maxWidth: '720px' }}>
