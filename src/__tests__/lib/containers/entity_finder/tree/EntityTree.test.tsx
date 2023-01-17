@@ -1,78 +1,59 @@
 import '@testing-library/jest-dom'
-import { act, render, waitFor, screen } from '@testing-library/react'
+import { act, render, screen, waitFor } from '@testing-library/react'
 import React, { useState } from 'react'
-import { SynapseClient } from '../../../../../lib/utils'
 import { EntityDetailsListDataConfigurationType } from '../../../../../lib/containers/entity_finder/details/EntityDetailsList'
 import {
-  FinderScope,
   EntityTree,
-  EntityTreeProps,
   EntityTreeContainer,
+  EntityTreeProps,
+  FinderScope,
 } from '../../../../../lib/containers/entity_finder/tree/EntityTree'
-import { useGetProjectsInfinite } from '../../../../../lib/utils/hooks/SynapseAPI/user/useProjects'
-import useGetEntityBundle from '../../../../../lib/utils/hooks/SynapseAPI/entity/useEntityBundle'
 import {
   EntityHeader,
   EntityPath,
   EntityType,
   PaginatedResults,
   ProjectHeader,
+  ProjectHeaderList,
 } from '../../../../../lib/utils/synapseTypes'
 import userEvent from '@testing-library/user-event'
-import { SynapseContextProvider } from '../../../../../lib/utils/SynapseContext'
-import { MOCK_CONTEXT_VALUE } from '../../../../../mocks/MockSynapseContext'
+import * as VirtualizedTreeModule from '../../../../../lib/containers/entity_finder/tree/VirtualizedTree'
 import {
   EntityTreeNodeType,
   VirtualizedTreeProps,
 } from '../../../../../lib/containers/entity_finder/tree/VirtualizedTree'
+import { rest, server } from '../../../../../mocks/msw/server'
+import failOnConsole from 'jest-fail-on-console'
+import {
+  BackendDestinationEnum,
+  getEndpoint,
+} from '../../../../../lib/utils/functions/getEndpoint'
+import {
+  ENTITY_HEADER_BY_ID,
+  ENTITY_PATH,
+  FAVORITES,
+  PROJECTS,
+} from '../../../../../lib/utils/APIConstants'
+import { createWrapper } from '../../../../../lib/testutils/TestingLibraryUtils'
+import mockFileEntityData from '../../../../../mocks/entity/mockFileEntity'
+import * as ToastMessageModule from '../../../../../lib/containers/ToastMessage'
 
-const VirtualizedTree = require('../../../../../lib/containers/entity_finder/tree/VirtualizedTree')
+const VIRTUALIZED_TREE_TEST_ID = 'VirtualizedTreeComponent'
 
 let invokeSetSelectedId: (containerId: string) => void
 
-VirtualizedTree.VirtualizedTree = jest
-  .fn()
+const mockVirtualizedTree = jest
+  .spyOn(VirtualizedTreeModule, 'VirtualizedTree')
   .mockImplementation(({ rootNodeConfiguration, setSelectedId }) => {
     invokeSetSelectedId = (containerId: string) => {
       setSelectedId(containerId)
     }
-    return <></>
+    return <div data-testid={VIRTUALIZED_TREE_TEST_ID}></div>
   })
 
-const mockTreePresenter = VirtualizedTree.VirtualizedTree
-
-jest.mock('../../../../../lib/utils/hooks/SynapseAPI/user/useProjects', () => {
-  return {
-    useGetProjectsInfinite: jest.fn(),
-  }
-})
-
-jest.mock(
-  '../../../../../lib/utils/hooks/SynapseAPI/entity/useEntityBundle',
-  () => {
-    return {
-      __esModule: true,
-      default: jest.fn(),
-    }
-  },
-)
-
-jest.mock('../../../../../lib/utils/SynapseClient', () => {
-  return {
-    getUserFavorites: jest.fn(),
-    getEntityPath: jest.fn(),
-    getEntityHeader: jest.fn(),
-  }
-})
-const mockGetUserFavorites = SynapseClient.getUserFavorites as jest.Mock
-const mockGetEntityPath = SynapseClient.getEntityPath as jest.Mock
-const mockGetEntityHeader = SynapseClient.getEntityHeader as jest.Mock
-const mockFetchNextPage = jest.fn()
+const mockDisplayToast = jest.spyOn(ToastMessageModule, 'displayToast')
 
 const mockSetDetailsViewConfiguration = jest.fn()
-const mockUseGetProjectsInfinite = useGetProjectsInfinite as jest.Mock
-const mockUseGetEntityBundle = useGetEntityBundle as jest.Mock
-
 const mockSetBreadcrumbItems = jest.fn()
 const mockToggleSelection = jest.fn()
 
@@ -123,6 +104,7 @@ const favorites: PaginatedResults<EntityHeader> = {
       benefactorId: 123,
       createdOn: 'yesterday',
       createdBy: '10000',
+      isLatestVersion: true,
     },
     {
       id: 'syn4',
@@ -135,6 +117,7 @@ const favorites: PaginatedResults<EntityHeader> = {
       benefactorId: 123,
       createdOn: 'yesterday',
       createdBy: '10000',
+      isLatestVersion: true,
     },
   ],
 }
@@ -180,6 +163,8 @@ const entityPath: EntityPath = {
   ],
 }
 
+const projectIdWithNoReadAccess = 'syn984312'
+
 const setCurrentContainerSpy = jest.fn()
 
 function renderComponent(propOverrides?: Partial<EntityTreeProps>) {
@@ -197,79 +182,96 @@ function renderComponent(propOverrides?: Partial<EntityTreeProps>) {
     )
   }
 
-  return render(
-    <SynapseContextProvider synapseContext={MOCK_CONTEXT_VALUE}>
-      <EntityTreeWithCurrentContainer />
-    </SynapseContextProvider>,
-  )
+  return render(<EntityTreeWithCurrentContainer />, {
+    wrapper: createWrapper(),
+  })
 }
 
 describe('EntityTree tests', () => {
-  beforeEach(() => {
-    jest.clearAllMocks()
-
-    mockGetUserFavorites.mockResolvedValue(favorites)
-    mockGetEntityPath.mockResolvedValue(entityPath)
-    mockGetEntityHeader.mockResolvedValue(entityPath.path[1])
-
-    mockUseGetEntityBundle.mockReturnValue({
-      data: {
-        path: entityPath,
-      },
-      isSuccess: true,
-    })
-    mockUseGetProjectsInfinite.mockReturnValue({
-      data: {
-        pages: [
-          {
+  failOnConsole()
+  beforeAll(() => {
+    server.listen()
+    server.use(
+      rest.get(
+        `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${FAVORITES}`,
+        async (req, res, ctx) => {
+          return res(ctx.status(200), ctx.json(favorites))
+        },
+      ),
+      rest.get(
+        `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY_PATH(
+          ':id',
+        )}`,
+        async (req, res, ctx) => {
+          return res(ctx.status(200), ctx.json(entityPath))
+        },
+      ),
+      rest.get(
+        `${getEndpoint(
+          BackendDestinationEnum.REPO_ENDPOINT,
+        )}${ENTITY_HEADER_BY_ID(':id')}`,
+        async (req, res, ctx) => {
+          if (req.params.id === projectIdWithNoReadAccess) {
+            return res(
+              ctx.status(403),
+              ctx.json({
+                reason: 'You do not have READ access on this entity.',
+              }),
+            )
+          }
+          return res(ctx.status(200), ctx.json(entityPath.path[1]))
+        },
+      ),
+      rest.get(
+        `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${PROJECTS}`,
+        async (req, res, ctx) => {
+          let response: ProjectHeaderList = {
             results: projectsPage1,
             nextPageToken: '50a0',
-          },
-          {
-            results: projectsPage2,
-            nextPageToken: null,
-          },
-        ],
-        pageParams: [],
-      },
-      fetchNextPage: mockFetchNextPage,
-      hasNextPage: false,
-    })
+          }
+
+          if (req.params.nextPageToken === '50a0') {
+            response.results = projectsPage2
+            response.nextPageToken = null
+          }
+          return res(ctx.status(200), ctx.json(response))
+        },
+      ),
+    )
   })
+  beforeEach(() => jest.clearAllMocks())
+  afterEach(() => server.restoreHandlers())
+  afterAll(() => server.close())
 
-  it('loads more projects when rootNodeConfiguration.fetchNextPageOfTopLevelEntities is called', async () => {
-    mockUseGetProjectsInfinite.mockReturnValue({
-      data: {
-        pages: [
-          {
-            results: projectsPage1,
-            nextPageToken: '50a0',
-          },
-          {
-            results: projectsPage2,
-            nextPageToken: null,
-          },
-        ],
-        pageParams: [],
-      },
-      fetchNextPage: mockFetchNextPage,
-      hasNextPage: true, // !
-      isLoading: false,
-    })
-
+  it('loads more projects when rootNodeConfiguration.fetchNextPage is called', async () => {
     renderComponent({ initialScope: FinderScope.ALL_PROJECTS })
 
-    // Don't fetch the next page until the prop is called
-    expect(mockFetchNextPage).not.toBeCalled()
+    // Wait for the virtualized tree to be rendered, which will happen when we have entities to show
+    await screen.findByTestId(VIRTUALIZED_TREE_TEST_ID)
 
-    // Capture the fetch function passed to the component
-    const props = mockTreePresenter.mock.calls[0][0] as VirtualizedTreeProps
-    expect(props.rootNodeConfiguration.fetchNextPage).toBeDefined()
+    // Capture the fetch function passed to the component, and check that the first project is passed along
+    let props: VirtualizedTreeProps | undefined
+    await waitFor(() => {
+      props = mockVirtualizedTree.mock.calls[
+        mockVirtualizedTree.mock.calls.length - 1
+      ][0] as VirtualizedTreeProps
+      expect(props.rootNodeConfiguration.fetchNextPage).toBeDefined()
+      expect(props.rootNodeConfiguration.children).toHaveLength(1)
+    })
 
     // Invoke the function
-    props.rootNodeConfiguration.fetchNextPage!()
+    act(() => {
+      props!.rootNodeConfiguration.fetchNextPage!()
+    })
 
-    await waitFor(() => expect(mockFetchNextPage).toBeCalled())
+    // Check that the second page of projects is now in the tree
+    await waitFor(() => {
+      props = mockVirtualizedTree.mock.calls[
+        mockVirtualizedTree.mock.calls.length - 1
+      ][0] as VirtualizedTreeProps
+      expect(props.rootNodeConfiguration.fetchNextPage).toBeDefined()
+      expect(props.rootNodeConfiguration.children).toHaveLength(2)
+    })
   })
 
   describe('Dropdown selection tests', () => {
@@ -307,12 +309,58 @@ describe('EntityTree tests', () => {
         initialContainer: defaultProps.initialContainer,
       })
 
+      let props: VirtualizedTreeProps | undefined
+      await waitFor(() => {
+        props = mockVirtualizedTree.mock.calls[
+          mockVirtualizedTree.mock.calls.length - 1
+        ][0] as VirtualizedTreeProps
+        expect(props.rootNodeConfiguration.children).toHaveLength(
+          projectsPage1.length,
+        )
+        expect(props.rootNodeConfiguration.children[0].id).toBe(
+          projectsPage1[0].id,
+        )
+      })
+
       await userEvent.click(screen.getByRole('button'))
       await userEvent.click(screen.getByText('My Favorites'))
 
-      await waitFor(() => expect(mockGetUserFavorites).toBeCalled())
+      await waitFor(() => {
+        props = mockVirtualizedTree.mock.calls[
+          mockVirtualizedTree.mock.calls.length - 1
+        ][0] as VirtualizedTreeProps
+        // While there are 2 favorites, only one is a container, so only one will appear
+        expect(props.rootNodeConfiguration.children).toHaveLength(1)
+        expect(props.rootNodeConfiguration.children[0].id).toBe(
+          favorites.results[0].id,
+        )
+      })
       // SWC-5593 - When switching to favorites, the container should be 'root'
       expect(setCurrentContainerSpy).toHaveBeenLastCalledWith('root')
+    })
+
+    it('handles the case where the caller does not have READ access on the project', async () => {
+      // The request to get the project will result in a 403 response, which will log an expected error
+      const consoleSpy = jest
+        .spyOn(console, 'error')
+        .mockImplementation(() => {})
+
+      renderComponent({
+        initialScope: FinderScope.CURRENT_PROJECT,
+        projectId: projectIdWithNoReadAccess,
+        initialContainer: undefined,
+      })
+
+      // No READ access on the project, so we should see a notification and the scope should be changed automatically
+      await waitFor(() =>
+        expect(mockDisplayToast).toHaveBeenCalledWith(
+          `You don't have access to the current project (${projectIdWithNoReadAccess}).`,
+          'warning',
+        ),
+      )
+      await screen.findByText(FinderScope.CREATED_BY_ME)
+
+      consoleSpy.mockRestore()
     })
   })
 
@@ -365,10 +413,6 @@ describe('EntityTree tests', () => {
       })
 
       await waitFor(() => {
-        expect(mockGetEntityHeader).toBeCalled()
-
-        expect(mockGetEntityPath).not.toBeCalled()
-
         const currentProject = entityPath.path[1]
 
         expect(mockSetDetailsViewConfiguration).toHaveBeenLastCalledWith({
@@ -416,7 +460,7 @@ describe('EntityTree tests', () => {
     await waitFor(() => {
       expect(mockSetDetailsViewConfiguration).toBeCalled()
 
-      expect(mockTreePresenter).toHaveBeenLastCalledWith(
+      expect(mockVirtualizedTree).toHaveBeenLastCalledWith(
         expect.objectContaining<VirtualizedTreeProps>({
           rootNodeConfiguration: {
             nodeText: 'Projects',
@@ -434,7 +478,7 @@ describe('EntityTree tests', () => {
       )
     })
     // Select an entity using callback prop in child component
-    const newSelectedId = 'syn99999'
+    const newSelectedId = mockFileEntityData.id
     act(() => {
       invokeSetSelectedId(newSelectedId)
     })
@@ -447,7 +491,7 @@ describe('EntityTree tests', () => {
     await waitFor(() => {
       expect(mockSetDetailsViewConfiguration).toBeCalled()
 
-      expect(mockTreePresenter).toHaveBeenLastCalledWith(
+      expect(mockVirtualizedTree).toHaveBeenLastCalledWith(
         expect.objectContaining<VirtualizedTreeProps>({
           rootNodeConfiguration: {
             nodeText: 'Projects',
