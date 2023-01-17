@@ -8,14 +8,16 @@ import React, {
   useState,
 } from 'react'
 import { Dropdown } from 'react-bootstrap'
-import { useErrorHandler } from 'react-error-boundary'
-import { SynapseClient } from '../../../utils'
 import { convertToEntityType } from '../../../utils/functions/EntityTypeUtils'
 import { SYNAPSE_ENTITY_ID_REGEX } from '../../../utils/functions/RegularExpressions'
 import useGetEntityBundle from '../../../utils/hooks/SynapseAPI/entity/useEntityBundle'
-import { useGetProjectsInfinite } from '../../../utils/hooks/SynapseAPI/user/useProjects'
+import {
+  useGetEntityHeader,
+  useGetEntityPath,
+  useGetFavorites,
+  useGetProjectsInfinite,
+} from '../../../utils/hooks/SynapseAPI'
 import { ALL_ENTITY_BUNDLE_FIELDS } from '../../../utils/SynapseConstants'
-import { useSynapseContext } from '../../../utils/SynapseContext'
 import { EntityPath, EntityType, Reference } from '../../../utils/synapseTypes'
 import { SynapseSpinner } from '../../LoadingScreen'
 import { BreadcrumbItem } from '../Breadcrumbs'
@@ -30,6 +32,7 @@ import {
   RootNodeConfiguration,
   VirtualizedTree,
 } from './VirtualizedTree'
+import { displayToast } from '../../ToastMessage'
 
 const isEntityIdInPath = (entityId: string, path: EntityPath): boolean => {
   for (const eh of path.path) {
@@ -127,16 +130,7 @@ export function EntityTree(props: EntityTreeProps) {
     type: EntityDetailsListDataConfigurationType.PROMPT,
   }
 
-  const { accessToken } = useSynapseContext()
-
-  const [isLoading, setIsLoading] = useState(false)
-  const [topLevelEntities, setTopLevelEntities] = useState<
-    Pick<EntityFinderHeader, 'name' | 'id' | 'type'>[]
-  >([])
   const [scope, setScope] = useState(initialScope)
-  const [initialContainerPath, setInitialContainerPath] = useState<EntityPath>()
-
-  const handleError = useErrorHandler()
 
   useEffect(() => {
     if (setDetailsViewConfiguration) {
@@ -161,7 +155,6 @@ export function EntityTree(props: EntityTreeProps) {
 
   const {
     data: projectData,
-    isSuccess: isSuccessProjects,
     fetchNextPage: fetchNextPageProjects,
     hasNextPage: hasNextPageProjects,
     isLoading: isLoadingProjects,
@@ -171,7 +164,7 @@ export function EntityTree(props: EntityTreeProps) {
       : { sort: 'PROJECT_NAME', sortDirection: 'ASC' },
     {
       enabled: useProjectData,
-      // Don't refetch the projects. Updating the entity headers will drop all of the children that VirtualizedTree has fetched
+      // Don't refetch the projects. Updating the entity headers will drop all the children that VirtualizedTree has fetched
       refetchInterval: Infinity,
     },
   )
@@ -179,88 +172,104 @@ export function EntityTree(props: EntityTreeProps) {
   const { data: currentContainerBundle, isSuccess: isSuccessBundle } =
     useGetEntityBundle(currentContainer!, undefined, ALL_ENTITY_BUNDLE_FIELDS, {
       enabled: !!currentContainer && currentContainer !== 'root',
+      useErrorBoundary: true,
     })
 
-  useEffect(() => {
-    if (useProjectData && isSuccessProjects) {
-      if (projectData?.pages) {
-        setTopLevelEntities(
-          projectData.pages.flatMap(page => page.results).map(toEntityHeader),
-        )
-      }
-    }
-  }, [useProjectData, isSuccessProjects, projectData])
+  const { data: favorites, isLoading: isLoadingFavorites } = useGetFavorites(
+    'NAME',
+    'ASC',
+    {
+      select: data => ({
+        // TODO: https://sagebionetworks.jira.com/browse/PLFM-6652
+        ...data,
+        results: data.results.filter(eh =>
+          visibleTypes.includes(convertToEntityType(eh.type)),
+        ),
+      }),
+      // Don't refetch the projects. Updating the entity headers will drop all the children that VirtualizedTree has fetched
+      refetchInterval: Infinity,
+      useErrorBoundary: true,
+    },
+  )
+
+  const { data: initialContainerPath } = useGetEntityPath(initialContainer!, {
+    enabled: !!(
+      projectId &&
+      initialContainer &&
+      initialContainer.match(SYNAPSE_ENTITY_ID_REGEX)
+    ),
+    refetchInterval: Infinity,
+    useErrorBoundary: true,
+  })
+
+  const {
+    data: projectHeader,
+    isLoading: isLoadingProjectHeader,
+    error: fetchProjectError,
+  } = useGetEntityHeader(projectId!, {
+    enabled: !!(projectId ?? initialContainerPath?.path[1]?.id),
+    refetchInterval: Infinity,
+  })
+
+  if (
+    FinderScope.CURRENT_PROJECT === scope &&
+    projectId &&
+    fetchProjectError &&
+    fetchProjectError.status === 403
+  ) {
+    // The user doesn't have access to the project, so let's change the scope to something else
+    displayToast(
+      `You don't have access to the current project (${projectId}).`,
+      'warning',
+    )
+    setScope(FinderScope.CREATED_BY_ME)
+  }
 
   // Populates the first level of entities in the tree view
-  useEffect(() => {
-    setIsLoading(true)
+  const {
+    topLevelEntities,
+    isLoading,
+  }: {
+    topLevelEntities: Pick<EntityFinderHeader, 'name' | 'id' | 'type'>[]
+    isLoading: boolean
+  } = useMemo(() => {
+    let topLevelEntities: Pick<EntityFinderHeader, 'name' | 'id' | 'type'>[] =
+      []
+    let isLoading: boolean = false
     switch (scope) {
       case FinderScope.ALL_PROJECTS:
       case FinderScope.CREATED_BY_ME:
-        setIsLoading(isLoadingProjects)
-        // See the useGetProjectsInfinite hook
+        if (projectData) {
+          topLevelEntities = projectData.pages
+            .flatMap(page => page.results)
+            .map(toEntityHeader)
+        }
+        isLoading = isLoadingProjects
         break
       case FinderScope.FAVORITES: {
-        SynapseClient.getUserFavorites(
-          accessToken,
-          undefined,
-          undefined,
-          'NAME',
-          'ASC',
-        ).then(({ results }) => {
-          // TODO: https://sagebionetworks.jira.com/browse/PLFM-6652
-          results = results.filter(result =>
-            visibleTypes.includes(convertToEntityType(result.type)),
-          )
-          setTopLevelEntities(results)
-          setIsLoading(false)
-        })
+        topLevelEntities = favorites?.results ?? []
+        isLoading = isLoadingFavorites
         break
       }
       case FinderScope.CURRENT_PROJECT:
-        if (projectId) {
-          if (initialContainer?.match(SYNAPSE_ENTITY_ID_REGEX)) {
-            SynapseClient.getEntityPath(initialContainer, accessToken)
-              .then(path => {
-                if (!path.path.map(entity => entity.id).includes(projectId)) {
-                  handleError(
-                    new Error(
-                      `An initial container (${initialContainer}) was provided but is not within or the same as the provided project (${projectId})`,
-                    ),
-                  )
-                }
-                setInitialContainerPath(path)
-                setTopLevelEntities([path.path[1]])
-                setIsLoading(false)
-              })
-              .catch(e => handleError(e))
-          } else {
-            SynapseClient.getEntityHeader(projectId, accessToken)
-              .then(header => {
-                setTopLevelEntities([header])
-                setIsLoading(false)
-              })
-              .catch(e => handleError(e))
-          }
-        } else {
-          handleError(
-            new Error(
-              'Cannot open current project because the current project is unknown',
-            ),
-          )
+        if (projectHeader) {
+          // use projectHeader as topLevelEntities
+          topLevelEntities = [projectHeader]
+          isLoading = isLoadingProjectHeader
         }
         break
       default:
-        handleError(new Error('No scope selected'))
+        throw new Error('No scope selected')
     }
+    return { topLevelEntities, isLoading }
   }, [
-    accessToken,
-    scope,
-    initialContainer,
-    handleError,
-    visibleTypes,
+    favorites?.results,
+    isLoadingFavorites,
+    isLoadingProjectHeader,
     isLoadingProjects,
-    projectId,
+    projectData,
+    projectHeader,
+    scope,
   ])
 
   // Creates the configuration for the details view and invokes the callback
@@ -327,7 +336,7 @@ export function EntityTree(props: EntityTreeProps) {
               .slice(1) // Remove the root entity, syn4489
               .map(entity => {
                 return {
-                  name: entity.name,
+                  name: entity.name ?? entity.id,
                   isCurrent: entity.id === currentContainer,
                   action: () => {
                     setCurrentContainer(entity.id)

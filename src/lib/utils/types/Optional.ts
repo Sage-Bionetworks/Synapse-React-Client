@@ -20,6 +20,8 @@
  * To make multiple properties optional, use a String Literal union:
  * type OptionalBarBaz = Optional<FooBarBaz, 'bar' | 'baz'>
  *
+ * To make all properties optional, use the built-in Partial type.
+ *
  * @see https://stackoverflow.com/a/54178819
  */
 export type Optional<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>

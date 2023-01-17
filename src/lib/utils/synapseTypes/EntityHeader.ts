@@ -1,4 +1,5 @@
 import { ENTITY_CONCRETE_TYPE } from './Entity'
+import { Optional } from '../types/Optional'
 
 /**
  * [EntityHeader | Synapse REST Docs](https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/EntityHeader.html)
@@ -36,5 +37,9 @@ export type EntityHeader = {
  * [EntityPath | Synapse REST Docs](https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/EntityPath.html)
  */
 export type EntityPath = {
-  path: Pick<EntityHeader, 'name' | 'id' | 'type'>[] // The list of all entities in this entity's path. The first element is the root parent and the last element (n) is the entity.
+  /*
+   * The list of all entities in this entity's path. The first element is the root parent and the last element (n) is
+   * the entity. The name may be undefined for ancestors on which the caller does not have READ access.
+   */
+  path: Optional<Pick<EntityHeader, 'name' | 'id' | 'type'>, 'name'>[]
 }

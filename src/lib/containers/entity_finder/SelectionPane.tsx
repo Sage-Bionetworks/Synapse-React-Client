@@ -75,7 +75,8 @@ const EntityPathDisplay: React.FunctionComponent<{
 
   useEffect(() => {
     if (bundle?.path?.path) {
-      setEntityName(bundle.path.path[bundle.path.path.length - 1].name)
+      const header = bundle.path.path[bundle.path.path.length - 1]
+      setEntityName(header.name ?? header.id)
       const path = bundle.path.path.slice(1, bundle.path.path.length - 1) // drop the first element, which is always syn4489 "root"
       setFullPath(path.map(header => header.name).join('/'))
       if (path.length < 4) {

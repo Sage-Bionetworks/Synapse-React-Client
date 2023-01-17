@@ -33,6 +33,9 @@ export const ENTITY_BUNDLE_V2 = (
 export const ENTITY_ACCESS = (id: string | number) =>
   `${REPO}/entity/${id}/access`
 
+export const ENTITY_PATH = (id: string | number) => `${ENTITY_ID(id)}/path`
+export const ENTITY_HEADER_BY_ID = (id: string | number) =>
+  `${ENTITY_ID(id)}/type`
 export const ENTITY_HEADERS = `${REPO}/entity/header`
 
 export const ENTITY_JSON = (id: string | number) => `${REPO}/entity/${id}/json`
@@ -174,3 +177,5 @@ export const ACCESS_REQUIREMENT_RESEARCH_PROJECT_FOR_UPDATE = (
 
 export const FILE_HANDLE = `${FILE}/fileHandle`
 export const FILE_HANDLE_BATCH = `${FILE_HANDLE}/batch`
+
+export const PROJECTS = `${REPO}/projects`
