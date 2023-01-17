@@ -80,7 +80,8 @@ const defaultMuiTheme: ThemeOptions = {
       styleOverrides: {
         root: {
           height: '38px',
-          px: '12px',
+          paddingLeft: '12px',
+          paddingRight: '12px',
         },
       },
     },
