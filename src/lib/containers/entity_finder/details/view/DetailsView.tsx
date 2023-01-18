@@ -250,16 +250,32 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
       if (appearance !== 'hidden') {
         // only include entities that should not be hidden
         const entityType = getEntityTypeFromHeader(entity)
+
+        const currentSelectedVersion = selected.get(entity.id)
+        let versionNumber: number | undefined = undefined
+        if ('versionNumber' in entity) {
+          if (
+            currentSelectedVersion != null &&
+            currentSelectedVersion !== NO_VERSION_NUMBER
+          ) {
+            // if a version is selected, the row should show that version's data
+            versionNumber = currentSelectedVersion
+          } else if (versionSelection === VersionSelectionType.REQUIRED) {
+            // if a version is not selected, but version selection is required, the row should show the latest version's data
+            versionNumber = entity.versionNumber
+          }
+          // otherwise, show the current version's data (versionNumber is undefined)
+        }
+
         entities.push({
           ...entity,
           entityId: entity.id,
-          versionNumber:
-            'versionNumber' in entity ? entity.versionNumber : undefined,
+          versionNumber: versionNumber,
           entityType: entityType,
           isSelected: appearance === 'selected',
           isDisabled: appearance === 'disabled',
           isVersionableEntity: isVersionableEntityType(entityType),
-          currentSelectedVersion: selected.get(entity.id),
+          currentSelectedVersion: currentSelectedVersion,
         })
       }
       return entities
