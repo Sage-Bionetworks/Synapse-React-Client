@@ -31,6 +31,11 @@ import { mockProjectHeader } from '../../../../../mocks/entity/mockEntity'
 import mockFileEntityData from '../../../../../mocks/entity/mockFileEntity'
 import { rest, server } from '../../../../../mocks/msw/server'
 import { MOCK_USER_ID } from '../../../../../mocks/user/mock_user_profile'
+import * as EntityBadgeModule from '../../../../../lib/containers/EntityBadgeIcons'
+
+const mockEntityBadgeIcons = jest
+  .spyOn(EntityBadgeModule, 'EntityBadgeIcons')
+  .mockImplementation(() => <></>)
 
 const mockFileEntityHeader = mockFileEntityData.entityHeader
 
@@ -72,8 +77,8 @@ const versionResult: PaginatedResults<VersionInfo> = {
   results: [
     {
       id: entityHeaders[0].id,
-      versionNumber: 5,
-      versionLabel: 'version 5 label',
+      versionNumber: 3,
+      versionLabel: 'version 3 label',
       versionComment: 'comment 2',
       modifiedBy: 'user',
       contentSize: '100001',
@@ -85,8 +90,8 @@ const versionResult: PaginatedResults<VersionInfo> = {
 
     {
       id: entityHeaders[0].id,
-      versionNumber: 2,
-      versionLabel: '2',
+      versionNumber: 1,
+      versionLabel: '1',
       versionComment: 'comment',
       modifiedBy: 'user',
       contentSize: '100000',
@@ -168,32 +173,35 @@ describe('DetailsView tests', () => {
     })
 
     describe('Determines correct row appearance', () => {
-      it('Creates a row with the default appearance', () => {
+      it('Creates a row with the default appearance', async () => {
         renderComponent({
           selected: Map(),
           visibleTypes: Object.values(EntityType),
           selectableTypes: Object.values(EntityType),
         })
 
+        const rows = await screen.findAllByRole('row')
+
         // Nothing is selected
         expect(
           screen.queryByRole('row', { selected: true }),
         ).not.toBeInTheDocument()
 
-        const rows = screen.getAllByRole('row')
         // Nothing is disabled
         expect(rows[FILE_INDEX]).not.toBeDisabled()
         expect(rows[PROJECT_INDEX]).not.toBeDisabled()
       })
 
-      it('Creates a row with the selected appearance', () => {
+      it('Creates a row with the selected appearance', async () => {
         renderComponent({
-          selected: Map([[entityHeaders[0].id, NO_VERSION_NUMBER]]), // !
+          selected: Map<string, number>([
+            [entityHeaders[0].id, NO_VERSION_NUMBER],
+          ]),
           visibleTypes: Object.values(EntityType),
           selectableTypes: Object.values(EntityType),
         })
 
-        const rows = screen.getAllByRole('row')
+        const rows = await screen.findAllByRole('row')
         // One row is selected -- the file
         expect(rows[FILE_INDEX]).toHaveAttribute('aria-selected', 'true')
         expect(rows[PROJECT_INDEX]).toHaveAttribute('aria-selected', 'false')
@@ -203,19 +211,19 @@ describe('DetailsView tests', () => {
         expect(rows[PROJECT_INDEX]).toHaveAttribute('aria-disabled', 'false')
       })
 
-      it('Creates a row with the disabled appearance', () => {
+      it('Creates a row with the disabled appearance', async () => {
         renderComponent({
           selected: Map(),
           visibleTypes: Object.values(EntityType),
           selectableTypes: [EntityType.PROJECT], // !
         })
 
+        const rows = await screen.findAllByRole('row')
+
         // Nothing is selected
         expect(
           screen.queryByRole('row', { selected: true }),
         ).not.toBeInTheDocument()
-
-        const rows = screen.getAllByRole('row')
 
         // One row is disabled (the file)
         expect(rows[FILE_INDEX]).toHaveAttribute('aria-disabled', 'true')
@@ -256,29 +264,29 @@ describe('DetailsView tests', () => {
   })
 
   describe('Conditionally hiding columns', () => {
-    it('shows both the selected and version columns', () => {
+    it('shows both the selected and version columns', async () => {
       renderComponent({
         selectColumnType: 'checkbox',
         versionSelection: VersionSelectionType.REQUIRED,
       })
 
-      expect(screen.getAllByRole('columnheader').length).toBe(9)
+      expect((await screen.findAllByRole('columnheader')).length).toBe(9)
     })
-    it('hides the selected column', () => {
+    it('hides the selected column', async () => {
       renderComponent({
         selectColumnType: 'none',
         versionSelection: VersionSelectionType.REQUIRED,
       })
 
-      expect(screen.getAllByRole('columnheader').length).toBe(8)
+      expect((await screen.findAllByRole('columnheader')).length).toBe(8)
     })
-    it('hides the version column', () => {
+    it('hides the version column', async () => {
       renderComponent({
         selectColumnType: 'checkbox',
         versionSelection: VersionSelectionType.DISALLOWED,
       })
 
-      expect(screen.getAllByRole('columnheader').length).toBe(8)
+      expect((await screen.findAllByRole('columnheader')).length).toBe(8)
     })
   })
 
@@ -318,7 +326,7 @@ describe('DetailsView tests', () => {
   })
 
   describe('select all tests', () => {
-    it('Select All checkbox will render checked', () => {
+    it('Select All checkbox will render checked', async () => {
       renderComponent({
         enableSelectAll: true,
         selectAllIsChecked: true,
@@ -326,9 +334,9 @@ describe('DetailsView tests', () => {
 
         selectColumnType: 'checkbox',
       })
-      screen.getByRole('checkbox', { checked: true })
+      await screen.findByRole('checkbox', { checked: true })
     })
-    it('Select All checkbox will render unchecked', () => {
+    it('Select All checkbox will render unchecked', async () => {
       renderComponent({
         enableSelectAll: true,
         selectAllIsChecked: false,
@@ -336,12 +344,12 @@ describe('DetailsView tests', () => {
         selectColumnType: 'checkbox',
       })
       // Two entities plus select all, all unchecked
-      expect(screen.getAllByRole('checkbox', { checked: false })).toHaveLength(
-        3,
-      )
+      expect(
+        await screen.findAllByRole('checkbox', { checked: false }),
+      ).toHaveLength(3)
     })
 
-    it('Select All checkbox will render disabled if there are no selectable entities', () => {
+    it('Select All checkbox will render disabled if there are no selectable entities', async () => {
       renderComponent({
         enableSelectAll: true,
         selectAllIsChecked: false,
@@ -349,8 +357,8 @@ describe('DetailsView tests', () => {
         hasNextPage: false,
         selectColumnType: 'checkbox',
       })
-      screen.getByRole('checkbox', { checked: false })
-      expect(screen.getByRole('checkbox')).toBeDisabled()
+      await screen.findByRole('checkbox', { checked: false })
+      expect(await screen.findByRole('checkbox')).toBeDisabled()
     })
 
     it('Clicking select all toggles selection for all entities when none are selected', async () => {
@@ -361,8 +369,9 @@ describe('DetailsView tests', () => {
         selectColumnType: 'checkbox',
       })
 
+      const selectAll = await screen.findByTestId('Select All')
       expect(mockToggleSelection).not.toHaveBeenCalled()
-      await userEvent.click(screen.getByTestId('Select All'))
+      await userEvent.click(selectAll)
       await waitFor(() =>
         expect(mockToggleSelection).toHaveBeenCalledWith([
           { targetId: entityHeaders[0].id, targetVersionNumber: undefined },
@@ -380,8 +389,9 @@ describe('DetailsView tests', () => {
         selectColumnType: 'checkbox',
       })
 
+      const selectAll = await screen.findByTestId('Select All')
       expect(mockToggleSelection).not.toHaveBeenCalled()
-      await userEvent.click(screen.getByTestId('Select All'))
+      await userEvent.click(selectAll)
       await waitFor(() =>
         expect(mockToggleSelection).toHaveBeenCalledWith([
           {
@@ -403,8 +413,9 @@ describe('DetailsView tests', () => {
         selectColumnType: 'checkbox',
       })
 
+      const selectAll = await screen.findByTestId('Select All')
       expect(mockToggleSelection).not.toHaveBeenCalled()
-      await userEvent.click(screen.getByTestId('Select All'))
+      await userEvent.click(selectAll)
       // Only the project is toggled because the file is already selected
       await waitFor(() =>
         expect(mockToggleSelection).toHaveBeenCalledWith([
@@ -425,8 +436,9 @@ describe('DetailsView tests', () => {
         selectColumnType: 'checkbox',
       })
 
+      const selectAll = await screen.findByTestId('Select All')
       expect(mockToggleSelection).not.toHaveBeenCalled()
-      await userEvent.click(screen.getByTestId('Select All'))
+      await userEvent.click(selectAll)
       // Both items are unselected and should be deselected, so they are both toggled
       await waitFor(() =>
         expect(mockToggleSelection).toHaveBeenCalledWith([
@@ -450,8 +462,9 @@ describe('DetailsView tests', () => {
         selectColumnType: 'checkbox',
       })
 
+      const selectAll = await screen.findByTestId('Select All')
       expect(mockToggleSelection).not.toHaveBeenCalled()
-      await userEvent.click(screen.getByTestId('Select All'))
+      await userEvent.click(selectAll)
       // Only the file is toggled because the project is unselectable
       await waitFor(() =>
         expect(mockToggleSelection).toHaveBeenCalledWith([
@@ -472,8 +485,9 @@ describe('DetailsView tests', () => {
         selectColumnType: 'checkbox',
       })
 
+      const selectAll = await screen.findByTestId('Select All')
       expect(mockToggleSelection).not.toHaveBeenCalled()
-      await userEvent.click(screen.getByTestId('Select All'))
+      await userEvent.click(selectAll)
       // Only the file is toggled because the project is hidden
       await waitFor(() =>
         expect(mockToggleSelection).toHaveBeenCalledWith([
@@ -490,7 +504,8 @@ describe('DetailsView tests', () => {
     it('toggles selection on click', async () => {
       renderComponent()
 
-      await userEvent.click(screen.getAllByRole('row')[FILE_INDEX])
+      const rows = await screen.findAllByRole('row')
+      await userEvent.click(rows[FILE_INDEX])
 
       expect(mockToggleSelection).toBeCalledWith({
         targetId: entityHeaders[0].id,
@@ -503,7 +518,8 @@ describe('DetailsView tests', () => {
         versionSelection: VersionSelectionType.REQUIRED,
       })
 
-      await userEvent.click(screen.getAllByRole('row')[FILE_INDEX])
+      const rows = await screen.findAllByRole('row')
+      await userEvent.click(rows[FILE_INDEX])
 
       expect(mockToggleSelection).toBeCalledWith({
         targetId: entityHeaders[0].id,
@@ -517,7 +533,8 @@ describe('DetailsView tests', () => {
       })
 
       // Click the project--projects don't have versions
-      await userEvent.click(screen.getAllByRole('row')[PROJECT_INDEX])
+      const rows = await screen.findAllByRole('row')
+      await userEvent.click(rows[PROJECT_INDEX])
 
       expect(mockToggleSelection).toBeCalledWith({
         targetId: entityHeaders[1].id,
@@ -532,7 +549,8 @@ describe('DetailsView tests', () => {
       })
 
       // Per props, File is a disabled type
-      await userEvent.click(screen.getAllByRole('row')[FILE_INDEX])
+      const rows = await screen.findAllByRole('row')
+      await userEvent.click(rows[FILE_INDEX])
 
       expect(mockToggleSelection).not.toBeCalled()
     })
@@ -544,10 +562,12 @@ describe('DetailsView tests', () => {
       })
 
       // One link to navigate to the project should be visible (you can't navigate inside of a folder)
+      const linkToProject = await screen.findByRole('link', {
+        name: entityHeaders[PROJECT_INDEX].name,
+      })
       expect(screen.queryAllByRole('link')).toHaveLength(1)
-      await userEvent.click(
-        screen.getByRole('link', { name: entityHeaders[PROJECT_INDEX].name }),
-      )
+
+      await userEvent.click(linkToProject)
 
       // Navigating should not toggle selection
       expect(mockToggleSelection).not.toBeCalled()
@@ -572,23 +592,26 @@ describe('DetailsView tests', () => {
     })
 
     describe('renders the correct checkbox state', () => {
-      it('rendered checkbox is checked if selected', () => {
+      it('rendered checkbox is checked if selected', async () => {
         renderComponent({
           selected: Map([[entityHeaders[0].id, NO_VERSION_NUMBER]]),
           selectColumnType: 'checkbox',
         })
-        expect(screen.getAllByRole('checkbox')[0]).toHaveAttribute('checked')
+
+        expect((await screen.findAllByRole('checkbox'))[0]).toHaveAttribute(
+          'checked',
+        )
       })
 
-      it('no checkbox button is created for a disabled row', () => {
+      it('no checkbox button is created for a disabled row', async () => {
         renderComponent({
           enableSelectAll: false,
           hasNextPage: false,
           selectableTypes: [EntityType.FILE],
           selectColumnType: 'checkbox',
         })
-        // The project is disabled so it won't have a checkbox
-        expect(screen.getAllByRole('checkbox')).toHaveLength(1)
+        // The project is disabled, so it won't have a checkbox
+        expect(await screen.findAllByRole('checkbox')).toHaveLength(1)
       })
     })
 
@@ -605,7 +628,7 @@ describe('DetailsView tests', () => {
         await screen.findByRole('listbox')
 
         // We should have two versions and 'Always Latest Version' as options
-        expect(screen.getAllByRole('option').length).toBe(3)
+        expect((await screen.findAllByRole('option')).length).toBe(3)
       })
 
       it('Always Latest Version text appears when versionSelection is TRACKED', async () => {
@@ -632,7 +655,7 @@ describe('DetailsView tests', () => {
         })
 
         expect(
-          await screen.queryByText('Always Latest Version'),
+          screen.queryByText('Always Latest Version'),
         ).not.toBeInTheDocument()
       })
 
@@ -658,15 +681,18 @@ describe('DetailsView tests', () => {
         renderComponent({
           selectableTypes: [EntityType.FILE],
           visibleTypes: [EntityType.FILE],
-          selected: Map([[entityHeaders[0].id, NO_VERSION_NUMBER]]),
+          selected: Map<string, number>([
+            [entityHeaders[0].id, NO_VERSION_NUMBER],
+          ]),
         })
-        await screen.findByRole('listbox')
+        const versionSelectBox = await screen.findByRole('listbox')
 
         // There are two versions, plus "Always Latest"
-        expect(screen.getAllByRole('option').length).toBe(3)
+        const options = await screen.findAllByRole('option')
+        expect(options.length).toBe(3)
 
         // Select 'always latest'
-        await userEvent.selectOptions(screen.getByRole('listbox'), '-1')
+        await userEvent.selectOptions(versionSelectBox, '-1')
         expect(mockToggleSelection).toBeCalledWith({
           targetId: entityHeaders[0].id,
           targetVersionNumber: undefined,
@@ -674,7 +700,7 @@ describe('DetailsView tests', () => {
 
         // Select v1
         await userEvent.selectOptions(
-          screen.getByRole('listbox'),
+          versionSelectBox,
           versionResult.results[0].versionNumber.toString(),
         )
         expect(mockToggleSelection).toBeCalledWith({
@@ -684,7 +710,7 @@ describe('DetailsView tests', () => {
 
         // Select v2
         await userEvent.selectOptions(
-          screen.getByRole('listbox'),
+          versionSelectBox,
           versionResult.results[1].versionNumber.toString(),
         )
         expect(mockToggleSelection).toBeCalledWith({
@@ -712,6 +738,17 @@ describe('DetailsView tests', () => {
         expect(
           (screen.getAllByRole('option')[2] as HTMLOptionElement).selected,
         ).toBe(false)
+
+        // The version number passed to renderers (such as the EntityBadgeIcons) should be undefined
+        await waitFor(() =>
+          expect(mockEntityBadgeIcons).toHaveBeenLastCalledWith(
+            expect.objectContaining({
+              entityId: entityHeaders[0].id,
+              versionNumber: undefined,
+            }),
+            expect.anything(),
+          ),
+        )
       })
 
       it('selects the correct version if one is selected', async () => {
@@ -735,9 +772,20 @@ describe('DetailsView tests', () => {
         expect(
           (screen.getAllByRole('option')[2] as HTMLOptionElement).selected,
         ).toBe(true)
+
+        // The version number passed to renderers (such as the EntityBadgeIcons) should be the selected version
+        await waitFor(() =>
+          expect(mockEntityBadgeIcons).toHaveBeenLastCalledWith(
+            expect.objectContaining({
+              entityId: entityHeaders[0].id,
+              versionNumber: versionResult.results[1].versionNumber,
+            }),
+            expect.anything(),
+          ),
+        )
       })
 
-      it('automatically selects the first version if mustSelectVersionNumber is true', async () => {
+      it('automatically selects the first version if versionSelection is REQUIRED', async () => {
         mockAllIsIntersecting(true)
 
         renderComponent({
@@ -762,6 +810,17 @@ describe('DetailsView tests', () => {
           targetId: entityHeaders[0].id,
           targetVersionNumber: versionResult.results[0].versionNumber,
         })
+
+        // The version number passed to renderers (such as the EntityBadgeIcons) should be the automatically selected version
+        await waitFor(() =>
+          expect(mockEntityBadgeIcons).toHaveBeenLastCalledWith(
+            expect.objectContaining({
+              entityId: entityHeaders[0].id,
+              versionNumber: versionResult.results[0].versionNumber,
+            }),
+            expect.anything(),
+          ),
+        )
       })
     })
   })
