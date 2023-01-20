@@ -44,7 +44,7 @@ export default function EntityPageTitleBar(props: EntityPageTitleBarProps) {
     <div>
       <Box
         sx={{
-          padding: '30px 40px',
+          padding: '20px 40px',
           backgroundColor: 'grey.100',
         }}
       >

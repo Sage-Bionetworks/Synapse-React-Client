@@ -4,9 +4,13 @@ import UniversalCookies from 'universal-cookie'
 import { SynapseConstants } from '.'
 import { PROVIDERS } from '../containers/Login'
 import {
+  ACCESS_APPROVAL,
+  ACCESS_APPROVAL_BY_ID,
   ACCESS_REQUEST_SUBMISSION_SEARCH,
   ACCESS_REQUIREMENT_ACL,
   ACCESS_REQUIREMENT_BY_ID,
+  ACCESS_REQUIREMENT_DATA_ACCESS_REQUEST_FOR_UPDATE,
+  ACCESS_REQUIREMENT_RESEARCH_PROJECT_FOR_UPDATE,
   ACCESS_REQUIREMENT_SEARCH,
   ACCESS_REQUIREMENT_STATUS,
   ACCESS_REQUIREMENT_WIKI_PAGE_KEY,
@@ -14,25 +18,35 @@ import {
   ALIAS_AVAILABLE,
   APPROVED_SUBMISSION_INFO,
   ASYNCHRONOUS_JOB_TOKEN,
+  DATA_ACCESS_REQUEST,
+  DATA_ACCESS_REQUEST_SUBMISSION,
   DATA_ACCESS_SUBMISSION_BY_ID,
+  DOI_ASSOCIATION,
   ENTITY,
   ENTITY_ACCESS,
+  ENTITY_ACCESS_REQUIREMENTS,
   ENTITY_BUNDLE_V2,
+  ENTITY_HEADER_BY_ID,
   ENTITY_HEADERS,
   ENTITY_ID,
   ENTITY_JSON,
+  ENTITY_PATH,
   ENTITY_SCHEMA_BINDING,
   ENTITY_SCHEMA_VALIDATION,
   EVALUATION,
   EVALUATION_BY_ID,
   EVALUATIONS_BY_ID,
   FAVORITES,
+  FILE_HANDLE_BATCH,
+  FORUM,
   FORUM_THREAD,
   NOTIFICATION_EMAIL,
   PROFILE_IMAGE_PREVIEW,
-  REGISTERED_SCHEMA_ID,
+  PROJECTS,
   REGISTER_ACCOUNT_STEP_1,
   REGISTER_ACCOUNT_STEP_2,
+  REGISTERED_SCHEMA_ID,
+  RESEARCH_PROJECT,
   SCHEMA_VALIDATION_GET,
   SCHEMA_VALIDATION_START,
   SIGN_TERMS_OF_USE,
@@ -40,6 +54,8 @@ import {
   TABLE_QUERY_ASYNC_START,
   TEAM_ID_MEMBER_ID,
   TEAM_MEMBERS,
+  THREAD,
+  THREAD_ID,
   TRASHCAN_PURGE,
   TRASHCAN_RESTORE,
   TRASHCAN_VIEW,
@@ -50,19 +66,6 @@ import {
   USER_PROFILE,
   USER_PROFILE_ID,
   VERIFICATION_SUBMISSION,
-  FORUM,
-  THREAD,
-  THREAD_ID,
-  DOI_ASSOCIATION,
-  ENTITY_ACCESS_REQUIREMENTS,
-  ACCESS_APPROVAL_BY_ID,
-  ACCESS_APPROVAL,
-  ACCESS_REQUIREMENT_RESEARCH_PROJECT_FOR_UPDATE,
-  RESEARCH_PROJECT,
-  DATA_ACCESS_REQUEST,
-  ACCESS_REQUIREMENT_DATA_ACCESS_REQUEST_FOR_UPDATE,
-  DATA_ACCESS_REQUEST_SUBMISSION,
-  FILE_HANDLE_BATCH,
 } from './APIConstants'
 import { dispatchDownloadListChangeEvent } from './functions/dispatchDownloadListChangeEvent'
 import {
@@ -76,12 +79,12 @@ import {
   NETWORK_UNAVAILABLE_MESSAGE,
 } from './SynapseConstants'
 import {
+  ACCESS_TYPE,
   AccessApproval,
   AccessCodeResponse,
   AccessControlList,
   AccessRequirement,
   AccessRequirementStatus,
-  ACCESS_TYPE,
   ACTSubmissionStatus,
   AddPartResponse,
   AsynchronousJobStatus,
@@ -92,6 +95,7 @@ import {
   BatchPresignedUploadUrlResponse,
   BulkFileDownloadRequest,
   BulkFileDownloadResponse,
+  DoiAssociation,
   DownloadFromTableRequest,
   DownloadFromTableResult,
   DownloadList,
@@ -147,7 +151,6 @@ import {
   VerificationSubmission,
   WikiPage,
   WikiPageKey,
-  DoiAssociation,
 } from './synapseTypes/'
 import {
   CreateSubmissionRequest,
@@ -1159,7 +1162,7 @@ export const getEntityHeaders = (
  */
 export const getEntityHeader = (entityId: string, accessToken?: string) => {
   return doGet<EntityHeader>(
-    `/repo/v1/entity/${entityId}/type`,
+    ENTITY_HEADER_BY_ID(entityId),
     accessToken,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
@@ -3000,7 +3003,7 @@ export const getMyProjects = (
     removeUndefined(params) as Record<string, string>,
   )
   return doGet<ProjectHeaderList>(
-    `/repo/v1/projects?${urlParams.toString()}`,
+    `${PROJECTS}?${urlParams.toString()}`,
     accessToken,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
@@ -3025,7 +3028,7 @@ export const getUserProjects = (
 // https://rest-docs.synapse.org/rest/GET/entity/id/path.html
 export const getEntityPath = (entityId: string, accessToken?: string) => {
   return doGet<EntityPath>(
-    `/repo/v1/entity/${entityId}/path`,
+    ENTITY_PATH(entityId),
     accessToken,
     BackendDestinationEnum.REPO_ENDPOINT,
   )

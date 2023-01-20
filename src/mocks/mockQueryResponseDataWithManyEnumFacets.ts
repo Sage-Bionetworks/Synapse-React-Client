@@ -1,6 +1,7 @@
 import { QueryResultBundle } from '../lib/utils/synapseTypes'
-import { MOCK_FOLDER_ID, MOCK_TABLE_ENTITY_ID } from './entity/mockEntity'
+import { MOCK_FOLDER_ID } from './entity/mockEntity'
 import mockFileEntityData from './entity/mockFileEntity'
+import { MOCK_TABLE_ENTITY_ID } from './entity/mockTableEntity'
 
 const MOCK_FILE_ENTITY_ID = mockFileEntityData.id
 

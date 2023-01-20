@@ -1,4 +1,4 @@
-import { Skeleton } from '@mui/material'
+import { Skeleton, Typography } from '@mui/material'
 import BaseTable, {
   AutoResizer,
   ColumnShape,
@@ -27,7 +27,6 @@ import {
   Reference,
 } from '../../../utils/synapseTypes'
 import { RequiredProperties } from '../../../utils/types/RequiredProperties'
-import { Typography } from '@mui/material'
 import {
   BadgeIconsRenderer,
   CellRendererProps,
@@ -461,7 +460,6 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
     {
       key: 'status',
       width: 80,
-      dataKey: 'entityId',
       resizable: true,
       cellRenderer: BadgeIconsRenderer,
     },

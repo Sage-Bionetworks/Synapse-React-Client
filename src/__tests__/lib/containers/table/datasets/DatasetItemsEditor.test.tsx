@@ -8,6 +8,7 @@ import {
   DatasetItemsEditorProps,
   getCopy,
 } from '../../../../../lib/containers/table/datasets/DatasetItemsEditor'
+import * as ToastMessageModule from '../../../../../lib/containers/ToastMessage'
 import { displayToast } from '../../../../../lib/containers/ToastMessage'
 import { createWrapper } from '../../../../../lib/testutils/TestingLibraryUtils'
 import { ENTITY_ID } from '../../../../../lib/utils/APIConstants'
@@ -26,6 +27,7 @@ import mockDatasetCollectionData from '../../../../../mocks/entity/mockDatasetCo
 import mockFileEntityData from '../../../../../mocks/entity/mockFileEntity'
 import { rest, server } from '../../../../../mocks/msw/server'
 import * as EntityFinderModal from '../../../../../lib/containers/entity_finder/EntityFinderModal'
+import * as EntityBadgeModule from '../../../../../lib/containers/EntityBadgeIcons'
 
 const mockDatasetEntity = mockDatasetEntityData.entity
 const mockDatasetCollectionEntity = mockDatasetCollectionData.entity
@@ -33,6 +35,10 @@ const mockFileEntity = mockFileEntityData.entity
 
 const datasetCopy = getCopy(mockDatasetEntity)
 const datasetCollectionCopy = getCopy(mockDatasetCollectionEntity)
+
+const mockEntityBadgeIcons = jest
+  .spyOn(EntityBadgeModule, 'EntityBadgeIcons')
+  .mockImplementation(() => <></>)
 
 // Having trouble mocking the AutoResizer in react-base-table. It just uses this under the hood:
 jest.mock(
@@ -42,9 +48,7 @@ jest.mock(
       children({ height: 450, width: 1200 }),
 )
 
-jest.mock('../../../../../lib/containers/ToastMessage', () => {
-  return { displayToast: jest.fn() }
-})
+jest.spyOn(ToastMessageModule, 'displayToast').mockImplementation(() => {})
 
 const mockFileReference: Reference = {
   targetId: mockFileEntity.id!,
@@ -491,8 +495,30 @@ describe('Dataset Items Editor tests', () => {
 
     // Sanity check: the selected version should not be 1 when we start.
     expect(mockFileReference.targetVersionNumber).not.toEqual(1)
+    // The data rows, including the entity badge icons, should be showing the current selected version's data
+    await waitFor(() =>
+      expect(mockEntityBadgeIcons).toHaveBeenLastCalledWith(
+        expect.objectContaining({
+          entityId: mockFileReference.targetId,
+          versionNumber: mockFileReference.targetVersionNumber,
+        }),
+        expect.anything(),
+      ),
+    )
 
+    // Call under test: select a different version
     await userEvent.selectOptions(await screen.findByRole('listbox'), '1')
+
+    // The version passed to the icons should now be v1
+    await waitFor(() =>
+      expect(mockEntityBadgeIcons).toHaveBeenLastCalledWith(
+        expect.objectContaining({
+          entityId: mockFileReference.targetId,
+          versionNumber: 1,
+        }),
+        expect.anything(),
+      ),
+    )
 
     await clickSave()
 

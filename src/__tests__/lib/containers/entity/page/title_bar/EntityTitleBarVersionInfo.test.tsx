@@ -4,10 +4,7 @@ import {
   EntityTitleBarVersionInfoProps,
   EXPORTED_FOR_UNIT_TESTING,
 } from '../../../../../../lib/containers/entity/page/title_bar/EntityTitleBarVersionInfo'
-import {
-  mockFolderEntity,
-  mockTableEntity,
-} from '../../../../../../mocks/entity/mockEntity'
+import { mockFolderEntity } from '../../../../../../mocks/entity/mockEntity'
 import mockFileEntity from '../../../../../../mocks/entity/mockFileEntity'
 import { mockDatasetEntity } from '../../../../../../mocks/entity/mockDataset'
 import { render, screen } from '@testing-library/react'
@@ -19,6 +16,7 @@ import {
   getEndpoint,
 } from '../../../../../../lib/utils/functions/getEndpoint'
 import { ENTITY_BUNDLE_V2 } from '../../../../../../lib/utils/APIConstants'
+import { mockTableEntity } from '../../../../../../mocks/entity/mockTableEntity'
 
 function renderComponent(props: EntityTitleBarVersionInfoProps) {
   return render(<EntityTitleBarVersionInfo {...props} />, {

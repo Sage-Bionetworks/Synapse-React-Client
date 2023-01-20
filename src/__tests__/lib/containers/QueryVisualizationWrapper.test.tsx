@@ -20,10 +20,10 @@ import {
   ColumnType,
   QueryBundleRequest,
 } from '../../../lib/utils/synapseTypes/'
-import { MOCK_TABLE_ENTITY_ID } from '../../../mocks/entity/mockEntity'
 import queryResponse from '../../../mocks/mockQueryResponseDataWithManyEnumFacets'
 import { getHandlersForTableQuery } from '../../../mocks/msw/handlers/tableQueryHandlers'
 import { server } from '../../../mocks/msw/server'
+import { MOCK_TABLE_ENTITY_ID } from '../../../mocks/entity/mockTableEntity'
 
 const onQueryContextReceived = jest.fn<void, [PaginatedQueryContextType]>()
 const onContextReceived = jest.fn<void, [QueryVisualizationContextType]>()

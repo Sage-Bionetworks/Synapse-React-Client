@@ -6,7 +6,7 @@ import {
   EntityType,
 } from '../../lib/utils/synapseTypes'
 import { VersionInfo } from '../../lib/utils/synapseTypes/VersionInfo'
-import { MOCK_USER_ID } from '../user/mock_user_profile'
+import { MOCK_USER_ID, MOCK_USER_ID_2 } from '../user/mock_user_profile'
 import { MockEntityData } from './MockEntityData'
 import mockProjectEntityData from './mockProject'
 
@@ -19,7 +19,9 @@ export const mockDatasetEntity: Dataset = {
   name: MOCK_DATASET_NAME,
   concreteType: 'org.sagebionetworks.repo.model.table.Dataset',
   createdBy: MOCK_USER_ID.toString(),
-  modifiedBy: MOCK_USER_ID.toString(),
+  modifiedBy: MOCK_USER_ID_2.toString(),
+  createdOn: '2020-01-01T00:00:00.000Z',
+  modifiedOn: '2020-02-01T00:00:00.000Z',
   versionNumber: 3,
   versionLabel: 'in progress',
   versionComment: 'in progress',

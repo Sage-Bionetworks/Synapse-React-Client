@@ -1,12 +1,11 @@
 import {
   Entity,
-  EntityHeader,
-  EntityView,
   ENTITY_VIEW_TYPE_MASK_FILE,
   ENTITY_VIEW_TYPE_MASK_PROJECT,
+  EntityHeader,
+  EntityView,
   PaginatedResults,
   ProjectHeader,
-  TableEntity,
 } from '../../lib/utils/synapseTypes'
 import { MOCK_USER_ID } from '../user/mock_user_profile'
 import mockFile from './mockFileEntity'
@@ -19,7 +18,6 @@ const mockFileEntityHeader = mockFile.entityHeader
 
 export const MOCK_FOLDER_ID = 'syn1234'
 export const MOCK_INVALID_PROJECT_NAME = 'A $@*#$% terribly named Project'
-export const MOCK_TABLE_ENTITY_ID = 'syn345'
 export const MOCK_FILE_VIEW_ENTITY_ID = 'syn456'
 export const MOCK_PROJECT_VIEW_ENTITY_ID = 'syn567'
 
@@ -54,18 +52,6 @@ export const mockProjectHeader: ProjectHeader = {
   lastActivity: '2022-02-03T12:44:35.457Z',
   modifiedOn: mockProjectEntity.modifiedOn!,
   modifiedBy: MOCK_USER_ID,
-}
-
-export const mockTableEntity: TableEntity = {
-  id: MOCK_TABLE_ENTITY_ID,
-  parentId: MOCK_PROJECT_ID,
-  name: MOCK_FILE_NAME,
-  concreteType: 'org.sagebionetworks.repo.model.table.TableEntity',
-  createdBy: MOCK_USER_ID.toString(),
-  modifiedBy: MOCK_USER_ID.toString(),
-  etag: '00000000-0000-0000-0000-000000000000',
-  columnIds: [],
-  isSearchEnabled: true,
 }
 
 export const mockFileViewEntity: EntityView = {

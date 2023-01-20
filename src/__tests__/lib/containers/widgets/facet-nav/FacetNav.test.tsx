@@ -21,6 +21,7 @@ import {
 } from '../../../../../lib/utils/synapseTypes'
 import testData from '../../../../../mocks/mockQueryResponseDataWithManyEnumFacets'
 import { server } from '../../../../../mocks/msw/server'
+import failOnConsole from 'jest-fail-on-console'
 
 const lastQueryRequest: QueryBundleRequest = {
   concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
@@ -93,6 +94,7 @@ function init(
 }
 
 describe('facets display hide/show', () => {
+  failOnConsole()
   beforeAll(() => server.listen())
   afterEach(() => server.restoreHandlers())
   afterAll(() => server.close())
@@ -100,14 +102,14 @@ describe('facets display hide/show', () => {
   it("should display 2 facets with 'show more' button", async () => {
     init()
     expect(await screen.findAllByRole('graphics-document')).toHaveLength(2)
-    screen.getByRole('button', { name: 'View All Charts' })
+    await screen.findByRole('button', { name: 'View All Charts' })
   })
 
   it('shows all facet plots when show more is clicked', async () => {
     init()
     expect(await screen.findAllByRole('graphics-document')).toHaveLength(2)
 
-    const showMoreButton = screen.getByRole('button', {
+    const showMoreButton = await screen.findByRole('button', {
       name: 'View All Charts',
     })
 
@@ -121,10 +123,10 @@ describe('facets display hide/show', () => {
       expectedLength,
     )
 
-    expect(() => screen.getByText('View All Charts')).toThrowError()
+    expect(screen.queryByText('View All Charts')).not.toBeInTheDocument()
   })
 
-  it('if there are only 2 facets show more button should not exist', async () => {
+  it('if there are only 2 facets, show more button should not exist', async () => {
     const data = cloneDeep(defaultQueryContext.data)
     data!.facets = [data!.facets[0], data!.facets[2]]
     init(undefined, {
@@ -132,7 +134,9 @@ describe('facets display hide/show', () => {
     })
     expect(await screen.findAllByRole('graphics-document')).toHaveLength(2)
 
-    expect(() => screen.getByText('View All Charts')).toThrowError()
+    await waitFor(() =>
+      expect(screen.queryByText('View All Charts')).not.toBeInTheDocument(),
+    )
   })
 
   it("should only show specified facets if 'facetsToPlot' are set", async () => {
@@ -142,7 +146,9 @@ describe('facets display hide/show', () => {
 
     // Only two plots are shown and the button is hidden
     expect(await screen.findAllByRole('graphics-document')).toHaveLength(2)
-    expect(() => screen.getByText('View All Charts')).toThrowError()
+    await waitFor(() =>
+      expect(screen.queryByText('View All Charts')).not.toBeInTheDocument(),
+    )
   })
 
   it('hiding facet should hide it from facet grid', async () => {
