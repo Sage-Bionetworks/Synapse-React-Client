@@ -1,6 +1,6 @@
 import { Activity } from '../../lib/utils/synapseTypes/Provenance/Provenance'
-import { MOCK_TABLE_ENTITY_ID } from '../entity/mockEntity'
 import { MOCK_USER_ID } from '../user/mock_user_profile'
+import { MOCK_TABLE_ENTITY_ID } from '../entity/mockTableEntity'
 
 const MOCK_ACTIVITY_ID = '1112345'
 const MOCK_ACTIVITY_NAME = 'My test activity'

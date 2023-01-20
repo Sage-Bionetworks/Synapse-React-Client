@@ -14,7 +14,7 @@ import mockFileEntityData from '../../../../mocks/entity/mockFileEntity'
 import { rest, server } from '../../../../mocks/msw/server'
 import { SynapseApiResponse } from '../../../../mocks/msw/handlers'
 import { Activity } from '../../../../lib/utils/synapseTypes/Provenance/Provenance'
-import { MOCK_TABLE_ENTITY_ID } from '../../../../mocks/entity/mockEntity'
+import { MOCK_TABLE_ENTITY_ID } from '../../../../mocks/entity/mockTableEntity'
 
 function renderComponent(props: ProvenanceProps) {
   return render(<ProvenanceGraph {...props} />, { wrapper: createWrapper() })

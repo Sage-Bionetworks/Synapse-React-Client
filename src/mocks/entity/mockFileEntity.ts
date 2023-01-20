@@ -35,7 +35,7 @@ const mockFileEntity: FileEntity = {
   name: MOCK_FILE_NAME,
   concreteType: 'org.sagebionetworks.repo.model.FileEntity',
   createdBy: MOCK_USER_ID.toString(),
-  modifiedBy: MOCK_USER_ID.toString(),
+  modifiedBy: MOCK_USER_ID_2.toString(),
   etag: '00000000-0000-0000-0000-000000000000',
   versionNumber: 3,
   versionLabel: 'a label for version 3',

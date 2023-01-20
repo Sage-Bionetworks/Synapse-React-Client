@@ -11,11 +11,9 @@ import {
   DOWNLOAD_FILES_MENU_TEXT,
 } from '../../../../../lib/containers/table/table-top/DownloadOptions'
 import { createWrapper } from '../../../../../lib/testutils/TestingLibraryUtils'
-import {
-  mockFileViewEntity,
-  mockTableEntity,
-} from '../../../../../mocks/entity/mockEntity'
+import { mockFileViewEntity } from '../../../../../mocks/entity/mockEntity'
 import mockDatasetData from '../../../../../mocks/entity/mockDataset'
+import { mockTableEntity } from '../../../../../mocks/entity/mockTableEntity'
 
 const mockDatasetEntity = mockDatasetData.entity
 
