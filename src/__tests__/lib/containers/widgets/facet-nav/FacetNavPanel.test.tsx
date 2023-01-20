@@ -3,7 +3,7 @@ import FacetNavPanel, {
   FacetNavPanelProps,
   truncate,
 } from '../../../../../lib/containers/widgets/facet-nav/FacetNavPanel'
-import { render, screen } from '@testing-library/react'
+import { render, screen, within } from '@testing-library/react'
 import { FacetColumnResultValues } from '../../../../../lib/utils/synapseTypes'
 import testData from '../../../../../mocks/mockQueryResponseDataWithManyEnumFacets'
 import { SynapseConstants } from '../../../../../lib/utils'
@@ -13,6 +13,7 @@ import {
 } from '../../../../../lib/containers/QueryContext'
 import { QueryVisualizationContextProvider } from '../../../../../lib/containers/QueryVisualizationWrapper'
 import { createWrapper } from '../../../../../lib/testutils/TestingLibraryUtils'
+import failOnConsole from 'jest-fail-on-console'
 
 const mockApplyCallback = jest.fn(() => null)
 const mockHideCallback = jest.fn(() => null)
@@ -83,55 +84,48 @@ function init(
 }
 
 describe('FacetNavPanel tests', () => {
+  failOnConsole()
   it('should initiate the panel with correct buttons and classes when not expanded', async () => {
-    const { container } = init()
-    await screen.findByRole('graphics-document')
-    const panel = container.querySelectorAll<HTMLElement>('div.FacetNavPanel')
-    expect(panel).toHaveLength(1)
+    init()
+    const panel = await screen.findByRole('graphics-document')
+    expect(panel).toHaveClass('FacetNavPanel')
 
-    const buttons = container.querySelectorAll<HTMLElement>(
-      'button > span > svg',
-    )
+    const buttons = await screen.findAllByRole<HTMLButtonElement>('button')
     expect(buttons.length).toBe(3)
-    expect(buttons[0].getAttribute('data-icon')).toBe('filter')
-    expect(buttons[1].getAttribute('data-icon')).toBe('expand')
-    expect(buttons[2].getAttribute('data-icon')).toBe('close')
-
-    const panelBody = container.querySelectorAll('div.FacetNavPanel__body')
-    expect(panelBody.length).toBe(1)
-    const panelBody2 = container.querySelectorAll(
-      'div.FacetNavPanel__body--expanded',
+    expect(buttons[0].querySelector('svg')!.getAttribute('data-icon')).toBe(
+      'filter',
     )
-    expect(panelBody2.length).toBe(0)
+    expect(buttons[1].querySelector('svg')!.getAttribute('data-icon')).toBe(
+      'expand',
+    )
+    expect(buttons[2].querySelector('svg')!.getAttribute('data-icon')).toBe(
+      'close',
+    )
+
+    const panelBody = await within(panel).findByRole('graphics-object')
+    expect(panelBody).toHaveClass('FacetNavPanel__body')
+    expect(panelBody).not.toHaveClass('FacetNavPanel__body--expanded')
   })
 
   it('should initiate the panel with correct buttons and class when expanded', async () => {
     //when expanded the onCollapse callback is passed but onExpand is not
-    const { container } = init({
+    init({
       ...props,
       onSetPlotType: mockSetPlotTypeCallback,
       isModalView: true,
     })
-    await screen.findByRole('graphics-document')
-    const panel = container.querySelectorAll<HTMLElement>(
-      'div.FacetNavPanel--expanded',
-    )
-    expect(panel).toHaveLength(1)
+    const panel = await screen.findByRole('graphics-document')
+    expect(panel).toHaveClass('FacetNavPanel--expanded')
 
-    const buttons = container.querySelectorAll<HTMLElement>(
-      'div.SRC-labeled-dropdown',
-    )
-    expect(buttons.length).toBe(2)
+    await within(panel).findByText('Chart Type')
+    await within(panel).findByText('Filter All Data By')
 
-    const panelBody = container.querySelectorAll('div.FacetNavPanel__body')
-    expect(panelBody.length).toBe(0)
-    const panelBody2 = container.querySelectorAll(
-      'div.FacetNavPanel__body--expanded',
-    )
-    expect(panelBody2.length).toBe(1)
+    const panelBody = await within(panel).findByRole('graphics-object')
+    expect(panelBody).not.toHaveClass('FacetNavPanel__body')
+    expect(panelBody).toHaveClass('FacetNavPanel__body--expanded')
   })
 
-  it('should truncate values', async () => {
+  it('should truncate values', () => {
     expect(truncate(undefined, 10)).toEqual(undefined)
     expect(truncate('', 0)).toEqual('')
     expect(truncate('', 5)).toEqual('')
