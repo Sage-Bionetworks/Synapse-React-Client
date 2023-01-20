@@ -49,6 +49,7 @@ import HtmlPreview from './containers/FilePreview/HtmlPreview/HtmlPreview'
 import EntityPageBreadcrumbs from './containers/entity/page/breadcrumbs/EntityPageBreadcrumbs'
 import EntityActionMenu from './containers/entity/page/action_menu/EntityActionMenu'
 import EntityPageTitleBar from './containers/entity/page/title_bar/EntityPageTitleBar'
+import { CreatedByModifiedBy } from './containers/entity/page/CreatedByModifiedBy'
 import { SynapseClient, SynapseConstants } from './utils'
 import Palettes from './utils/theme/palette/Palettes'
 import {
@@ -118,6 +119,7 @@ const SynapseComponents = {
   EntityPageBreadcrumbs,
   EntityActionMenu,
   EntityPageTitleBar,
+  CreatedByModifiedBy,
 }
 
 // Include the version in the build
