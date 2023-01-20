@@ -1,7 +1,7 @@
 import { InfoOutlined } from '@mui/icons-material'
 import * as PlotlyTyped from 'plotly.js'
 import Plotly from 'plotly.js-basic-dist'
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useState } from 'react'
 import { Button, Dropdown, Modal } from 'react-bootstrap'
 import createPlotlyComponent from 'react-plotly.js/factory'
 import { SizeMe } from 'react-sizeme'
@@ -25,6 +25,7 @@ import {
   applyMultipleChangesToValuesColumn,
 } from '../query-filter/FacetFilterControls'
 import { Tooltip } from '@mui/material'
+import { useQuery } from 'react-query'
 
 const Plot = createPlotlyComponent(Plotly)
 
@@ -355,7 +356,6 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = (
 
   const { getColumnDisplayName } = useQueryVisualizationContext()
 
-  const [plotData, setPlotData] = useState<GraphData>()
   const [showModal, setShowModal] = useState(false)
 
   const plotTitle = getColumnDisplayName(facetToPlot.columnName)
@@ -368,27 +368,27 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = (
     [data, facetToPlot.columnName],
   )
 
-  useEffect(() => {
-    let isMounted = true
-    if (!facetToPlot) {
-      return
-    } else {
+  const { data: plotData } = useQuery(
+    [
+      'extractPlotDataArray',
+      facetToPlot,
+      getColumnType(),
+      index,
+      plotType,
+      accessToken,
+    ],
+    () =>
       extractPlotDataArray(
         facetToPlot,
         getColumnType(),
         index,
         plotType,
         accessToken,
-      ).then(plotData => {
-        if (isMounted) {
-          setPlotData(plotData)
-        }
-      })
-    }
-    return () => {
-      isMounted = false
-    }
-  }, [facetToPlot, data, index, plotType, accessToken, getColumnType])
+      ),
+    {
+      enabled: !!facetToPlot,
+    },
+  )
 
   /* rendering functions */
   const ChartSelectionToggle = (): JSX.Element => (
@@ -542,6 +542,7 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = (
           )}
           <div
             className={`FacetNavPanel__body${isModalView ? '--expanded' : ''}`}
+            role="graphics-object"
           >
             <SizeMe monitorHeight>
               {({ size }) => (
