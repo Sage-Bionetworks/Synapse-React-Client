@@ -513,7 +513,7 @@ describe('SynapseTable tests', () => {
       )
 
       await screen.findByTestId('EntityLink')
-      // Verify that the header is passed
+      // Verify that the ID is passed
       expect(mockEntityLink).toHaveBeenCalledWith(
         expect.objectContaining({
           entity: mockEntityLinkValue,
