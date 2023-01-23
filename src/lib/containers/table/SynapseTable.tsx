@@ -52,20 +52,6 @@ import { TablePagination } from './TablePagination'
 import EntityIDColumnCopyIcon from './EntityIDColumnCopyIcon'
 import ExpandableTableDataCell from './ExpandableTableDataCell'
 
-export const EMPTY_HEADER: EntityHeader = {
-  id: '',
-  name: '',
-  type: 'org.sagebionetworks.repo.model.FileEntity',
-  versionNumber: -1,
-  versionLabel: '',
-  benefactorId: -1,
-  createdBy: '',
-  createdOn: '',
-  modifiedBy: '',
-  modifiedOn: '',
-  isLatestVersion: true,
-}
-
 type Direction = '' | 'ASC' | 'DESC'
 export const SORT_STATE: Direction[] = ['', 'DESC', 'ASC']
 export const DOWNLOAD_OPTIONS_CONTAINER_CLASS = 'SRC-download-options-container'
@@ -279,10 +265,6 @@ export default class SynapseTable extends React.Component<
         },
       )
       try {
-        // initialize mapEntityIdToHeader
-        referenceList.forEach(el => {
-          mapEntityIdToHeader[el.targetId] = EMPTY_HEADER
-        })
         const data = await SynapseClient.getEntityHeaders(
           referenceList,
           this.props.synapseContext.accessToken,

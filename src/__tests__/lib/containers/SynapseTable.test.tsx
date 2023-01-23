@@ -46,19 +46,19 @@ import {
 import { MOCK_CONTEXT_VALUE } from '../../../mocks/MockSynapseContext'
 import { rest, server } from '../../../mocks/msw/server'
 import queryResultBundleJson from '../../../mocks/query/syn16787123.json'
-import fileViewQueryResultBundleJson from '../../../mocks/query/syn20337467.json'
 import dayjs from 'dayjs'
 import { formatDate } from '../../../lib/utils/functions/DateFormatter'
 import {
   MOCK_USER_ID,
   MOCK_USER_ID_2,
 } from '../../../mocks/user/mock_user_profile'
+import * as HasAccessModule from '../../../lib/containers/access_requirements/HasAccessV2'
+import * as EntityLinkModule from '../../../lib/containers/EntityLink'
+import * as UserCardModule from '../../../lib/containers/UserCard'
 import failOnConsole from 'jest-fail-on-console'
 
 const queryResultBundle: QueryResultBundle =
   queryResultBundleJson as QueryResultBundle
-const fileViewQueryResultBundle: QueryResultBundle =
-  fileViewQueryResultBundleJson as QueryResultBundle
 
 const title = 'studies'
 const totalColumns = 13
@@ -170,24 +170,18 @@ function renderTableCell(
   )
 }
 
-jest.mock('../../../lib/containers/access_requirements/HasAccessV2', () => ({
-  HasAccessV2: function MockHasAccess() {
-    return <div data-testid="HasAccess"></div>
-  },
-}))
-
-jest.mock('../../../lib/containers/EntityLink', () => {
-  return {
-    EntityLink: function MockEntityLink() {
-      return <span data-testid="EntityLink"></span>
-    },
-  }
+jest.spyOn(HasAccessModule, 'HasAccessV2').mockImplementation(() => {
+  return <div data-testid="HasAccess"></div>
 })
 
-jest.mock('../../../lib/containers/UserCard', () => {
-  return function MockUserCard() {
-    return <div data-testid="UserCard"></div>
-  }
+const mockEntityLink = jest
+  .spyOn(EntityLinkModule, 'EntityLink')
+  .mockImplementation(() => {
+    return <span data-testid="EntityLink"></span>
+  })
+
+jest.spyOn(UserCardModule, 'default').mockImplementation(() => {
+  return <div data-testid="UserCard"></div>
 })
 
 server.use(
@@ -306,10 +300,6 @@ describe('SynapseTable tests', () => {
       // simulate having clicked the sort button on the first column
       // projectStatus -- this should set it to descend
       const sortedColumn = 'projectStatus'
-      const columnClickInformation = {
-        index: 0,
-        name: sortedColumn,
-      }
 
       await userEvent.click(
         (
@@ -448,7 +438,9 @@ describe('SynapseTable tests', () => {
     // We only care about the conditional rendering, not the
     // instantiation of the EntityLink, so we cast the value
     const mapEntityIdToHeader = {
-      [mockEntityLinkValue]: {} as EntityHeader,
+      [mockEntityLinkValue]: {
+        id: mockEntityLinkValue,
+      } as EntityHeader,
     }
     const mapUserIdToHeader: Record<
       string,
@@ -477,7 +469,7 @@ describe('SynapseTable tests', () => {
       rowVersionNumber: mockRowVersion,
     }
 
-    it('renders an entity link', async () => {
+    it('renders an entity link with a fetched header', async () => {
       renderTableCell(
         {
           ...tableCellProps,
@@ -493,6 +485,41 @@ describe('SynapseTable tests', () => {
       )
 
       await screen.findByTestId('EntityLink')
+      // Verify that the header is passed
+      expect(mockEntityLink).toHaveBeenCalledWith(
+        expect.objectContaining({
+          entity: mapEntityIdToHeader[mockEntityLinkValue],
+        }),
+        expect.anything(),
+      )
+    })
+
+    it('renders an entity link with an ID', async () => {
+      // We may have no headers in certain cases, like if it's unauthorized or does not exist.
+      // The EntityLink component can gracefully handle these cases if we pass an ID.
+      const noHeadersFetched = {}
+      renderTableCell(
+        {
+          ...tableCellProps,
+          columnType: ColumnType.ENTITYID,
+          columnValue: mockEntityLinkValue,
+          mapEntityIdToHeader: noHeadersFetched,
+        },
+        {
+          entity: {
+            concreteType: 'org.sagebionetworks.repo.model.table.TableEntity',
+          },
+        },
+      )
+
+      await screen.findByTestId('EntityLink')
+      // Verify that the header is passed
+      expect(mockEntityLink).toHaveBeenCalledWith(
+        expect.objectContaining({
+          entity: mockEntityLinkValue,
+        }),
+        expect.anything(),
+      )
     })
 
     it('PORTALS-2095: renders an entity link for name column in EntityView', async () => {
