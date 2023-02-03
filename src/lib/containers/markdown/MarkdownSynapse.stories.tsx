@@ -80,6 +80,11 @@ HtmlRenderingTest.args = {
   wikiId: '493662',
 }
 
+export const LargeHtmlFileRenderingTest = Template.bind({})
+LargeHtmlFileRenderingTest.args = {
+  ownerId: 'syn38870076',
+}
+
 export const MarkdownIDUReport = Template.bind({})
 MarkdownIDUReport.args = {
   markdown: '${iduReport?accessRestrictionId=9605700}',

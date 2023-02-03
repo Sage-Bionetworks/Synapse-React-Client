@@ -99,36 +99,31 @@ export const SynapseTableCell: React.FC<SynapseTableCellProps> = ({
     rowVersionNumber
   ) {
     const synId = `syn${rowId.toString()}`
-    if (Object.prototype.hasOwnProperty.call(mapEntityIdToHeader, synId)) {
-      return (
-        <p>
-          <EntityLink
-            entity={mapEntityIdToHeader[synId]}
-            versionNumber={rowVersionNumber}
-            className={`${isBold}`}
-            showIcon={false}
-            displayTextField={columnName}
-          />
-        </p>
-      )
-    }
+    const entity = mapEntityIdToHeader[synId] ?? synId
+    return (
+      <p>
+        <EntityLink
+          entity={entity}
+          versionNumber={rowVersionNumber}
+          className={`${isBold}`}
+          showIcon={false}
+          displayTextField={columnName}
+        />
+      </p>
+    )
   }
 
   switch (columnType) {
     case ColumnType.ENTITYID:
-      if (
-        Object.prototype.hasOwnProperty.call(mapEntityIdToHeader, columnValue)
-      ) {
-        return (
-          <p>
-            <EntityLink
-              entity={mapEntityIdToHeader[columnValue]}
-              className={`${isBold}`}
-              displayTextField={'name'}
-            />
-          </p>
-        )
-      }
+      return (
+        <p>
+          <EntityLink
+            entity={mapEntityIdToHeader[columnValue] ?? columnValue}
+            className={`${isBold}`}
+            displayTextField={'name'}
+          />
+        </p>
+      )
       break
     case ColumnType.DATE_LIST: {
       const jsonData: number[] = JSON.parse(columnValue)
