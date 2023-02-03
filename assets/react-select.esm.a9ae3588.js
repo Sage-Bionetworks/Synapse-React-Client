@@ -1,0 +1,1 @@
+import{u as a,S as o}from"./Select-54ac8379.esm.1fa52e56.js";import{r as s,j as S}from"./jsx-runtime.6efef3f0.js";import"./index.527b2819.js";var c=s.exports.forwardRef(function(e,r){var t=a(e);return S(o,{ref:r,...t})});const m=c;export{m as S};
