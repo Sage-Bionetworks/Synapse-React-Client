@@ -63,7 +63,7 @@ export default function HtmlPreview(props: HtmlPreviewProps) {
     setInterval(() => {
       updateHeight()
     }, 500)
-  }, [])
+  }, [rawHtml])
   const htmlIsCreatedByTrustedUser = !!teamMembership
 
   const cleanHtml = useCleanHtml({
