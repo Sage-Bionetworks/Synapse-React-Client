@@ -1,7 +1,6 @@
 import * as React from 'react'
 import { useEffect, useState } from 'react'
-import * as ReactBootstrap from 'react-bootstrap'
-import { Alert, Button, Form } from 'react-bootstrap'
+import { Alert, Form } from 'react-bootstrap'
 import {
   getDataAccessRequestForUpdate,
   getFiles,
@@ -35,6 +34,15 @@ import { useSynapseContext } from '../../../utils/SynapseContext'
 import { RenewalInterface } from '../../../utils/synapseTypes/AccessRequirement/RenewalInterface'
 import { RadioGroup } from '../../widgets/RadioGroup'
 import { requestDataStepCallbackProps } from '../AccessRequirementList'
+import {
+  Box,
+  Button,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  IconButton,
+  Stack,
+} from '@mui/material'
 
 export type RequestDataAccessStep2Props = {
   managedACTAccessRequirement: ManagedACTAccessRequirement
@@ -82,6 +90,7 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
     entityId,
     user,
     researchProjectId,
+    onHide,
   } = props
   const { accessToken } = useSynapseContext()
   const [DUCTemplate, setDUCTemplate] = useState<DataAccessDoc>()
@@ -619,12 +628,16 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
         className={'access-request-form2'}
         onSubmit={e => e.preventDefault()}
       >
-        <ReactBootstrap.Modal.Header closeButton={true}>
-          <ReactBootstrap.Modal.Title className="AccessRequirementList__title">
+        <DialogTitle>
+          <Stack direction="row" alignItems={'center'} gap={'5px'}>
             Request Access
-          </ReactBootstrap.Modal.Title>
-        </ReactBootstrap.Modal.Header>
-        <ReactBootstrap.Modal.Body>
+            <Box sx={{ flexGrow: 1 }} />
+            <IconButton onClick={onHide}>
+              <IconSvg icon={'close'} wrap={false} sx={{ color: 'grey.700' }} />
+            </IconButton>
+          </Stack>
+        </DialogTitle>
+        <DialogContent>
           <p>
             Please provide the information below to submit the request for
             access.
@@ -668,7 +681,6 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
                       accessor.accessType === AccessType.GAIN_ACCESS && (
                         <Button
                           className={'clear-x'}
-                          variant={'link'}
                           onClick={() =>
                             onClearAccessor(accessor.profile.ownerId)
                           }
@@ -822,7 +834,6 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
                       />
                       <Button
                         className={'clear-x'}
-                        variant={'link'}
                         onClick={() =>
                           onClearAttachment(attachment.fileHandleId)
                         }
@@ -886,12 +897,11 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
             /* Alert message */
             alert && <Alert variant={alert.key}>{alert.message}</Alert>
           }
-        </ReactBootstrap.Modal.Body>
-        <ReactBootstrap.Modal.Footer>
+        </DialogContent>
+        <DialogActions>
           {
             <>
               <Button
-                variant="link"
                 onClick={() =>
                   requestDataStepCallback?.({
                     step: 3,
@@ -901,12 +911,12 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
               >
                 Cancel
               </Button>
-              <Button variant="primary" onClick={() => handleSubmit()}>
+              <Button variant="contained" onClick={() => handleSubmit()}>
                 Submit
               </Button>
             </>
           }
-        </ReactBootstrap.Modal.Footer>
+        </DialogActions>
       </Form>
     </>
   )
